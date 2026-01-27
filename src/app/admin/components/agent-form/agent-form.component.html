@@ -1,0 +1,54 @@
+<div class="form-container" *ngIf="form">
+  <h2>{{ id ? 'Temsilci Düzenle' : 'Yeni Temsilci' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Ad</label>
+    <input formControlName="firstName" />
+
+    <label>Soyad</label>
+    <input formControlName="lastName" />
+
+    <label>E-posta</label>
+    <input type="email" formControlName="email" />
+
+    <label>Telefon</label>
+    <input formControlName="phone" />
+
+    <label>Şifre</label>
+    <input type="password" formControlName="password" [required]="!id" />
+
+    <label>Şube</label>
+    <select formControlName="branchId">
+      <option [ngValue]="null">Şube seçiniz</option>
+      <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+    </select>
+
+    <label>Supervisor</label>
+    <select formControlName="supervisorId">
+      <option [ngValue]="null">Supervisor seçiniz</option>
+      <option *ngFor="let s of supervisors" [ngValue]="s.id">{{ s.nickname }}</option>
+    </select>
+
+    <label>Nickname</label>
+    <input formControlName="nickname" />
+
+    <label>Seviye</label>
+    <select formControlName="agentLevel">
+      <option [ngValue]="null">Seviye seçiniz</option>
+      <option *ngFor="let l of agentLevels" [ngValue]="l.value">{{ l.label }}</option>
+    </select>
+
+    <label>Dil Grubu</label>
+    <select formControlName="languageGroupId">
+      <option [ngValue]="null">Dil grubu seçiniz</option>
+      <option *ngFor="let lg of languageGroups" [ngValue]="lg.id">{{ lg.name }}</option>
+    </select>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="loading || form.invalid">
+        {{ id ? 'Güncelle' : 'Kaydet' }}
+      </button>
+    <button type="button" (click)="cancel()">İptal</button>
+    </div>
+  </form>
+</div>

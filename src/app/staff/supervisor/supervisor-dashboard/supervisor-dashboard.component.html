@@ -1,0 +1,39 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Agent Listesi</h2>
+
+  <table class="table-auto w-full border-collapse border border-gray-300">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="border p-2">Durum</th>
+        <th class="border p-2">NickName</th>
+        <th class="border p-2">Şube</th>
+        <th class="border p-2">Dil Grubu</th>
+        <th class="border p-2">Seviye</th>
+        <th class="border p-2">Aktif</th>
+        <th class="border p-2">İşlem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let agent of agents">
+      <td class="border p-2 text-center">
+        <span [class]="getStatusClass(agent.presenceStatus)">
+          {{ getStatusBadge(agent.presenceStatus) }} {{ agent.presenceStatus || 'Offline' }}
+        </span>
+      </td>    
+        <td class="border p-2">{{ agent.nickname }}</td>
+        <td class="border p-2">{{ agent.branch }}</td>
+        <td class="border p-2">{{ agent.languageGroup }}</td>
+        <td class="border p-2">{{ agent.agentLevel }}</td>
+        <td class="border p-2 text-center">
+          <span [ngClass]="agent.isActive ? 'text-green-600' : 'text-red-600'">
+            {{ agent.isActive ? 'Aktif' : 'Pasif' }}
+          </span>
+        </td>
+        <td class="border p-2 text-center">
+          <button class="bg-blue-500 text-white px-2 py-1 rounded mr-1">Detay</button>
+          <button class="bg-green-500 text-white px-2 py-1 rounded">Performans</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

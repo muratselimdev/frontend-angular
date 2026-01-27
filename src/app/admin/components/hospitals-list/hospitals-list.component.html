@@ -1,0 +1,32 @@
+<div class="header">
+  <h2>Hastaneler</h2>
+  <button (click)="addNew()">+ Yeni Hastane</button>
+</div>
+
+<div *ngIf="loading">Yükleniyor...</div>
+
+<table *ngIf="!loading" class="tbl">
+  <thead>
+    <tr>
+      <th>Adı</th>
+      <th>Şube</th>
+      <th>Adress</th>
+      <th>Durum</th>
+      <th>İşlemler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let h of hospitals">
+      <td>{{ h.name }}</td>
+      <td>{{ h.branchName }}</td>
+      <td>{{ h.address }}</td>
+      <td><span [class]="h.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ h.isActive ? 'Aktif' : 'Pasif' }}
+          </span></td>
+      <td>
+        <button class="btn btn-sm btn-warning" (click)="toggleActive(h)">Aktif/Pasif</button>
+        <button class="btn btn-sm btn-primary ms-2" (click)="edit(h)">Düzenle</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

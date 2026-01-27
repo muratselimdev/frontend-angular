@@ -1,0 +1,17 @@
+.navbar {
+  border-radius: 0 0 12px 12px;
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+}
+
+.nav-item button {
+  border-radius: 10px;
+}
+
+.login-logo {
+  max-width: 220px; 
+  height: auto;
+}
+

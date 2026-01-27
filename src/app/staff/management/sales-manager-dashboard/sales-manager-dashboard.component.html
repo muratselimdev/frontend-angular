@@ -1,0 +1,30 @@
+<h2>Sales Manager Dashboard</h2>
+
+<div class="stats">
+  <div class="card" *ngFor="let s of ['Pending', 'InProgress', 'Approved', 'Rejected', 'Closed']">
+    <h4>{{ s }}</h4>
+    <p>{{ stats[s] || 0 }}</p>
+  </div>
+</div>
+
+<h3>Bekleyen Çağrılar</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Müşteri</th>
+      <th>Konu</th>
+      <th>Durum</th>
+      <th>Oluşturma</th>
+      <th>Temsilci</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of pendingCalls">
+      <td>{{ c.customerName }}</td>
+      <td>{{ c.subject }}</td>
+      <td>{{ c.status }}</td>
+      <td>{{ c.createdAt | date:'short' }}</td>
+      <td>{{ c.agent?.nickName }}</td>
+    </tr>
+  </tbody>
+</table>

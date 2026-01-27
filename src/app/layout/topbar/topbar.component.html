@@ -1,0 +1,24 @@
+<header class="topbar" *ngIf="auth.isLoggedIn">
+  <div class="left">
+    <!--<a routerLink="/admin" class="brand">OneClinic {{ roleText() }}</a>-->
+    <img src="logo.png" class="login-logo">
+    <!--<nav>
+      <a routerLink="/admin/supervisors">Supervisors</a>
+      <a routerLink="/admin/agents">Agents</a>
+    </nav>-->
+  </div>
+  <div class="right">
+    <span class="user">
+      @if (auth.profile?.nickname === null)
+      {
+        {{ auth.profile?.firstName }} {{ auth.profile?.lastName }}
+      }
+      @else
+      {
+        {{ auth.profile?.nickname }}
+      }
+      <!--<span class="badge">{{ roleText() }}</span>-->
+    </span>
+    <button (click)="logout()">Çıkış</button>
+  </div>
+</header>

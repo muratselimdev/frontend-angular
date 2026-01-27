@@ -1,0 +1,43 @@
+<div *ngIf="visible" class="incoming-overlay">
+
+  <div class="incoming-modal">
+    
+    <!-- Kapat Butonu -->
+    <button class="close-btn" (click)="rejectCall()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <!-- Başlık -->
+    <div class="header">
+      📞 Gelen Çağrı
+    </div>
+
+    <!-- Arayan Bilgisi -->
+    <div class="caller-info">
+      <div class="avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <div class="caller-name">
+        {{ callerName }}
+      </div>
+
+      <div class="sub-text">
+        Sizi arıyor...
+      </div>
+    </div>
+
+    <!-- Aksiyon Butonları -->
+    <div class="actions">
+      <button class="btn accept" (click)="acceptCall()">
+        <i class="bi bi-telephone-fill"></i>
+      </button>
+
+      <button class="btn reject" (click)="rejectCall()">
+        <i class="bi bi-telephone-x-fill"></i>
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,38 @@
+<div class="header">
+    <h3> Oteller</h3>
+    <button class="button" (click)="addNew()">+ Yeni Otel</button>
+</div>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Otel Adı</th>
+      <th>Adres</th>
+      <th>Telefon</th>
+      <th>Yıldız</th>
+      <th>Satış (€)</th> <!-- ✅ -->
+      <th>Maliyet (€)</th> <!-- ✅ -->
+      <th>Durum</th>
+      <th>İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let h of hotels">
+      <td>{{ h.hotelName }}</td>
+      <td>{{ h.address }}</td>
+      <td>{{ h.phone }}</td>
+      <td>{{ h.star }}</td>
+      <td>{{ h.price | currency:'EUR':'symbol' }}</td>
+      <td>{{ h.cost | currency:'EUR':'symbol' }}</td>
+      <td>
+        <span [class]="h.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+          {{ h.isActive ? 'Aktif' : 'Pasif' }}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-warning" (click)="toggle(h)">Aktif/Pasif</button>
+        <button class="btn btn-sm btn-primary ms-2" [routerLink]="['/admin/hotels', h.id]">Düzenle</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

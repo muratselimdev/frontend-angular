@@ -1,0 +1,17 @@
+<div class="form-container">
+  <h2>{{ id ? 'Şube Düzenle' : 'Yeni Şube' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Adı</label>
+    <input formControlName="name" />
+
+    <label>
+      <input type="checkbox" formControlName="isActive" />
+      Aktif
+    </label>
+
+    <button type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+    </button>
+    <button type="button" (click)="cancel()">İptal</button>
+  </form>
+</div>

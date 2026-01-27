@@ -1,0 +1,241 @@
+<!-- 🎧 Sesli arama audio elementleri -->
+<audio #localAudio autoplay muted playsinline></audio>
+<audio #remoteAudio autoplay playsinline></audio>
+
+<div class="card p-0 shadow" *ngIf="data">
+
+  <!-- 🔹 Üst Başlık -->
+  <div class="d-flex align-items-center justify-content-between mb-3 p-3 pb-0">
+    <h3>🩺 Talep Detayı</h3>
+    <small class="text-muted">Oluşturulma: {{ data.createdAt | date:'short' }}</small>
+  </div>
+
+  <!-- 🔹 Agent Durumu -->
+  <div class="d-flex align-items-center gap-2 mb-3 ms-3">
+    <div
+      class="status-dot"
+      [ngClass]="{
+        'online': agentStatus === 'online',
+        'busy': agentStatus === 'busy',
+        'offline': agentStatus === 'offline'
+      }"
+    ></div>
+    <span class="fw-semibold text-muted text-capitalize">{{ agentStatus }}</span>
+  </div>
+
+  <!-- ------------------------------------------------------------- -->
+  <!-- 🧭 Sekmeler -->
+  <!-- ------------------------------------------------------------- -->
+  <mat-tab-group
+    mat-align-tabs="center"
+    mat-stretch-tabs
+    dynamicHeight
+    animationDuration="300ms"
+    [(selectedIndex)]="selectedTabIndex"
+    class="modern-tabs"
+  >
+
+    <!-- 🧑‍💼 Bilgiler -->
+    <mat-tab>
+      <ng-template mat-tab-label> 🧑‍💼 Bilgiler </ng-template>
+
+      <div class="p-4">
+
+        <h5 class="fw-semibold text-success mb-3">👤 Müşteri Bilgileri</h5>
+
+        <div class="row">
+          <div class="col-md-6">
+            <p><b>Ad Soyad:</b> {{ data.customer?.fullName }}</p>
+            <p><b>E-posta:</b> {{ data.customer?.email }}</p>
+            <p><b>Telefon:</b> {{ data.customer?.phone }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <p><b>Durum:</b> {{ data.status }}</p>
+            <p><b>Oluşturulma:</b> {{ data.createdAt | date:'short' }}</p>
+          </div>
+        </div>
+
+        <hr />
+
+        <h5 class="fw-semibold text-success mb-3">🤝 Atamalar</h5>
+
+        <p><b>Temsilci:</b> {{ data.assignedAgent?.fullName || '-' }}</p>
+        <p><b>Klinik:</b> {{ data.plan?.clinic?.name || '-' }}</p>
+        <p><b>Hastane:</b> {{ data.plan?.hospital?.name || '-' }}</p>
+        <p><b>Otel:</b> {{ data.plan?.hotelName || '-' }}</p>
+
+      </div>
+    </mat-tab>
+
+    <!-- 💊 Tedaviler -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        💊 Tedaviler
+        <span *ngIf="data.treatments?.length" class="badge bg-success ms-2">
+          {{ data.treatments.length }}
+        </span>
+      </ng-template>
+
+      <div class="p-4">
+        <h5 class="fw-semibold text-success mb-3">💊 Tedavi Listesi</h5>
+
+        <table class="table table-striped table-hover text-sm">
+          <thead>
+            <tr>
+              <th>Tedavi</th>
+              <th>Fiyat</th>
+              <th>Not</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let t of data.treatments">
+              <td>{{ t.treatmentName }}</td>
+              <td>{{ t.customPrice }} {{ t.currency }}</td>
+              <td>{{ t.notes }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
+    <!-- 📎 Dosyalar -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        📎 Dosyalar
+        <span *ngIf="data.attachments?.length" class="badge bg-info text-dark ms-2">
+          {{ data.attachments.length }}
+        </span>
+      </ng-template>
+
+      <div class="p-4">
+        <h5 class="fw-semibold text-success mb-3">📎 Yüklenen Dosyalar</h5>
+
+        <ul class="list-group">
+          <li
+            *ngFor="let a of data.attachments"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <a [href]="a.url" target="_blank">{{ a.fileName }}</a>
+            <small class="text-muted">{{ a.type }}</small>
+          </li>
+        </ul>
+      </div>
+    </mat-tab>
+
+    <!-- 💬 Mesajlar -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        💬 Mesajlar
+        <span *ngIf="data.messages?.length" class="badge bg-primary ms-2">
+          {{ data.messages.length }}
+        </span>
+      </ng-template>
+
+      <div class="p-4">
+
+        <h5 class="fw-semibold text-success mb-3">💬 Sohbet Geçmişi</h5>
+
+        <!-- ⬇️ CHAT SCROLL BOX -->
+<div #chatBox
+  class="chat-box"
+>
+
+  <div *ngFor="let msg of data.messages"
+       class="chat-message"
+       [ngClass]="msg.fromUserId === agentId ? 'chat-right' : 'chat-left'">
+
+    <!-- Sender Name -->
+    <div class="sender-name">
+      {{
+        msg.fromUserId === agentId
+        ? (data.assignedAgent?.fullName || 'Temsilci')
+        : (data.customer?.fullName || 'Müşteri')
+      }}
+    </div>
+
+    <!-- Message Bubble -->
+    <div class="bubble"
+         [ngClass]="msg.fromUserId === agentId ? 'bubble-right' : 'bubble-left'">
+      {{ msg.message }}
+    </div>
+
+    <!-- Time + Read Status -->
+    <div class="msg-meta"
+         [ngClass]="msg.fromUserId === agentId ? 'msg-meta-right' : ''">
+      {{ msg.sentAt | date:'shortTime' }}
+      <ng-container *ngIf="msg.fromUserId === agentId">
+        <i *ngIf="msg.isRead" class="bi bi-check2-all text-primary ms-1"></i>
+        <i *ngIf="!msg.isRead" class="bi bi-check2 text-secondary ms-1"></i>
+      </ng-container>
+    </div>
+  </div>
+
+</div>
+
+
+        <!-- Input -->
+        <div class="d-flex gap-2">
+          <input
+            [(ngModel)]="newMessage"
+            placeholder="Mesaj yazın..."
+            class="form-control form-control-sm"
+            (keyup.enter)="sendMessage()"
+          />
+          <button class="btn btn-primary btn-sm" (click)="sendMessage()">Gönder</button>
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <!-- 🎧 Aramalar -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        🎧 Aramalar
+        <span *ngIf="data.voiceCalls?.length" class="badge bg-warning text-dark ms-2">
+          {{ data.voiceCalls.length }}
+        </span>
+      </ng-template>
+
+      <div class="p-4">
+
+        <h5 class="fw-semibold text-success mb-3">🎧 Sesli Arama Geçmişi</h5>
+
+        <table class="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th>Başlangıç</th>
+              <th>Bitiş</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of data.voiceCalls">
+              <td>{{ v.startedAt | date:'short' }}</td>
+              <td>{{ v.endedAt | date:'short' }}</td>
+              <td>{{ v.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 🎤 Arama başlat -->
+        <button class="btn btn-warning btn-sm mt-3" (click)="startVoiceCall()" [disabled]="callActive">
+          🎤 Yeni Arama Başlat
+        </button>
+
+        <!-- ❌ Bitir -->
+        <button *ngIf="callActive" class="btn btn-danger ms-2 btn-sm" (click)="endCall()">
+          <i class="bi bi-telephone-x"></i> Bitir
+        </button>
+
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>
+
+<div *ngIf="loading" class="text-center mt-4">
+  <div class="spinner-border text-success"></div>
+  <p>Yükleniyor...</p>
+</div>

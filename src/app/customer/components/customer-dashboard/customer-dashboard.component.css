@@ -1,0 +1,12 @@
+.container {
+  max-width: 500px;
+}
+
+.card {
+  border-radius: 16px;
+  background-color: #fdfdfd;
+}
+
+select {
+  border-radius: 10px;
+}

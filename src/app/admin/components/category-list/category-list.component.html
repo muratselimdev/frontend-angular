@@ -1,0 +1,68 @@
+<div class="header">
+  <h2>Kategoriler</h2>
+      <button class="btn primary" routerLink="/admin/categories/new">
+  + Yeni Kategori</button>
+</div>
+
+<div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+  <!-- Liste -->
+  <table class="tbl" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Başlık</th>
+        <th>Açıklama</th>
+        <th>Icon</th>
+        <th>Durum</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let c of categories">
+        <td>
+          {{ c.name }}
+        </td>
+        <td>
+          {{ c.description }}
+        </td>
+        <td>
+          {{ c.icon }}
+        </td>
+
+      <td>
+          <span [class]="c.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ c.isActive ? 'Aktif' : 'Pasif' }}
+          </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-warning" (click)="toggle(c)">Aktif/Pasif</button>
+        <button class="btn btn-sm btn-primary ms-2" (click)="edit(c)">Düzenle</button>
+      </td>
+      </tr>
+
+      <!-- Boş durum -->
+      <tr *ngIf="categories.length === 0">
+        <td colspan="5" class="empty">
+          Henüz kategori yok
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #loadingTpl>Yükleniyor...</ng-template>
+
+
+
+
+<!-- <table>
+  <tr *ngFor="let c of categories">
+    <td>{{ c.name }}</td>
+    <td>{{ c.isActive ? 'Aktif' : 'Pasif' }}</td>
+    <td>
+      <button (click)="toggle(c)">
+        {{ c.isActive ? 'Pasif Yap' : 'Aktif Yap' }}
+      </button>
+    </td>
+  </tr>
+</table> -->

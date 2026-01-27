@@ -1,0 +1,42 @@
+<div class="container mt-3">
+  <h3>Otel Formu</h3>
+  <form (ngSubmit)="save()">
+    <div class="mb-3">
+      <label>Otel Adı</label>
+      <input [(ngModel)]="model.hotelName" name="hotelName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label>Adres</label>
+      <input [(ngModel)]="model.address" name="address" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label>Telefon</label>
+      <input [(ngModel)]="model.phone" name="phone" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label>Yıldız</label>
+      <input type="number" [(ngModel)]="model.star" name="star" class="form-control" min="1" max="5" />
+    </div>
+
+    <div class="mb-3">
+      <label>Satış Fiyatı (€)</label>
+      <input type="number" [(ngModel)]="model.price" name="price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label>Maliyet (€)</label>
+      <input type="number" [(ngModel)]="model.cost" name="cost" class="form-control" />
+    </div>
+
+    <div class="form-check mb-3">
+      <input type="checkbox" [(ngModel)]="model.isActive" name="isActive" class="form-check-input" />
+      <label class="form-check-label">Aktif mi?</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+        <button type="button" (click)="cancel()">İptal</button>
+  </form>
+</div>

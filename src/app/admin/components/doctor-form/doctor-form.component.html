@@ -1,0 +1,40 @@
+<div class="form-container" *ngIf="!loading">
+  <h2>{{ id ? 'Doktor Düzenle' : 'Yeni Doktor' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Ad</label>
+    <input formControlName="firstName" />
+
+    <label>Soyad</label>
+    <input formControlName="lastName" />
+
+    <label>Email</label>
+    <input formControlName="email" type="email" />
+
+    <label>Telefon</label>
+    <input formControlName="phone" />
+
+    <label *ngIf="!id">Şifre</label>
+    <input *ngIf="!id" formControlName="password" type="password" />
+
+    <label>Klinik</label>
+    <select formControlName="clinicId">
+      <option [ngValue]="null">Seçiniz</option>
+      <option *ngFor="let c of clinics" [ngValue]="c.id">{{ c.name }}</option>
+    </select>
+
+    <label>Hastane</label>
+    <select formControlName="hospitalId">
+      <option [ngValue]="null">Seçiniz</option>
+      <option *ngFor="let h of hospitals" [ngValue]="h.id">{{ h.name }}</option>
+    </select>
+
+    <label>
+      <input type="checkbox" formControlName="isActive" /> Aktif
+    </label>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid">Kaydet</button>
+      <button type="button" (click)="cancel()">İptal</button>
+    </div>
+  </form>
+</div>

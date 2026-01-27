@@ -1,0 +1,36 @@
+<div class="header">
+  <h2>Tercüman Liderleri</h2>
+  <button (click)="addNew()">+ Yeni Lider</button>
+</div>
+
+<div *ngIf="loading">Yükleniyor...</div>
+
+<table class="tbl" *ngIf="!loading">
+  <thead>
+    <tr>
+      <th>Ad</th>
+      <th>Soyad</th>
+      <th>Email</th>
+      <th>Şube</th>
+      <th>Dil Grubu</th>
+      <th>Durum</th>
+      <th>İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let i of items">
+      <td>{{ i.firstName }}</td>
+      <td>{{ i.lastName }}</td>
+      <td>{{ i.email }}</td>
+      <td>{{ i.branch }}</td>
+      <td>{{ i.languageGroup }}</td>
+      <td><span [class]="i.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ i.isActive ? 'Aktif' : 'Pasif' }}
+          </span></td>
+      <td>
+        <button class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-1 rounded transition-colors duration-200" (click)="toggleActive(i)">Aktif/Pasif</button>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded ml-2 transition-colors duration-200" (click)="edit(i.id)">Düzenle</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

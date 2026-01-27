@@ -1,0 +1,27 @@
+<div class="container mt-3">
+  <h3>Hasta Transferi Formu</h3>
+  <form (ngSubmit)="save()">
+    <div class="mb-3">
+      <label>Transfer Tipi</label>
+      <input [(ngModel)]="model.transferType" name="transferType" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label>Araç Tipi</label>
+      <input [(ngModel)]="model.vehicleType" name="vehicleType" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label>Tarih</label>
+      <input type="datetime-local" [(ngModel)]="model.transferDate" name="transferDate" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label>Not</label>
+      <textarea [(ngModel)]="model.notes" name="notes" class="form-control"></textarea>
+    </div>
+    <div class="form-check mb-3">
+      <input type="checkbox" [(ngModel)]="model.isActive" name="isActive" class="form-check-input" />
+      <label class="form-check-label">Aktif mi?</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <button type="button" (click)="cancel()">İptal</button>
+  </form>
+</div>

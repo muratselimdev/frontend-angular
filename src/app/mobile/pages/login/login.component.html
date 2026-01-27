@@ -1,0 +1,55 @@
+<div class="min-h-screen bg-background-light flex flex-col text-center">
+  
+  <!-- Üst görsel -->
+  <div class="relative h-[42vh] w-full">
+    <div 
+      class="absolute inset-0 bg-cover bg-center rounded-b-[2rem]"
+      style="background-image: url('assets/img/login-hero.jpg')">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white/90"></div>
+  </div>
+
+  <!-- Form Body -->
+  <div class="flex-1 px-8 pb-10 -mt-14 relative z-10">
+    
+    <div class="bg-white shadow-xl rounded-2xl p-6 border border-gray-100">
+      <img src="assets/img/oneclinic-logo-green.svg" class="mx-auto mb-4 w-44" />
+
+      <h2 class="text-xl font-bold mb-6 text-primary">Hoş Geldiniz</h2>
+
+      <form (submit)="login()">
+
+        <label class="block text-left text-sm mb-1 font-semibold">E-posta</label>
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          class="w-full h-12 rounded-xl border px-3 mb-3"
+          placeholder="ornek@mail.com"
+        />
+
+        <label class="block text-left text-sm mb-1 font-semibold">Parola</label>
+        <input
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          class="w-full h-12 rounded-xl border px-3 mb-4"
+          placeholder="••••••"
+        />
+
+        <button
+          type="submit"
+          class="w-full h-12 rounded-xl bg-primary text-white font-bold shadow-lg mt-2">
+          Giriş Yap
+        </button>
+      </form>
+
+      <button
+        class="mt-4 text-sm text-gray-500 underline"
+        (click)="goToRegister()">
+        Hesabınız yok mu? Kayıt olun
+      </button>
+    </div>
+  </div>
+
+</div>

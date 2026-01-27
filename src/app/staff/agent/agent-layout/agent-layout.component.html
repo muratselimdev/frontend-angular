@@ -1,0 +1,48 @@
+<div class="agent-layout">
+  <!-- 🔹 Sol Menü -->
+  <aside class="sidebar">
+    <div class="sidebar-header text-center py-3">
+      <h3>🎧 Agent Panel</h3>
+    </div>
+
+    <!-- 📞 Gelen çağrı popup -->
+    <app-call-incoming-modal
+      *ngIf="incomingVisible"
+      [visible]="incomingVisible"
+      [callerName]="callerName"
+      (accept)="onAcceptCall()"
+      (reject)="onRejectCall()">
+    </app-call-incoming-modal>
+
+    <nav class="mt-3">
+      <ul class="list-unstyled">
+        <li *ngFor="let item of menuItems">
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            class="d-flex align-items-center px-3 py-2">
+            <span class="me-2">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- 🔹 İçerik Alanı -->
+  <main class="content p-3">
+    <!-- 🎧 Aktif Çağrı Bilgisi -->
+    <!-- <div *ngIf="callActive" class="alert alert-success text-center p-2 mb-2 shadow-sm">
+      🎙️ Arama devam ediyor...
+      <button class="btn btn-danger btn-sm ms-2" (click)="endCall()">
+        <i class="bi bi-telephone-x"></i> Durdur
+      </button>
+    </div> -->
+
+    <!-- 🔹 Sayfa içerikleri -->
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- 🔊 Uzak taraf sesi (WebRTC için) -->
+  <audio id="remoteAudio" autoplay></audio>
+</div>

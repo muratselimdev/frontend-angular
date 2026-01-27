@@ -1,0 +1,129 @@
+<!-- Dashboard Header -->
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+  <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+    Welcome back! Here's what's happening with your clinic today.
+  </p>
+</div>
+
+<!-- Stats Cards Grid -->
+<div class="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2 xl:grid-cols-4">
+  <div *ngFor="let card of statCards" 
+       class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow duration-200">
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ card.title }}</p>
+        <h3 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ card.value }}</h3>
+        <div class="flex items-center mt-2">
+          <span [class]="card.isPositive ? 'text-green-600' : 'text-red-600'" 
+                class="text-sm font-medium flex items-center">
+            <span *ngIf="card.isPositive">↗</span>
+            <span *ngIf="!card.isPositive">↘</span>
+            {{ card.change }}%
+          </span>
+          <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">from last month</span>
+        </div>
+      </div>
+      <div class="text-4xl opacity-80">{{ card.icon }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts and Activity Grid -->
+<div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
+  
+  <!-- Chart Card -->
+  <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Weekly Activity</h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Patient visits overview</p>
+    </div>
+    
+    <div class="relative h-64">
+      <div class="flex items-end justify-between h-full space-x-2">
+        <div *ngFor="let item of chartData" class="flex flex-col items-center flex-1">
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden" 
+               [style.height.%]="(item.value / getMaxChartValue()) * 100">
+            <div class="w-full h-full bg-gradient-to-t from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 transition-colors duration-200"></div>
+          </div>
+          <span class="mt-2 text-xs font-medium text-gray-600 dark:text-gray-400">{{ item.label }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+        <span class="text-sm text-gray-600 dark:text-gray-400">Patient Visits</span>
+      </div>
+      <button class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+        View Details →
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activity Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Activity</h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Latest updates</p>
+    </div>
+    
+    <div class="space-y-4">
+      <div *ngFor="let activity of recentActivities" 
+           class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200">
+        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+          <span class="text-blue-600 dark:text-blue-400 font-medium text-sm">
+            {{ activity.user.charAt(0) }}
+          </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+            {{ activity.user }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ activity.action }}
+          </p>
+          <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+            {{ activity.time }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <button class="w-full mt-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-gray-700 pt-4">
+      View All Activities
+    </button>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <button class="flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all duration-200 group">
+    <div class="text-center">
+      <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200">➕</div>
+      <p class="text-sm font-medium text-gray-900 dark:text-white">Add Patient</p>
+    </div>
+  </button>
+  
+  <button class="flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all duration-200 group">
+    <div class="text-center">
+      <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200">📅</div>
+      <p class="text-sm font-medium text-gray-900 dark:text-white">Schedule Appointment</p>
+    </div>
+  </button>
+  
+  <button class="flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all duration-200 group">
+    <div class="text-center">
+      <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200">📊</div>
+      <p class="text-sm font-medium text-gray-900 dark:text-white">View Reports</p>
+    </div>
+  </button>
+  
+  <button class="flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all duration-200 group">
+    <div class="text-center">
+      <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200">⚙️</div>
+      <p class="text-sm font-medium text-gray-900 dark:text-white">Settings</p>
+    </div>
+  </button>
+</div>

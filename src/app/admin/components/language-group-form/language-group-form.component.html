@@ -1,0 +1,19 @@
+<div class="form-container">
+  <h2>{{ id ? 'Dil Grubu Düzenle' : 'Yeni Dil Grubu' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Kod</label>
+    <input formControlName="code" placeholder="Örn: EN" />
+
+    <label>Ad</label>
+    <input formControlName="name" placeholder="Örn: English" />
+
+    <label>
+      <input type="checkbox" formControlName="isActive" />
+      Aktif mi?
+    </label>
+
+    <button type="submit" [disabled]="loading || form.invalid">Kaydet</button>
+    <button type="button" (click)="router.navigate(['/admin/language-groups'])">İptal</button>
+  </form>
+</div>

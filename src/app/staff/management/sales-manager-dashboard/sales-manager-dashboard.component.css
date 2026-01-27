@@ -1,0 +1,66 @@
+h2 {
+  color: #222;
+  margin: 20px 0 10px;
+  font-weight: 600;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: linear-gradient(135deg, #00aaff, #0056b3);
+  color: white;
+  border-radius: 12px;
+  flex: 1 1 150px;
+  margin: 10px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h4 {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.card p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  background-color: #ffffff;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #0056b3;
+  color: white;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+  background-color: #f7f7f7;
+}
+
+th {
+  font-size: 13px;
+  text-transform: uppercase;
+}

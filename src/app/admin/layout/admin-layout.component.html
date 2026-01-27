@@ -1,0 +1,213 @@
+﻿<div class="min-h-screen" [class.dark]="isDarkMode">
+  
+  <!-- Backdrop overlay for mobile -->
+  <div *ngIf="mobileOpen" 
+       class="fixed inset-0 bg-black/40 z-[1040] lg:hidden transition-opacity duration-300"
+       (click)="closeMobileSidebar()">
+  </div>
+
+  <!-- Main Grid Container -->
+  <div class="min-h-screen">
+    
+    <!-- First Row: Logo/Header - Full Width -->
+    <div class="w-full bg-red-500 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4 px-6">
+      <div class="flex items-center justify-between">
+        <!-- Logo Section -->
+        <div class="flex items-center gap-4">
+          <button
+            (click)="toggleMobileSidebar()"
+            class="lg:hidden flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+            <svg *ngIf="!mobileOpen" width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M0.583 1C0.583 0.586 0.919 0.25 1.333 0.25H14.667C15.081 0.25 15.417 0.586 15.417 1C15.417 1.414 15.081 1.75 14.667 1.75H1.333C0.919 1.75 0.583 1.414 0.583 1ZM0.583 11C0.583 10.586 0.919 10.25 1.333 10.25H14.667C15.081 10.25 15.417 10.586 15.417 11C15.417 11.414 15.081 11.75 14.667 11.75H1.333C0.919 11.75 0.583 11.414 0.583 11ZM1.333 5.25C0.919 5.25 0.583 5.586 0.583 6C0.583 6.414 0.919 6.75 1.333 6.75H8C8.414 6.75 8.75 6.414 8.75 6C8.75 5.586 8.414 5.25 8 5.25H1.333Z" fill="currentColor"/>
+            </svg>
+            <svg *ngIf="mobileOpen" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M6.22 7.28C5.93 6.99 5.93 6.51 6.22 6.22C6.51 5.93 6.99 5.93 7.28 6.22L12 10.94L16.72 6.22C17.01 5.93 17.49 5.93 17.78 6.22C18.07 6.51 18.07 6.99 17.78 7.28L13.06 12L17.78 16.72C18.07 17.01 18.07 17.49 17.78 17.78C17.49 18.07 17.01 18.07 16.72 17.78L12 13.06L7.28 17.78C6.99 18.07 6.51 18.07 6.22 17.78C5.93 17.49 5.93 17.01 6.22 16.72L10.94 12L6.22 7.28Z" fill="currentColor"/>
+            </svg>
+          </button>
+          
+          <div class="text-2xl font-bold">
+            <span class="text-blue-600 dark:text-blue-400">
+              Admin & Dashboard
+            </span>
+          </div>
+        </div>
+
+        <!-- Right side actions -->
+        <div class="flex items-center gap-2">
+          <!-- Search bar -->
+          <div class="hidden lg:flex flex-1 max-w-md">
+            <input 
+              type="search" 
+              placeholder="Search..."
+              class="w-full px-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <!-- Dark mode toggle -->
+          <button
+            (click)="toggleDarkMode()"
+            class="flex items-center justify-center w-10 h-10 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors duration-200">
+            <svg *ngIf="!isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+            <svg *ngIf="isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </button>
+
+          <!-- Notifications -->
+          <button class="relative flex items-center justify-center w-10 h-10 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+
+          <!-- User menu -->
+          <div class="flex items-center gap-2 pl-2 border-l border-gray-200 dark:border-gray-700">
+            <button class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+              <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                A
+              </div>
+              <span class="hidden lg:block text-sm font-medium text-gray-900 dark:text-white">Admin</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+<!--    Menu and Content -->   
+
+
+
+<!-- All Below By Murat -->
+
+
+    <!-- Second Row: Grid with Menu (4 cols) and Content (8 cols) -->
+    <!-- <div class="grid grid-cols-1 lg:grid-cols-12 bg-blue-900"> -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 ">
+      
+      <!-- Left Column: Menu - 4 columns on desktop -->
+      
+        
+        <!-- Navigation -->
+        <div [ngClass]="sidebarCollapsed ? 'lg:col-span-1' : 'lg:col-span-2'" 
+             class="flex flex-col overflow-y-auto duration-300 ease-in-out no-scrollbar flex-1 pt-4 bg-green-900 transition-all">
+          <nav class="mb-0" [ngClass]="sidebarCollapsed ? 'pl-2 pr-2' : 'pl-4 pr-0'">
+            <div class="flex flex-col gap-1">
+              <div *ngFor="let group of menuGroups; let groupIndex = index">
+                <button
+                  type="button"
+                  (click)="toggleGroup(groupIndex)"
+                  [attr.aria-expanded]="group.isOpen"
+                  [ngClass]="sidebarCollapsed ? 'justify-center' : 'justify-start'"
+                  class="w-full mb-1 text-xs uppercase flex items-center leading-5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-3 gap-2">
+                  <span class="flex items-center gap-2">
+                    <svg *ngIf="group.icon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getGroupIconPath(group.icon)"></path>
+                    </svg>
+                    <span *ngIf="!sidebarCollapsed">{{ group.label }}</span>
+                    <svg *ngIf="!sidebarCollapsed" class="w-4 h-4 transition-transform duration-200" 
+                         [class.rotate-180]="group.isOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </span>
+                </button>
+                <ul *ngIf="group.isOpen && !sidebarCollapsed" class="flex flex-col gap-1 pr-0">
+                  <li *ngFor="let item of group.items; let itemIndex = index">
+                    <!-- Button for items with submenus -->
+                    <button *ngIf="item.subItems"
+                      class="group menu-item w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                      [class.bg-blue-50]="item.isOpen"
+                      [class.dark:bg-blue-900/20]="item.isOpen"
+                      [class.text-blue-600]="item.isOpen"
+                      [class.dark:text-blue-400]="item.isOpen"
+                      (click)="toggleSubmenu(groupIndex, itemIndex)">
+                      <span class="text-xl transition-transform duration-200 group-hover:scale-105">{{ item.icon }}</span>
+                      <span class="flex-1 text-left text-sm font-medium transition-transform duration-200 group-hover:translate-x-0.5">
+                        {{ item.label }}
+                      </span>
+                      <svg *ngIf="item.subItems"
+                           class="w-4 h-4 transition-transform duration-200"
+                           [class.rotate-180]="item.isOpen"
+                           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </button>
+                    
+                    <!-- Link for items without submenus -->
+                     <a *ngIf="!item.subItems && item.path"
+                       class="group menu-item flex items-center gap-2 px-3 py-1.5 rounded-md text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                       [routerLink]="item.path"
+                       routerLinkActive="bg-blue-500 text-white"
+                       [routerLinkActiveOptions]="{exact: false}"
+                       (click)="closeMobileSidebar()">
+                      <span class="text-xl transition-transform duration-200 group-hover:scale-105">{{ item.icon }}</span>
+                      <span class="text-sm font-medium transition-transform duration-200 group-hover:translate-x-0.5">
+                        {{ item.label }}
+                      </span>
+                    </a>
+
+                    <!-- Submenu items -->
+                    <div *ngIf="item.subItems && item.isOpen"
+                         class="mt-0.5 ml-8 space-y-0">
+                      <a *ngFor="let subItem of item.subItems"
+                         [routerLink]="subItem.path"
+                         routerLinkActive="text-blue-600 dark:text-blue-400 font-medium"
+                         (click)="closeMobileSidebar()"
+                         class="submenu-link group block px-3 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
+                        {{ subItem.label }}
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+     
+    
+      
+
+      <!-- Main Content Murat -->
+
+      <!-- Right Column: Content Area - 8 columns on desktop -->
+      <div [ngClass]="sidebarCollapsed ? 'lg:col-span-11' : 'lg:col-span-10'" 
+           class="flex flex-col min-h-[calc(100vh-80px)] w-full transition-all duration-300 ease-in-out">
+        
+        <!-- Content Header with Menu Icon -->
+        <div class="p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+          <button
+            (click)="toggleContentMenu()"
+            class="flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M0.583 1C0.583 0.586 0.919 0.25 1.333 0.25H14.667C15.081 0.25 15.417 0.586 15.417 1C15.417 1.414 15.081 1.75 14.667 1.75H1.333C0.919 1.75 0.583 1.414 0.583 1ZM0.583 11C0.583 10.586 0.919 10.25 1.333 10.25H14.667C15.081 10.25 15.417 10.586 15.417 11C15.417 11.414 15.081 11.75 14.667 11.75H1.333C0.919 11.75 0.583 11.414 0.583 11ZM1.333 5.25C0.919 5.25 0.583 5.586 0.583 6C0.583 6.414 0.919 6.75 1.333 6.75H8C8.414 6.75 8.75 6.414 8.75 6C8.75 5.586 8.414 5.25 8 5.25H1.333Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+
+        
+        <!-- Page Content -->
+        <!-- <div class="flex-1 p-4 mx-auto w-full md:p-6 bg-gray-50 dark:bg-gray-800"> -->
+        <div class="flex-2 p-4 w-full md:p-6 bg-red-100 dark:bg-gray-800">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Footer - Full Width (like header) -->
+    <div class="w-full bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-4 px-6">
+      <div class="flex items-center justify-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          OneClinic Team © {{ getCurrentYear() }}
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>

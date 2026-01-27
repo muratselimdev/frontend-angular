@@ -1,0 +1,24 @@
+<nav class="bg-white shadow-sm px-4 py-3">
+  <div class="flex items-center justify-between">
+    <a class="font-bold text-blue-600 text-xl" routerLink="/customer/dashboard">
+      <img src="logo.png" class="login-logo">
+    </a>
+
+    <ul class="flex space-x-6">
+      <li><a class="text-gray-700 hover:text-blue-600 transition-colors" routerLink="/customer/requests">Taleplerim</a></li>
+      <li><a class="text-gray-700 hover:text-blue-600 transition-colors" routerLink="/customer/profile">Profilim</a></li>
+      <li><a class="text-gray-700 hover:text-blue-600 transition-colors" routerLink="/customer/requests/new">➕ Yeni Talep</a></li>
+    </ul>
+
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-600 font-semibold">
+        👋 Hoş geldiniz, <span class="text-gray-900">{{ customerName }}</span>
+      </span>
+      <button class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded text-sm transition-colors duration-200" (click)="logout()">🚪 Çıkış Yap</button>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 mt-6">
+<router-outlet></router-outlet>
+</div>

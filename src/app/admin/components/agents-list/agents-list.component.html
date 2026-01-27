@@ -1,0 +1,52 @@
+<div class="header">
+  <h2>Temsilciler</h2>
+  <button (click)="addNew()">+ Yeni Temsilci</button>
+</div>
+
+<div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+<div class="card-body">
+<div class="table-responsive">
+<table class="table table-hover table-striped" *ngIf="!loading">
+  <thead class="table-dark">
+    <tr>
+      <th>NickName</th>
+      <th>Adı</th>
+      <th>Soyadı</th>
+      <th>Email</th>
+      <th>Telefon</th>
+      <th>Şube</th>
+      <th>Supervisor</th>
+      <th>Seviye</th>
+      <th>Dil Grubu</th>
+      <th>Durum</th>
+      <th>İşlemler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let a of agents">
+      <td>{{ a.nickname }}</td>
+      <td>{{ a.firstName }}</td>
+      <td>{{ a.lastName }}</td>
+      <td>{{ a.email }}</td>
+      <td>{{ a.phone }}</td>
+      <td>{{ a.branch || '-' }}</td>
+      <td>{{ a.supervisor }}</td>
+      <td>{{ a.agentLevel || '-' }}</td>
+      <td>{{ a.languageGroup || '-' }}</td>
+      <td>
+          <span [class]="a.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ a.isActive ? 'Aktif' : 'Pasif' }}
+          </span>
+      </td>
+      <td>
+          <button class="btn btn-sm btn-warning" (click)="toggleActive(a)">Aktif/Pasif</button>
+          <button class="btn btn-sm btn-primary ms-2" (click)="edit(a)">Düzenle</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+

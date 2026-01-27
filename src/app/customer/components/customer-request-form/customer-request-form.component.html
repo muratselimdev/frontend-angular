@@ -1,0 +1,70 @@
+<audio id="remoteAudio" autoplay></audio>
+<form [formGroup]="form" (ngSubmit)="submit()" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-md">
+  <h5 class="mb-4 text-xl font-bold"><i class="bi bi-plus-circle"></i></h5>
+
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Tedavi Grubu</label>
+    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" formControlName="treatmentGroupId" (change)="onGroupChange($event)">
+      <option value="">Seçiniz</option>
+      <option *ngFor="let g of treatmentGroups" [value]="g.id">{{ g.groupName }}</option>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Tedavi</label>
+    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" formControlName="treatmentId">
+      <option value="">Seçiniz</option>
+      <option *ngFor="let t of treatments" [value]="t.id">{{ t.treatmentName }}</option>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Notlar</label>
+    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" formControlName="notes" rows="3"></textarea>
+  </div>
+
+  <!-- Belge yükleme -->
+  <div class="flex items-center mb-3">
+    <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" id="hasDocuments" formControlName="hasDocuments" />
+    <label for="hasDocuments" class="ml-2 text-sm text-gray-700">📄 Belge yüklemek istiyorum (kimlik, pasaport vb.)</label>
+  </div>
+
+  <div *ngIf="form.get('hasDocuments')?.value" class="mb-4 pl-6">
+    <input type="file" multiple (change)="onDocumentsSelected($event)" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="documentFiles.length > 0" class="text-sm text-gray-600 mt-2">
+      Seçilen {{ documentFiles.length }} belge.
+      <ul class="list-none mt-2">
+        <li *ngFor="let doc of documentFiles">
+          📎 {{ doc.name }} ({{ doc.size / 1024 | number: '1.0-0' }} KB)
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Resim yükleme -->
+  <div class="flex items-center mb-3">
+    <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" id="hasImages" formControlName="hasImages" />
+    <label for="hasImages" class="ml-2 text-sm text-gray-700">📸 Resim yüklemek istiyorum (tedavi fotoğrafları)</label>
+  </div>
+
+<div *ngIf="form.get('hasImages')?.value" class="mb-4 pl-6">
+  <input type="file" multiple accept="image/*" (change)="onImagesSelected($event)" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  <div *ngIf="imageFiles.length > 0" class="flex gap-2 flex-wrap mt-2">
+    <div *ngFor="let img of imageFiles">
+      <img [src]="getPreviewUrl(img)"
+           class="border rounded shadow-sm"
+           style="width: 70px; height: 70px; object-fit: cover;" />
+    </div>
+  </div>
+</div>
+
+<button type="submit" class="w-full bg-[#16edb1] hover:bg-[#13c99a] text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" [disabled]="loading">Talep Oluştur
+  <i *ngIf="!loading" class="bi bi-send"></i>
+  <span *ngIf="loading">
+    <svg class="animate-spin inline-block w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg> Gönderiliyor...
+  </span>
+</button>
+</form>

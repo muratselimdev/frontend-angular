@@ -1,0 +1,54 @@
+<div class="header">
+  <h2>Kampanyalar</h2>
+      <button class="btn primary" routerLink="/admin/campaigns/new">
+  + Yeni Kampanya</button>
+</div>
+
+<div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+  <table class="tbl" *ngIf="!loading">
+  <thead>
+    <tr>
+      <th>Adı</th>
+      <th>İndirim</th>
+      <th>Görsel</th>
+      <th class="date">Başlangıç Tarihi</th>
+      <th class="date">Bitiş Tarihi</th>
+      <th>Durum</th>
+      <th>İşlemler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let b of campaigns">
+      <td>{{ b.title }}</td>
+      <td>
+        %{{ b.discountRate }}
+      </td>
+        <td>
+        {{ b.imageUrl }}
+      </td>        
+      <td>
+        {{ b.startDate | date:'dd.MM.yyyy'}}
+      </td>        
+      <td>
+        {{ b.endDate | date:'dd.MM.yyyy'}}
+      </td>
+      <td>
+          <span [class]="b.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ b.isActive ? 'Aktif' : 'Pasif' }}
+          </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-warning" (click)="toggle(b)">Aktif/Pasif</button>
+        <button class="btn btn-sm btn-primary ms-2" (click)="edit(b)">Düzenle</button>
+      </td>
+    </tr>
+          <tr *ngIf="campaigns.length === 0">
+        <td colspan="5" class="empty">
+          Henüz kampanya yok
+        </td>
+      </tr>
+  </tbody>
+</table>
+
+<ng-template #loadingTpl>Yükleniyor...</ng-template>

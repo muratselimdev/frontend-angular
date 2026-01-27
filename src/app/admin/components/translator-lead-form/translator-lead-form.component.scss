@@ -1,0 +1,14 @@
+.card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
+h2 { margin-top: 0; }
+
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+.col label { display: block; font-weight: 600; margin-bottom: 6px; }
+.col input, .col select { width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 8px; }
+
+.chk { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; }
+
+.actions { margin-top: 16px; display: flex; gap: 10px; }
+.btn { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #f8fafc; cursor: pointer; }
+.btn.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+.loading { text-align: center; padding: 24px; }

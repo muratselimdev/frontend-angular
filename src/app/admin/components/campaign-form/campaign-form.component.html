@@ -1,0 +1,66 @@
+<div class="page">
+
+  <h2>
+    {{ campaignId ? 'Kampanya Düzenle' : 'Yeni Kampanya' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+
+    <label>
+      Başlık *
+      <input type="text" formControlName="title">
+    </label>
+
+    <label>
+      Açıklama
+      <textarea rows="3" formControlName="description"></textarea>
+    </label>
+
+    <label>
+      İndirim (%) *
+      <input type="number" formControlName="discountRate">
+    </label>
+
+  <label>Kampanya Görseli</label>
+
+  <div class="image-picker" (click)="fileInput.click()">
+    <img *ngIf="previewUrl" [src]="previewUrl" />
+    <span *ngIf="!previewUrl">Resim Seç</span>
+  </div>
+
+  <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    hidden
+    (change)="onFileSelected($event)"
+  />
+
+    <label>
+      Başlangıç Tarihi
+      <input type="date" formControlName="startDate">
+    </label>
+
+    <label>
+      Bitiş Tarihi
+      <input type="date" formControlName="endDate">
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="isActive">
+      Aktif
+    </label>
+
+    <div class="actions">
+      <button type="submit" class="btn primary" [disabled]="loading">
+        Kaydet
+      </button>
+
+      <button type="button" class="btn" (click)="cancel()">
+        Vazgeç
+      </button>
+    </div>
+
+  </form>
+
+</div>

@@ -1,0 +1,17 @@
+{
+  "PROFILE": {
+    "FULLNAME": "Full Name",
+    "EMAIL": "Email",
+    "PHONE": "Phone",
+    "COUNTRY": "Country",
+    "LANGUAGE": "Language",
+    "UPDATE": "Update"
+  },
+  "LANGUAGES": {
+    "tr": "Turkish",
+    "en": "English",
+    "de": "German",
+    "fr": "French",
+    "ar": "Arabic"
+  }
+}

@@ -1,0 +1,34 @@
+<div class="max-w-2xl mx-auto mt-4">
+  <h3 class="text-2xl font-bold mb-4">Tedavi Formu</h3>
+  <form (ngSubmit)="save()">
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Tedavi Adı</label>
+      <input [(ngModel)]="model.treatmentName" name="treatmentName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Fiyat (€)</label>
+      <input type="number" [(ngModel)]="model.price" name="price" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Maliyet (€)</label>
+      <input type="number" [(ngModel)]="model.cost" name="cost" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Tedavi Grubu</label>
+      <select [(ngModel)]="model.treatmentGroupId" name="treatmentGroupId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <option *ngFor="let g of groups" [value]="g.id">{{ g.groupName }}</option>
+      </select>
+    </div>
+
+    <div class="flex items-center mb-4">
+      <input type="checkbox" [(ngModel)]="model.isActive" name="isActive" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+      <label class="ml-2 text-sm text-gray-700">Aktif mi?</label>
+    </div>
+
+    <button type="submit" class="bg-[#16edb1] hover:bg-[#13c99a] text-white font-semibold px-4 py-2 rounded-md transition-colors duration-200">Kaydet</button>
+    <button type="button" (click)="cancel()" class="ml-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-md transition-colors duration-200">İptal</button>
+  </form>
+</div>

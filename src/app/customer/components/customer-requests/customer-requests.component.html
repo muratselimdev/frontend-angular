@@ -1,0 +1,237 @@
+<!-- 🎧 Sesli arama için audio elementleri (Android FIX: playsinline küçük harf) -->
+<audio #localAudio autoplay muted playsinline></audio>
+<audio #remoteAudio autoplay playsinline></audio>
+
+<div class="card shadow-sm border-0 p-4 mt-3">
+  <h5 class="fw-bold mb-3">
+    <i class="bi bi-clipboard-check me-2"></i> Taleplerim
+  </h5>
+
+  <!-- 📞 Gelen çağrı popup -->
+  <app-call-incoming-modal
+    *ngIf="incomingVisible"
+    [visible]="incomingVisible"
+    [callerName]="callerName"
+    (accept)="onAcceptCall()"
+    (reject)="onRejectCall()"
+  ></app-call-incoming-modal>
+
+  <!-- 🎧 Aktif çağrı göstergesi -->
+  <div *ngIf="callActive" class="alert alert-success text-center p-2 mb-2 shadow-sm">
+    🎙️ Arama devam ediyor...
+    <button class="btn btn-danger btn-sm ms-2" (click)="endCall()">
+      <i class="bi bi-telephone-x"></i> Durdur
+    </button>
+  </div>
+
+  <!-- 🔹 Talepler Tablosu -->
+  <table class="table table-hover align-middle text-center">
+    <thead class="table-light">
+      <tr>
+        <th>Grup</th>
+        <th>Tedavi</th>
+        <th>Durum</th>
+        <th>Oluşturulma</th>
+        <th>Notlar</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let r of requests">
+        <td>{{ r.groupName }}</td>
+        <td>{{ r.treatmentName }}</td>
+
+        <td>
+          <span
+            [ngClass]="{
+              'badge bg-warning text-dark': r.status === 'Pending',
+              'badge bg-success': r.status === 'Completed',
+              'badge bg-secondary': r.status === 'Cancelled',
+              'badge bg-info': r.status === 'New'
+            }"
+          >
+            {{ r.status }}
+          </span>
+        </td>
+
+        <td>{{ r.createdAt | date: 'short' }}</td>
+        <td>{{ r.notes || '-' }}</td>
+
+        <td>
+          <button class="btn btn-outline-primary btn-sm me-2" (click)="openDetails(r)">
+            <i class="bi bi-eye"></i> Detay
+          </button>
+
+          <button
+            class="btn btn-outline-danger btn-sm"
+            [disabled]="r.status !== 'New' && r.status !== 'Pending'"
+            (click)="cancelRequest(r)"
+          >
+            <i class="bi bi-x-circle"></i> İptal Et
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Hiç talep yoksa -->
+  <div *ngIf="requests.length === 0" class="text-muted py-4 text-center">
+    Henüz bir talebiniz bulunmuyor.
+  </div>
+</div>
+
+<!-- 🔹 Talep Detayları Modal -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="showModal">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+
+      <!-- HEADER -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-file-earmark-text me-2"></i> Talep Detayları
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body" *ngIf="selectedRequest">
+
+        <!-- Üst Bilgiler -->
+        <div class="row mb-3">
+          <div class="col-md-6"><strong>Grup:</strong> {{ selectedRequest.groupName }}</div>
+          <div class="col-md-6"><strong>Tedavi:</strong> {{ selectedRequest.treatmentName }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6"><strong>Durum:</strong> {{ selectedRequest.status }}</div>
+          <div class="col-md-6"><strong>Dil:</strong> {{ selectedRequest.language || '-' }}</div>
+        </div>
+
+        <div class="mb-3"><strong>Not:</strong> {{ selectedRequest.notes || 'Yok' }}</div>
+
+        <div *ngIf="selectedRequest.isCancelled" class="alert alert-warning">
+          <strong>İptal Sebebi:</strong> {{ selectedRequest.cancelReason }}<br />
+          <strong>İptal Tarihi:</strong> {{ selectedRequest.cancelledAt | date:'short' }}
+        </div>
+
+        <!-- Belgeler -->
+        <div class="mt-3">
+          <h6><i class="bi bi-paperclip me-2"></i> Belgeler</h6>
+
+          <ul class="list-group" *ngIf="selectedRequest.documents?.length; else noDocs">
+            <li class="list-group-item" *ngFor="let f of selectedRequest.documents">
+              <a [href]="f.url" target="_blank">
+                <i class="bi bi-file-earmark"></i> {{ f.fileName }}
+              </a>
+            </li>
+          </ul>
+
+          <ng-template #noDocs>
+            <p class="text-muted mt-2">Bu talebe ait belge bulunmuyor.</p>
+          </ng-template>
+        </div>
+
+        <!-- Görseller -->
+        <div class="mt-3">
+          <h6><i class="bi bi-images me-2"></i> Görseller</h6>
+
+          <ul class="list-group" *ngIf="selectedRequest.images?.length; else noImgs">
+            <li class="list-group-item" *ngFor="let f of selectedRequest.images">
+              <a [href]="f.url" target="_blank">
+                <i class="bi bi-file-earmark-image"></i> {{ f.fileName }}
+              </a>
+            </li>
+          </ul>
+
+          <ng-template #noImgs>
+            <p class="text-muted mt-2">Bu talebe ait görsel bulunmuyor.</p>
+          </ng-template>
+        </div>
+
+        <!-- Dosya Yükleme -->
+        <div class="border rounded p-3 mt-4 bg-light">
+          <h6><i class="bi bi-upload me-2"></i> Yeni Belge / Görsel Yükle</h6>
+
+          <div class="mb-2">
+            <label class="form-label">Dosya Türü</label>
+            <select class="form-select" [(ngModel)]="selectedUploadType">
+              <option value="">Seçiniz</option>
+              <option value="1">📄 Belge</option>
+              <option value="2">📸 Görsel</option>
+            </select>
+          </div>
+
+          <input type="file" class="form-control mb-2" (change)="onFileSelected($event)" multiple />
+
+          <div *ngIf="selectedFiles.length > 0" class="small text-muted mb-2">
+            {{ selectedFiles.length }} dosya seçildi.
+          </div>
+
+          <button class="btn btn-success w-100" (click)="uploadSelectedFiles()">
+            <i class="bi bi-cloud-arrow-up"></i> Dosyaları Yükle
+          </button>
+        </div>
+
+        <hr />
+
+        <!-- 💬 Mesajlaşma -->
+        <div class="mt-4 border-top pt-3">
+          <h6><i class="bi bi-chat-dots me-2"></i> Mesajlaşma</h6>
+
+          <div #chatBox class="chat-box border rounded p-3 mb-2" style="height:250px;overflow-y:auto;background:#fafafa;">
+            <div *ngFor="let msg of chatMessages" class="mb-2">
+              <small class="fw-semibold d-block"
+                     [ngClass]="{ 'text-end': msg.fromUserId === customerId }">
+                {{ msg.fromUserId === customerId ? 'Ben' : (selectedRequest?.assignedAgent?.fullName || 'Temsilci') }}
+              </small>
+
+              <div [ngClass]="{ 'text-end': msg.fromUserId === customerId }">
+                <small class="text-muted">
+                  {{ msg.sentAt | date:'shortTime' }}
+                  <i *ngIf="msg.isRead" class="bi bi-check2-all text-primary ms-1"></i>
+                  <i *ngIf="!msg.isRead" class="bi bi-check2 text-secondary ms-1"></i>
+                </small><br />
+
+                <span class="badge"
+                      [ngClass]="msg.fromUserId === customerId ? 'bg-primary text-white' : 'bg-light text-dark'">
+                  {{ msg.message }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <input type="text" class="form-control"
+                   [(ngModel)]="newMessage"
+                   placeholder="Mesaj yazın..."
+                   (keyup.enter)="sendChatMessage()" />
+            <button class="btn btn-primary" (click)="sendChatMessage()">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- 📞 Sesli Arama -->
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-outline-success" (click)="startVoiceCall()" [disabled]="callActive">
+            <i class="bi bi-telephone"></i> Arama Başlat
+          </button>
+
+          <button *ngIf="callActive" class="btn btn-danger ms-2 btn-sm" (click)="endCall()">
+            <i class="bi bi-telephone-x"></i> Bitir
+          </button>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">Kapat</button>
+      </div>
+    </div>
+  </div>
+</div>

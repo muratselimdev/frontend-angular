@@ -1,0 +1,54 @@
+<div class="header">
+    <h3>Supervisor</h3>
+    <button class="button" (click)="goNew()">+ Yeni Supervisor</button>
+</div>
+
+  <div class="filters ms2">
+    <label>Şube:
+      <select [(ngModel)]="branchId" (change)="load()">
+        <option [ngValue]="undefined">Tümü</option>
+        <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+      </select>
+    </label>
+
+    <label class="ms2">Dil Grubu:
+      <select [(ngModel)]="languageGroupId" (change)="load()">
+        <option [ngValue]="undefined">Tümü</option>
+        <option *ngFor="let lg of langs" [ngValue]="lg.id">{{ lg.name }}</option>
+      </select>
+    </label>
+  </div>
+  <br>
+  <div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+  <table class="tbl" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>NickName</th>
+        <th>Ad Soyad</th>
+        <th>E-posta</th>
+        <th>Şube</th>
+        <th>Dil</th>
+        <th>Durum</th>
+        <th>İşlem</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of list">
+        <td>{{ s.nickname }}</td>
+        <td>{{ s.firstName }} {{ s.lastName }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.branchName || s.branchId }}</td>
+        <td>{{ s.lang || s.languageGroupId }}</td>
+        <td><span [class]="s.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+            {{ s.isActive ? 'Aktif' : 'Pasif' }}
+          </span></td>
+        <!-- <td>{{ s.agentCount ?? '-' }}</td> -->
+        <td>
+          <button class="btn btn-sm btn-warning" (click)="toggleActive(s)">Aktif/Pasif</button>
+          <button class="btn btn-sm btn-primary ms-2" (click)="goEdit(s.id)">Düzenle</button></td>
+      </tr>
+    </tbody>
+  </table>
+

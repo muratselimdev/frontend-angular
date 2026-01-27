@@ -1,0 +1,83 @@
+/* TailAdmin-inspired layout styles */
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Custom scrollbar for sidebar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth transitions */
+aside {
+  will-change: width, transform;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :host {
+    color-scheme: dark;
+  }
+}
+
+/* Custom animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile sidebar animation */
+@media (max-width: 1023px) {
+  aside.translate-x-0 {
+    animation: slideIn 0.3s ease-out;
+  }
+}
+
+/* Header shadow on scroll */
+header.shadow-scroll {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+/* Notification badge pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.notification-badge {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Menu item hover/active animations */
+.menu-item {
+  transition: background-color 200ms ease;
+}
+
+.submenu-link {
+  transition: background-color 200ms ease;
+}

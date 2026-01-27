@@ -1,0 +1,44 @@
+<div class="container" *ngIf="form">
+  <h2>{{ isEdit ? 'Supervisor Düzenle' : 'Yeni Supervisor' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="grid">
+      <label>Ad
+        <input formControlName="firstName" required />
+      </label>
+      <label>Soyad
+        <input formControlName="lastName" required />
+      </label>
+      <label>E-posta
+        <input formControlName="email" type="email" />
+      </label>
+      <label>Telefon
+        <input formControlName="phone" />
+      </label>
+      <label *ngIf="!isEdit">Parola
+        <input formControlName="password" type="password" required minlength="6" />
+      </label>
+      <label>Şube
+        <select formControlName="branchId" required>
+          <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+        </select>
+      </label>
+      <label>Dil Grubu
+        <select formControlName="languageGroupId" required>
+          <option *ngFor="let lg of langs" [value]="lg.id">{{ lg.name }}</option>
+        </select>
+      </label>
+      <label>Nickname
+        <input formControlName="nickname" />
+      </label>
+      <label>Aktif mi?
+        <input type="checkbox" formControlName="isActive" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid">Kaydet</button>
+    <button type="button" (click)="cancel()">İptal</button>
+    </div>
+  </form>
+</div>

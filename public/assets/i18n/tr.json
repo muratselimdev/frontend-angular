@@ -1,0 +1,17 @@
+{
+  "PROFILE": {
+    "FULLNAME": "Ad Soyad",
+    "EMAIL": "Email",
+    "PHONE": "Telefon",
+    "COUNTRY": "Ülke",
+    "LANGUAGE": "Dil",
+    "UPDATE": "Güncelle"
+  },
+  "LANGUAGES": {
+    "tr": "Türkçe",
+    "en": "İngilizce",
+    "de": "Almanca",
+    "fr": "Fransızca",
+    "ar": "Arapça"
+  }
+}

@@ -1,0 +1,53 @@
+.agent-layout {
+  display: flex;
+  height: 100vh;
+
+  .sidebar {
+    width: 240px;
+     background-color: #f0fdf9; /*açık yeşil (şirket rengi #00FFB2’ye uygun) */
+    padding: 20px;
+    border-right: 1px solid #ddd;
+
+    .sidebar-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #009f7a;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 10px;
+
+        a {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          padding: 8px 12px;
+          border-radius: 8px;
+          color: #333;
+          transition: background 0.2s;
+
+          .icon {
+            margin-right: 8px;
+          }
+
+          &.active,
+          &:hover {
+            background-color: #00ffb2;
+            color: #000;
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+}

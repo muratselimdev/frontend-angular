@@ -1,0 +1,14 @@
+<h2>{{ id ? 'Klinik Düzenle' : 'Yeni Klinik' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <label>Adı</label>
+  <input formControlName="name" />
+
+  <label>Şube</label>
+  <select formControlName="branchId">
+    <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+  </select>
+
+  <button type="submit" [disabled]="form.invalid">Kaydet</button>
+    <button type="button" (click)="cancel()">İptal</button>
+</form>

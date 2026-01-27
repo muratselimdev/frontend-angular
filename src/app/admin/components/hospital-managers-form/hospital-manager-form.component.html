@@ -1,0 +1,31 @@
+<h2>Hastane Yöneticisi {{ id ? 'Düzenle' : 'Ekle' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <label>Ad</label>
+  <input formControlName="firstName" />
+
+  <label>Soyad</label>
+  <input formControlName="lastName" />
+
+  <label>Email</label>
+  <input formControlName="email" type="email" />
+
+  <label>Telefon</label>
+  <input formControlName="phone" />
+
+  <label>Şifre</label>
+  <input formControlName="password" type="password" [required]="!id" />
+
+  <label>Hastane</label>
+  <select formControlName="hospitalId">
+    <option *ngFor="let h of hospitals" [value]="h.id">{{ h.name }}</option>
+  </select>
+
+  <label>Durum</label>
+  <input type="checkbox" formControlName="isActive" /> Aktif
+
+  <div class="actions">
+    <button type="submit" [disabled]="form.invalid">Kaydet</button>
+    <button type="button" (click)="cancel()">İptal</button>
+  </div>
+</form>

@@ -1,0 +1,65 @@
+<div class="card" *ngIf="!loading; else loadingTpl">
+  <h2>{{ id ? 'Tercüman Lideri Düzenle' : 'Yeni Tercüman Lideri' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="grid">
+      <div class="col">
+        <label>Ad</label>
+        <input formControlName="firstName" />
+      </div>
+      <div class="col">
+        <label>Soyad</label>
+        <input formControlName="lastName" />
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <label>Email</label>
+        <input formControlName="email" type="email" />
+      </div>
+      <div class="col">
+        <label>Telefon</label>
+        <input formControlName="phone" />
+      </div>
+    </div>
+
+    <div class="grid" *ngIf="!id">
+      <div class="col">
+        <label>Şifre</label>
+        <input formControlName="password" type="password" />
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="col">
+        <label>Şube</label>
+        <select formControlName="branchId">
+          <option [ngValue]="null">Seçiniz</option>
+          <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Dil Grubu</label>
+        <select formControlName="languageGroupId">
+          <option [ngValue]="null">Seçiniz</option>
+          <option *ngFor="let l of langs" [ngValue]="l.id">{{ l.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="chk">
+      <input type="checkbox" formControlName="isActive" />
+      Aktif
+    </label>
+
+    <div class="actions">
+      <button type="submit" class="btn primary" [disabled]="form.invalid">Kaydet</button>
+      <button type="button" class="btn" (click)="cancel()">İptal</button>
+    </div>
+  </form>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Yükleniyor…</div>
+</ng-template>

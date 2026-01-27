@@ -1,0 +1,17 @@
+<!-- Campaign Slider -->
+<div *ngFor="let c of campaigns">
+  <div class="relative rounded-2xl overflow-hidden">
+    <img [src]="c.imageUrl" class="w-full h-full object-cover">
+    <div class="absolute top-2 left-2 bg-primary text-white px-2 py-1 rounded">
+      %{{ c.discountRate }} İndirim
+    </div>
+  </div>
+</div>
+
+<!-- Categories -->
+<button *ngFor="let cat of categories"
+  class="rounded-xl p-4"
+  [style.background]="cat.color">
+  <span class="material-symbols-outlined">{{ cat.icon }}</span>
+  {{ cat.name }}
+</button>

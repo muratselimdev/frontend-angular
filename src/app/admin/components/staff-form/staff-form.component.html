@@ -1,0 +1,18 @@
+<h2>{{ id ? title + ' Düzenle' : 'Yeni ' + title }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <label>Ad</label>
+  <input formControlName="firstName" />
+
+  <label>Soyad</label>
+  <input formControlName="lastName" />
+
+  <label>Email</label>
+  <input formControlName="email" type="email" />
+
+  <label>Telefon</label>
+  <input formControlName="phone" />
+
+  <button type="submit" [disabled]="form.invalid">Kaydet</button>
+  <button type="button" (click)="cancel()">İptal</button>
+</form>

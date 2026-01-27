@@ -1,0 +1,135 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+  <div class="card p-4 shadow register-card">
+
+    <img src="logo.png" class="login-logo mb-2" alt="Logo" />
+    <h6 class="text-center text-success mb-3">Yeni Hesap Oluştur</h6>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <!-- Ad Soyad -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label>Ad</label>
+          <input type="text" formControlName="firstName" class="form-control" />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label>Soyad</label>
+          <input type="text" formControlName="lastName" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label>E-posta</label>
+        <input type="email" formControlName="email" class="form-control" />
+      </div>
+
+      <!-- Ülke -->
+    <div class="mb-3">
+    <label>Ülke</label>
+    <select class="form-select" formControlName="country" (change)="onCountryChange($any($event.target).value)">
+        <option value="">Ülke seçiniz...</option>
+        <option *ngFor="let c of countries" [value]="c.name">
+        {{ c.name }} ({{ c.phoneCode }})
+        </option>
+    </select>
+    </div>
+
+    <div class="mb-3" *ngIf="regions.length > 0">
+    <label>Bölge / Eyalet</label>
+    <select class="form-select" formControlName="region" (change)="onRegionChange($any($event.target).value)">
+        <option value="">Bölge seçiniz...</option>
+        <option *ngFor="let r of regions" [value]="r.name">{{ r.name }}</option>
+    </select>
+    </div>
+
+          <!-- AREA CODES -->
+    <div class="mb-3" *ngIf="areaCodes.length > 0">
+    <label>Telefon Alan Kodu</label>
+    <select class="form-select" (change)="selectedAreaCode = $any($event.target).value">
+        <option value="">Seçiniz...</option>
+        <option *ngFor="let ac of areaCodes" [value]="ac">{{ ac }}</option>
+    </select>
+    </div>
+
+    <!-- TELEFON -->
+    <div class="mb-3">
+      <label>Telefon</label>
+
+      <div class="input-group">
+
+        <!-- Prefix kutusu -->
+        <span class="input-group-text">
+
+          <!-- 🟦 Eğer eyaletin alan kodu varsa -->
+          <ng-container *ngIf="selectedAreaCode; else countryPrefix">
+            {{ selectedAreaCode }}
+          </ng-container>
+
+          <!-- 🟩 Eyalet yoksa ülke telefon kodu göster -->
+          <ng-template #countryPrefix>
+            {{ selectedPhoneCode }}
+          </ng-template>
+
+        </span>
+
+        <!-- Kullanıcı telefon numarası -->
+        <input
+          type="text"
+          class="form-control"
+          formControlName="phone"
+          placeholder="Telefon numarası"
+        />
+      </div>
+    </div>
+
+      <!-- Dil -->
+      <div class="mb-3">
+        <label>Tercih Edilen Dil</label>
+        <select class="form-select" formControlName="languageGroupId">
+          <option value="">Dil seçiniz...</option>
+          <option *ngFor="let lang of languages" [value]="lang.id">
+            {{ lang.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Parola -->
+      <div class="mb-1">
+        <label>Parola</label>
+        <input type="password" formControlName="password" class="form-control" />
+      </div>
+
+      <!-- Şifre güç barı -->
+      <div class="password-strength">
+        <span [ngClass]="passwordStrength"></span>
+      </div>
+
+      <!-- Parola tekrar -->
+      <div class="mb-3 mt-3">
+        <label>Parola (Tekrar)</label>
+        <input type="password" formControlName="confirmPassword" class="form-control" />
+        <div *ngIf="form.errors?.['mismatch'] && form.get('confirmPassword')?.touched"
+             class="text-danger small">
+          Parolalar eşleşmiyor.
+        </div>
+      </div>
+
+      <!-- Kayıt butonu -->
+      <button class="btn btn-success w-100" [disabled]="form.invalid || loading">
+        <ng-container *ngIf="!loading; else loadingTpl">Kayıt Ol</ng-container>
+        <ng-template #loadingTpl>
+          <span class="spinner-border spinner-border-sm me-1"></span> 
+          Kayıt yapılıyor...
+        </ng-template>
+      </button>
+
+      <div class="text-center mt-3">
+        <a routerLink="/customer/login">Hesabınız var mı? Giriş yapın</a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
