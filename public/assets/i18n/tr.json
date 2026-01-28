@@ -13,5 +13,11 @@
     "de": "Almanca",
     "fr": "Fransızca",
     "ar": "Arapça"
+  },
+  "USER_MENU": {
+    "EDIT_PROFILE": "Profili düzenle",
+    "ACCOUNT_SETTINGS": "Hesap ayarları",
+    "SUPPORT": "Destek",
+    "SIGN_OUT": "Çıkış yap"
   }
 }

@@ -11,6 +11,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { CustomerAuthInterceptor } from './customer/interceptors/customer-auth.interceptor';
 
+// Translation
+import { TranslateModule } from '@ngx-translate/core';
+
 // Auth
 import { LoginComponent } from './login/login.component';
 
@@ -35,6 +38,9 @@ import { MobileLoginComponent } from './mobile/pages/login/login.component';
     RouterModule,
     AppRoutingModule,
     AdminModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'tr'
+    }),
     ToastrModule.forRoot({
       positionClass: 'toast-top-right',
       preventDuplicates: true,

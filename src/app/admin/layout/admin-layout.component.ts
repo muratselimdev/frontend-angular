@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../auth/auth.service';
 
 interface MenuItem {
   label: string;
@@ -21,7 +24,7 @@ interface MenuGroup {
   styleUrl: './admin-layout.component.css',
   standalone: false
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit {
   collapsed = false;   // desktop collapse
   mobileOpen = false;  // mobile offcanvas
   isExpanded = true;   // sidebar expanded state
@@ -29,6 +32,15 @@ export class AdminLayoutComponent {
   isDarkMode = false;  // dark mode toggle
   contentMenuOpen = false; // content menu toggle
   sidebarCollapsed = false; // sidebar icon-only mode
+  languageMenuOpen = false; // language dropdown menu
+  currentLanguage = 'tr'; // current language
+  userMenuOpen = false; // user dropdown menu
+
+  constructor(
+    private router: Router,
+    private translate: TranslateService,
+    private authService: AuthService
+  ) {}
 
   menuGroups: MenuGroup[] = [
     {
@@ -138,6 +150,7 @@ export class AdminLayoutComponent {
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     document.documentElement.classList.toggle('dark', this.isDarkMode);
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
   }
 
   toggleContentMenu() {
@@ -154,8 +167,79 @@ export class AdminLayoutComponent {
     this.isHovered = false;
   }
 
+  ngOnInit() {
+    // Initialize dark mode from localStorage if previously set
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+      this.isDarkMode = true;
+      document.documentElement.classList.add('dark');
+    }
+    
+    // Set Turkish as default language
+    this.currentLanguage = 'tr';
+    this.translate.use('tr');
+  }
+
+  toggleLanguageMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.languageMenuOpen = !this.languageMenuOpen;
+  }
+
+  switchLanguage(lang: string) {
+    this.currentLanguage = lang;
+    this.translate.use(lang);
+    localStorage.setItem('language', lang);
+    this.languageMenuOpen = false;
+  }
+
   getCurrentYear(): number {
     return new Date().getFullYear();
+  }
+
+  navigateToProfile() {
+    this.userMenuOpen = false;
+    this.router.navigate(['/admin/profile']);
+  }
+
+  navigateToSettings() {
+    this.userMenuOpen = false;
+    this.router.navigate(['/admin/settings']);
+  }
+
+  navigateToSupport() {
+    this.userMenuOpen = false;
+    this.router.navigate(['/admin/support']);
+  }
+
+  logout() {
+    this.userMenuOpen = false;
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  getUserName(): string {
+    const profile = this.authService.profile;
+    if (profile?.firstName && profile?.lastName) {
+      return `${profile.firstName} ${profile.lastName}`;
+    }
+    return profile?.firstName || profile?.email || 'Admin';
+  }
+
+  getUserEmail(): string {
+    return this.authService.profile?.email || 'admin@example.com';
+  }
+
+  getUserInitial(): string {
+    const profile = this.authService.profile;
+    if (profile?.firstName) {
+      return profile.firstName.charAt(0).toUpperCase();
+    }
+    if (profile?.email) {
+      return profile.email.charAt(0).toUpperCase();
+    }
+    return 'A';
   }
 
   getGroupIconPath(iconName: string): string {

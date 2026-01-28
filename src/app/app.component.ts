@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,15 @@ export class AppComponent implements OnInit {
 
   isAuthRoute = false;
 
-constructor(private router: Router) {
+constructor(
+  private router: Router,
+  private translate: TranslateService
+) {
+  // Initialize translation - Turkish only
+  this.translate.addLangs(['tr']);
+  this.translate.setDefaultLang('tr');
+  this.translate.use('tr');
+  
   if (this.isMobile()) {
     this.router.navigateByUrl('/mobile/login');
   }

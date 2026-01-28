@@ -13,5 +13,11 @@
     "de": "German",
     "fr": "French",
     "ar": "Arabic"
+  },
+  "USER_MENU": {
+    "EDIT_PROFILE": "Edit profile",
+    "ACCOUNT_SETTINGS": "Account settings",
+    "SUPPORT": "Support",
+    "SIGN_OUT": "Sign out"
   }
 }

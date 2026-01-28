@@ -2,9 +2,12 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutComponent } from './layout/admin-layout.component';
+import { UserMenuComponent } from './layout/user-menu/user-menu.component';
+import { ClickOutsideDirective } from './layout/click-outside.directive';
 
 import { BranchesListComponent } from './components/branches-list/branches-list.component';
 import { BranchFormComponent } from './components/branch-form/branch-form.component';
@@ -52,6 +55,8 @@ import { AdminPanel } from './components/admin-panel/admin-panel';
 @NgModule({
   declarations: [
     AdminLayoutComponent,
+    UserMenuComponent,
+    ClickOutsideDirective,
     BranchesListComponent,
     BranchFormComponent,
     AgentsListComponent,
@@ -99,7 +104,8 @@ import { AdminPanel } from './components/admin-panel/admin-panel';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    TranslateModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
