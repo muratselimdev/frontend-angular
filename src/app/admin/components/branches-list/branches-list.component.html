@@ -1,6 +1,6 @@
 <div class="header">
   <h2>Şubeler</h2>
-  <button (click)="addNew()">+ Yeni Şube</button>
+  <button class="btn-bootstrap-primary" (click)="addNew()">+ Yeni Şube</button>
 </div>
 
 <div *ngIf="loading" class="loading">Yükleniyor...</div>
@@ -17,13 +17,14 @@
     <tr *ngFor="let b of branches">
       <td>{{ b.name }}</td>
       <td>
-          <span [class]="b.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+          <span [ngClass]="b.isActive ? 'badge-bootstrap-success' : 'badge-bootstrap-danger'" 
+                class="px-3 py-1 rounded text-sm font-medium inline-flex items-center">
             {{ b.isActive ? 'Aktif' : 'Pasif' }}
           </span>
       </td>
       <td>
-        <button class="btn btn-sm btn-warning" (click)="toggleActive(b)">Aktif/Pasif</button>
-        <button class="btn btn-sm btn-primary ms-2" (click)="edit(b)">Düzenle</button>
+        <button class="btn-bootstrap-warning" (click)="toggleActive(b)">Aktif/Pasif</button>
+        <button class="btn-bootstrap-info ml-2" (click)="edit(b)">Düzenle</button>
       </td>
     </tr>
   </tbody>

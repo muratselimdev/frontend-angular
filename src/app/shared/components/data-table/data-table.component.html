@@ -1,0 +1,114 @@
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+  <!-- Table Container -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <!-- Table Header -->
+      <thead class="bg-gray-50 dark:bg-gray-900">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+            Durum
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+            İşlemler
+          </th>
+        </tr>
+      </thead>
+      
+      <!-- Table Body -->
+      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <!-- Status Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium" style="background-color: #d4edda; color: #155724;">
+              Aktif
+            </span>
+            <!-- For Passive status use: -->
+            <!-- <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium" style="background-color: #f8d7da; color: #721c24;">
+              Pasif
+            </span> -->
+          </td>
+          
+          <!-- Actions Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              <!-- Toggle Status Button -->
+              <button class="px-4 py-2 text-sm font-medium rounded transition-colors duration-200" style="background-color: #ffc107; color: #212529;" onmouseover="this.style.backgroundColor='#e0a800'" onmouseout="this.style.backgroundColor='#ffc107'">
+                Aktif/Pasif
+              </button>
+              
+              <!-- Edit Button -->
+              <button class="px-4 py-2 text-sm font-medium text-white rounded transition-colors duration-200" style="background-color: #17a2b8;" onmouseover="this.style.backgroundColor='#138496'" onmouseout="this.style.backgroundColor='#17a2b8'">
+                Düzenle
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <!-- More rows... -->
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium" style="background-color: #d4edda; color: #155724;">
+              Aktif
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              <button class="px-4 py-2 text-sm font-medium rounded transition-colors duration-200" style="background-color: #ffc107; color: #212529;" onmouseover="this.style.backgroundColor='#e0a800'" onmouseout="this.style.backgroundColor='#ffc107'">
+                Aktif/Pasif
+              </button>
+              <button class="px-4 py-2 text-sm font-medium text-white rounded transition-colors duration-200" style="background-color: #17a2b8;" onmouseover="this.style.backgroundColor='#138496'" onmouseout="this.style.backgroundColor='#17a2b8'">
+                Düzenle
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Pagination (Optional) -->
+  <div class="bg-white dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
+    <div class="flex items-center justify-between">
+      <div class="flex-1 flex justify-between sm:hidden">
+        <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+          Önceki
+        </button>
+        <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+          Sonraki
+        </button>
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">
+            Toplam <span class="font-medium">10</span> kayıt
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <button class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <span class="sr-only">Önceki</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+              1
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-blue-900 text-sm font-medium text-blue-600 dark:text-blue-400">
+              2
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+              3
+            </button>
+            <button class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <span class="sr-only">Sonraki</span>
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

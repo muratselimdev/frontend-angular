@@ -7,10 +7,11 @@
   </div>
 
   <!-- Main Grid Container -->
-  <div class="min-h-screen">
+  <div class="min-h-screen flex flex-col">
     
     <!-- First Row: Logo/Header - Full Width -->
-    <div class="w-full bg-red-500 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4 px-6">
+    <!-- <div class="w-full bg-red-500 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4 px-6"> -->
+    <div class="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4 px-6 sticky top-0 z-[1030]">
       <div class="flex items-center justify-between">
         <!-- Logo Section -->
         <div class="flex items-center gap-4">
@@ -89,25 +90,29 @@
 
     <!-- Second Row: Grid with Menu (4 cols) and Content (8 cols) -->
     <!-- <div class="grid grid-cols-1 lg:grid-cols-12 bg-blue-900"> -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 ">
+    <div class="flex flex-col lg:flex-row">
       
       <!-- Left Column: Menu - 4 columns on desktop -->
       
         
         <!-- Navigation -->
-        <div [ngClass]="sidebarCollapsed ? 'lg:col-span-1' : 'lg:col-span-2'" 
-             class="flex flex-col overflow-y-auto duration-300 ease-in-out no-scrollbar flex-1 pt-4 bg-green-900 transition-all">
-          <nav class="mb-0" [ngClass]="sidebarCollapsed ? 'pl-2 pr-2' : 'pl-4 pr-0'">
+        <!-- <div [ngClass]="sidebarCollapsed ? 'w-16' : 'lg:w-1/6'" 
+             class="flex flex-col overflow-y-auto duration-300 ease-in-out no-scrollbar pt-4 bg-green-900 transition-all"> -->
+             <div [ngClass]="sidebarCollapsed ? 'w-16' : 'lg:w-1/6'" 
+             class="fixed lg:static inset-y-0 left-0 z-[1050] w-64 lg:w-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col overflow-y-auto duration-300 ease-in-out no-scrollbar pt-4 transition-all transform lg:transform-none"
+             [class.-translate-x-full]="!mobileOpen"
+             [class.translate-x-0]="mobileOpen">
+          <nav class="mb-0" [ngClass]="sidebarCollapsed ? 'pl-1 pr-1' : 'pl-4 pr-0'">
             <div class="flex flex-col gap-1">
               <div *ngFor="let group of menuGroups; let groupIndex = index">
                 <button
                   type="button"
                   (click)="toggleGroup(groupIndex)"
                   [attr.aria-expanded]="group.isOpen"
-                  [ngClass]="sidebarCollapsed ? 'justify-center' : 'justify-start'"
-                  class="w-full mb-1 text-xs uppercase flex items-center leading-5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-3 gap-2">
+                  [ngClass]="sidebarCollapsed ? 'justify-center px-1' : 'justify-start px-3'"
+                  class="w-full mb-1 text-xs uppercase flex items-center leading-5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors gap-2">
                   <span class="flex items-center gap-2">
-                    <svg *ngIf="group.icon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg *ngIf="group.icon" [ngClass]="sidebarCollapsed ? 'w-6 h-6' : 'w-7 h-7'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getGroupIconPath(group.icon)"></path>
                     </svg>
                     <span *ngIf="!sidebarCollapsed">{{ group.label }}</span>
@@ -176,11 +181,10 @@
       <!-- Main Content Murat -->
 
       <!-- Right Column: Content Area - 8 columns on desktop -->
-      <div [ngClass]="sidebarCollapsed ? 'lg:col-span-11' : 'lg:col-span-10'" 
-           class="flex flex-col min-h-[calc(100vh-80px)] w-full transition-all duration-300 ease-in-out">
+      <div class="flex-1 flex flex-col min-h-[calc(100vh-80px)] transition-all duration-300 ease-in-out">
         
         <!-- Content Header with Menu Icon -->
-        <div class="p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div class="hidden lg:block p-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <button
             (click)="toggleContentMenu()"
             class="flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
@@ -193,7 +197,8 @@
         
         <!-- Page Content -->
         <!-- <div class="flex-1 p-4 mx-auto w-full md:p-6 bg-gray-50 dark:bg-gray-800"> -->
-        <div class="flex-2 p-4 w-full md:p-6 bg-red-100 dark:bg-gray-800">
+        <!-- <div class="flex-2 p-4 w-full md:p-6 bg-red-100 dark:bg-gray-800"> -->
+        <div class="flex-2 p-4 w-full md:p-6 dark:bg-gray-800">
           <router-outlet></router-outlet>
         </div>
       </div>

@@ -52,6 +52,17 @@ aside {
   aside.translate-x-0 {
     animation: slideIn 0.3s ease-out;
   }
+  
+  /* Ensure sidebar is properly positioned on mobile */
+  .fixed.inset-y-0 {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+  
+  /* Prevent body scroll when mobile sidebar is open */
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
 }
 
 /* Header shadow on scroll */

@@ -3,3 +3,63 @@
 table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #eee; }
 th,td { padding:8px 12px; border-bottom:1px solid #f1f1f1; }
 .active { color:green; font-weight:600; }
+
+/* Bootstrap Color Classes */
+.btn-bootstrap-primary {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-bootstrap-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-bootstrap-warning {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #212529;
+  background-color: #ffc107;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-bootstrap-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-bootstrap-info {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #17a2b8;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-bootstrap-info:hover {
+  background-color: #138496;
+}
+
+.badge-bootstrap-success {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+
+.badge-bootstrap-danger {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
