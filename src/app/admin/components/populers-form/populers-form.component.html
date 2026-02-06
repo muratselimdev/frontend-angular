@@ -1,0 +1,68 @@
+<div class="page">
+  <div class="form-container">
+    <div class="form-header">
+      <h2>{{ populerId ? 'Popüler Düzenle' : 'Yeni Popüller' }}</h2>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <div class="grid">
+        <label>
+          Başlık *
+          <input type="text" formControlName="title">
+        </label>
+
+        <label>
+          Rating
+          <input type="number" step="0.1" formControlName="rating">
+        </label>
+
+        <label>
+          Fiyat
+          <input type="number" step="0.01" formControlName="price">
+        </label>
+
+        <label>
+          Reviews
+          <input type="number" formControlName="reviews">
+        </label>
+      </div>
+
+      <label class="block">
+        Görsel
+      </label>
+
+      <div class="image-picker" (click)="fileInput.click()">
+        <img *ngIf="previewUrl" [src]="previewUrl" />
+        <span *ngIf="!previewUrl">Resim Seç</span>
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="onFileSelected($event)"
+      />
+
+      <label>
+        ImageUrl
+        <input type="text" formControlName="imageUrl">
+      </label>
+
+      <label class="checkbox">
+        <input type="checkbox" formControlName="isActive">
+        Aktif
+      </label>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" [disabled]="loading">
+          Kaydet
+        </button>
+
+        <button type="button" class="btn" (click)="cancel()">
+          Vazgeç
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

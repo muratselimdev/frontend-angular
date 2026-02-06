@@ -72,7 +72,8 @@ export class AdminLayoutComponent implements OnInit {
       isOpen: true,
       items: [
         { label: 'Kategoriler', path: '/admin/categories', icon: '🚐' },
-        { label: 'Kampanyalar', path: '/admin/campaigns', icon: '🚐' }
+        { label: 'Kampanyalar', path: '/admin/campaigns', icon: '🚐' },
+        { label: 'Popüller', path: '/admin/populers', icon: '🚐' }
       ]
     },
     {
@@ -115,12 +116,12 @@ export class AdminLayoutComponent implements OnInit {
     }
   ];
 
-  toggleSidebar() { 
+  toggleSidebar() {
     this.collapsed = !this.collapsed;
     this.isExpanded = !this.isExpanded;
   }
-  
-  toggleMobileSidebar() { 
+
+  toggleMobileSidebar() {
     this.mobileOpen = !this.mobileOpen;
     // Prevent body scroll when mobile menu is open
     if (this.mobileOpen) {
@@ -129,8 +130,8 @@ export class AdminLayoutComponent implements OnInit {
       document.body.classList.remove('mobile-menu-open');
     }
   }
-  
-  closeMobileSidebar() { 
+
+  closeMobileSidebar() {
     this.mobileOpen = false;
     document.body.classList.remove('mobile-menu-open');
   }
@@ -174,7 +175,7 @@ export class AdminLayoutComponent implements OnInit {
       this.isDarkMode = true;
       document.documentElement.classList.add('dark');
     }
-    
+
     // Set Turkish as default language
     this.currentLanguage = 'tr';
     this.translate.use('tr');

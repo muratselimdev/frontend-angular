@@ -1,0 +1,51 @@
+<div class="header flex justify-between items-center mb-4">
+  <h2 class="m-0">Popüller</h2>
+  <button class="btn primary" routerLink="/admin/populers/new">
+    + Yeni Popüller
+  </button>
+</div>
+
+<div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+<table class="tbl" *ngIf="!loading">
+  <thead>
+    <tr>
+      <th>Başlık</th>
+      <th>Rating</th>
+      <th>Fiyat</th>
+      <th>Reviews</th>
+      <th class="date">Oluşturulma</th>
+      <th class="date">Güncellenme</th>
+      <th>Durum</th>
+      <th>Görsel</th>
+      <th>İşlemler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of populers">
+      <td>{{ p.title }}</td>
+      <td>{{ p.rating | number:'1.1-1' }}</td>
+      <td>{{ p.price | number:'1.2-2' }}</td>
+      <td>{{ p.reviews }}</td>
+      <td>{{ p.createdAt | date:'dd.MM.yyyy' }}</td>
+      <td>{{ p.updatedAt | date:'dd.MM.yyyy' }}</td>
+      <td>
+        <span [class]="p.isActive ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold' : 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold'">
+          {{ p.isActive ? 'Aktif' : 'Pasif' }}
+        </span>
+      </td>
+      <td>
+        <img *ngIf="getImageSrc(p)" [src]="getImageSrc(p)" alt="Popüler" class="thumb" />
+      </td>
+      <td>
+        <button class="btn btn-sm btn-warning" (click)="toggle(p)">Aktif/Pasif</button>
+        <button class="btn btn-sm btn-primary ms-2" (click)="edit(p)">Düzenle</button>
+      </td>
+    </tr>
+    <tr *ngIf="populers.length === 0">
+      <td colspan="9" class="empty">Henüz popüler yok</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #loadingTpl>Yükleniyor...</ng-template>

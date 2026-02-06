@@ -51,6 +51,8 @@ import { CampaignFormComponent } from './components/campaign-form/campaign-form.
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { CategoryFormComponent } from './components/category-form/category-form.component';
 import { AdminPanel } from './components/admin-panel/admin-panel';
+import { PopulersListComponent } from './components/populers-list/populers-list.component';
+import { PopulersFormComponent } from './components/populers-form/populers-form.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +99,9 @@ import { AdminPanel } from './components/admin-panel/admin-panel';
     CategoryFormComponent,
     CampaignListComponent,
     CampaignFormComponent,
-    AdminPanel
+    AdminPanel,
+    PopulersListComponent,
+    PopulersFormComponent
   ],
   imports: [
     CommonModule,

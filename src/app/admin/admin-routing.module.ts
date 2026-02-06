@@ -43,6 +43,8 @@ import { CampaignListComponent } from './components/campaing-list/campaing-list.
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
 import { CategoryFormComponent } from './components/category-form/category-form.component';
 import { AdminPanel } from './components/admin-panel/admin-panel';
+import { PopulersListComponent } from './components/populers-list/populers-list.component';
+import { PopulersFormComponent } from './components/populers-form/populers-form.component';
 
 const routes: Routes = [
   {
@@ -92,7 +94,11 @@ const routes: Routes = [
       { path: 'campaigns', component: CampaignListComponent },
       { path: 'campaigns/new', component: CampaignFormComponent },
       { path: 'campaigns/:id', component: CampaignFormComponent },
-      
+
+      { path: 'populers', component: PopulersListComponent },
+      { path: 'populers/new', component: PopulersFormComponent },
+      { path: 'populers/:id', component: PopulersFormComponent },
+
       // Oteller
       { path: 'hotels', component: HotelsListComponent },
       { path: 'hotels/new', component: HotelFormComponent },
@@ -142,7 +148,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],   
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class AdminRoutingModule {}
