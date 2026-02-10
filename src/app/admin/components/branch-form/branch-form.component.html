@@ -1,17 +1,65 @@
-<div class="form-container">
-  <h2>{{ id ? 'Şube Düzenle' : 'Yeni Şube' }}</h2>
-  <form [formGroup]="form" (ngSubmit)="save()">
-    <label>Adı</label>
-    <input formControlName="name" />
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-    <label>
-      <input type="checkbox" formControlName="isActive" />
-      Aktif
-    </label>
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M6 3v2.25M6 14.25V3M18.75 3v11.25M18.75 14.25V3M2.25 21h19.5m-18-18v18m16.5-18v18M12 11.25H9.75M12 11.25H14.25M12 11.25V9M12 11.25v2.25" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Şube Düzenle' : 'Yeni Şube' }}</h2>
+          <p class="modern-subtitle">Organizasyon şube ve lokasyon bilgilerini yönetin.</p>
+        </div>
+      </div>
+    </div>
 
-    <button type="submit" [disabled]="loading || form.invalid">
-      {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
-    </button>
-    <button type="button" (click)="cancel()">İptal</button>
-  </form>
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
+
+        <!-- Temel Bilgiler -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Şube Bilgileri
+        </h3>
+
+        <div class="modern-grid-1">
+          <div class="modern-field">
+            <label class="modern-label">Şube Adı <span class="modern-req">*</span></label>
+            <input type="text" formControlName="name" class="modern-input" placeholder="Şube adı giriniz">
+          </div>
+        </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Status -->
+        <div class="modern-toggle-wrapper">
+          <label class="modern-toggle-label">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="modern-toggle">
+              <div class="modern-toggle-bg"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">Aktif (Kullanımda)</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="form.invalid || loading">
+           <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
+

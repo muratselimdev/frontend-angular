@@ -1,31 +1,108 @@
-<h2>Hemşire {{ id ? 'Düzenle' : 'Ekle' }}</h2>
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-<form [formGroup]="form" (ngSubmit)="save()">
-  <label>Ad</label>
-  <input formControlName="firstName" />
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Hemşire Düzenle' : 'Hemşire Ekle' }}</h2>
+          <p class="modern-subtitle">Hastane asistanı/hemşire bilgilerini ve yetkilerini yönetin.</p>
+        </div>
+      </div>
+    </div>
 
-  <label>Soyad</label>
-  <input formControlName="lastName" />
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
 
-  <label>Email</label>
-  <input formControlName="email" type="email" />
+        <!-- Kişisel Bilgiler -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Kişisel Bilgiler
+        </h3>
 
-  <label>Telefon</label>
-  <input formControlName="phone" />
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Ad <span class="modern-req">*</span></label>
+            <input type="text" formControlName="firstName" class="modern-input" placeholder="Ad giriniz">
+          </div>
 
-  <label>Şifre</label>
-  <input formControlName="password" type="password" [required]="!id" />
+          <div class="modern-field">
+            <label class="modern-label">Soyad <span class="modern-req">*</span></label>
+            <input type="text" formControlName="lastName" class="modern-input" placeholder="Soyad giriniz">
+          </div>
+        </div>
 
-  <label>Hastane</label>
-  <select formControlName="clinicId">
-    <option *ngFor="let c of clinics" [value]="c.id">{{ c.name }}</option>
-  </select>
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">E-Posta <span class="modern-req">*</span></label>
+            <input type="email" formControlName="email" class="modern-input" placeholder="ornek@email.com">
+          </div>
 
-  <label>Durum</label>
-  <input type="checkbox" formControlName="isActive" /> Aktif
+          <div class="modern-field">
+            <label class="modern-label">Telefon</label>
+            <input type="text" formControlName="phone" class="modern-input" placeholder="+90 5XX XXX XX XX">
+          </div>
+        </div>
 
-  <div class="actions">
-    <button type="submit" [disabled]="form.invalid">Kaydet</button>
-    <button type="button" (click)="cancel()">İptal</button>
+        <!-- Görev ve Güvenlik -->
+        <div class="modern-divider"></div>
+
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker bg-rose-500"></span>
+          Görev & Güvenlik
+        </h3>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Hastane <span class="modern-req">*</span></label>
+            <div class="modern-select-wrapper">
+              <select formControlName="clinicId" class="modern-select">
+                <option [ngValue]="null" disabled>Hastane Seçiniz</option>
+                <option *ngFor="let c of clinics" [value]="c.id">{{ c.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Şifre <span *ngIf="!id" class="modern-req">*</span></label>
+            <input type="password" formControlName="password" class="modern-input" placeholder="******">
+            <p *ngIf="id" class="mt-1 text-xs text-gray-500">Boş bırakırsanız mevcut şifre değişmez.</p>
+          </div>
+        </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Status -->
+        <div class="modern-toggle-wrapper">
+          <label class="modern-toggle-label">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="modern-toggle">
+              <div class="modern-toggle-bg"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">Aktif (Giriş Yapabilir)</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="form.invalid || loading">
+          <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
   </div>
-</form>
+</div>
+

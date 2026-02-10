@@ -1,19 +1,71 @@
-<div class="form-container">
-  <h2>{{ id ? 'Dil Grubu Düzenle' : 'Yeni Dil Grubu' }}</h2>
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-  <form [formGroup]="form" (ngSubmit)="save()">
-    <label>Kod</label>
-    <input formControlName="code" placeholder="Örn: EN" />
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Dil Grubu Düzenle' : 'Yeni Dil Grubu' }}</h2>
+          <p class="modern-subtitle">Sistemde kullanılacak dil ve ülke gruplarını yönetin.</p>
+        </div>
+      </div>
+    </div>
 
-    <label>Ad</label>
-    <input formControlName="name" placeholder="Örn: English" />
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
 
-    <label>
-      <input type="checkbox" formControlName="isActive" />
-      Aktif mi?
-    </label>
+        <!-- Dil Bilgileri -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Grup Bilgileri
+        </h3>
 
-    <button type="submit" [disabled]="loading || form.invalid">Kaydet</button>
-    <button type="button" (click)="router.navigate(['/admin/language-groups'])">İptal</button>
-  </form>
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Grup Kodu <span class="modern-req">*</span></label>
+            <input type="text" formControlName="code" class="modern-input" placeholder="Örn: EN, TR, AR">
+            <p class="mt-1 text-xs text-gray-500">ISO dil kodu veya kısa tanımlayıcı.</p>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Grup Adı <span class="modern-req">*</span></label>
+            <input type="text" formControlName="name" class="modern-input" placeholder="Örn: English (Global)">
+          </div>
+        </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Status -->
+        <div class="modern-toggle-wrapper">
+          <label class="modern-toggle-label">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="modern-toggle">
+              <div class="modern-toggle-bg"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">Aktif (Kullanımda)</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="router.navigate(['/admin/language-groups'])">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="form.invalid || loading">
+           <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
+

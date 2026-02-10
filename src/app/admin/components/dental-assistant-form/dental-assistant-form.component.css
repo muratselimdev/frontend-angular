@@ -1,5 +1,1 @@
-.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-.header button { padding:6px 10px; border:1px solid #ccc; border-radius:6px; background:#2563eb; color:#fff; cursor:pointer; }
-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #eee; }
-th,td { padding:8px 12px; border-bottom:1px solid #f1f1f1; }
-.active { color:green; font-weight:600; }
+/* Styles are handled by global form-theme.scss now */

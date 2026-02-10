@@ -10,6 +10,7 @@ import { TreatmentGroupVm, CreateTreatmentGroupDto, UpdateTreatmentGroupDto } fr
 })
 export class TreatmentGroupFormComponent implements OnInit {
   model: TreatmentGroupVm = { id: 0, groupName: '', isActive: true };
+  loading = false;
 
   constructor(
     private groupsService: TreatmentGroupService,
@@ -25,15 +26,25 @@ export class TreatmentGroupFormComponent implements OnInit {
   }
 
   save() {
+    this.loading = true;
+    let req$;
+
     if (this.model.id === 0) {
       const dto: CreateTreatmentGroupDto = { groupName: this.model.groupName, isActive: this.model.isActive };
-      this.groupsService.create(dto).subscribe(() => alert('Tedavi grubu eklendi'));
-      this.router.navigate(['/admin/treatment-groups']);
+      req$ = this.groupsService.create(dto);
     } else {
       const dto: UpdateTreatmentGroupDto = { groupName: this.model.groupName, isActive: this.model.isActive };
-      this.groupsService.update(this.model.id, dto).subscribe(() => alert('Tedavi grubu güncellendi'));
-      this.router.navigate(['/admin/treatment-groups']);
+      req$ = this.groupsService.update(this.model.id, dto);
     }
+
+    req$.subscribe({
+      next: () => {
+        this.router.navigate(['/admin/treatment-groups']);
+      },
+      error: () => {
+         this.loading = false;
+      }
+    });
   }
 
     cancel() {

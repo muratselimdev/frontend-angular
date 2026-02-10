@@ -1,14 +1,62 @@
-<h2>{{ id ? 'Hastane Düzenle' : 'Yeni Hastane' }}</h2>
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-<form [formGroup]="form" (ngSubmit)="save()">
-  <label>Adı</label>
-  <input formControlName="name" />
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Hastane Düzenle' : 'Yeni Hastane' }}</h2>
+          <p class="modern-subtitle">Hastane bilgilerini ve bağlı olduğu şubeyi yönetin.</p>
+        </div>
+      </div>
+    </div>
 
-  <label>Şube</label>
-  <select formControlName="branchId">
-    <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
-  </select>
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
 
-  <button type="submit" [disabled]="form.invalid">Kaydet</button>
-    <button type="button" (click)="cancel()">İptal</button>
-</form>
+        <!-- Temel Bilgiler -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Hastane Bilgileri
+        </h3>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Hastane Adı <span class="modern-req">*</span></label>
+            <input type="text" formControlName="name" class="modern-input" placeholder="Hastane adı giriniz">
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Bağlı Olduğu Şube <span class="modern-req">*</span></label>
+            <div class="modern-select-wrapper">
+               <select formControlName="branchId" class="modern-select">
+                <option [ngValue]="null" disabled>Şube Seçiniz</option>
+                <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="form.invalid || loading">
+           <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+

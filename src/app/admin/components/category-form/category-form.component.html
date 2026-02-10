@@ -1,53 +1,74 @@
-<div class="page">
+<div class="modern-page">
+  <div class="modern-page-inner">
 
-  <h2>
-    {{ categoryId ? 'Kategori Düzenle' : 'Yeni Kategori' }}
-  </h2>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-
-    <label>
-      Başlık *
-      <input type="text" formControlName="name">
-    </label>
-
-    <label>
-      Açıklama
-      <textarea rows="3" formControlName="description"></textarea>
-    </label>
-
-  <label>Katagori Görseli
-      <input type="text" formControlName="icon">
-  </label>
-
-  <!-- <div class="image-picker" (click)="fileInput.click()">
-    <img *ngIf="previewUrl" [src]="previewUrl" />
-    <span *ngIf="!previewUrl">Resim Seç</span>
-  </div>
-
-  <input
-    #fileInput
-    type="file"
-    accept="image/*"
-    hidden
-    (change)="onFileSelected($event)"
-  /> -->
-
-  <label class="checkbox">
-      <input type="checkbox" formControlName="isActive">
-      Aktif
-    </label>
-
-    <div class="actions">
-      <button type="submit" class="btn primary" [disabled]="loading">
-        Kaydet
-      </button>
-
-      <button type="button" class="btn" (click)="cancel()">
-        Vazgeç
-      </button>
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ categoryId ? 'Kategori Düzenle' : 'Yeni Kategori' }}</h2>
+          <p class="modern-subtitle">Kategori bilgilerini buradan yönetebilirsiniz.</p>
+        </div>
+      </div>
     </div>
 
-  </form>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="modern-card">
+      <div class="modern-card-body">
 
+        <!-- Basic Info -->
+        <div class="modern-grid-1">
+          <div class="modern-field">
+            <label class="modern-label">Başlık <span class="modern-req">*</span></label>
+            <div class="modern-input-wrapper">
+              <input type="text" formControlName="name" class="modern-input" placeholder="Kategori adı">
+            </div>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Açıklama</label>
+            <textarea rows="3" formControlName="description" class="modern-textarea" placeholder="Kategori açıklaması"></textarea>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Kategori Görseli (Icon)</label>
+            <div class="modern-input-wrapper">
+              <input type="text" formControlName="icon" class="modern-input" placeholder="Icon kodu veya URL">
+            </div>
+          </div>
+        </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Status -->
+        <div class="modern-toggle-wrapper">
+          <label class="modern-toggle-label">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="modern-toggle">
+              <div class="modern-toggle-bg"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">Aktif</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="loading">
+          <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
 </div>

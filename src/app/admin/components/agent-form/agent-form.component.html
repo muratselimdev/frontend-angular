@@ -1,54 +1,114 @@
-<div class="form-container" *ngIf="form">
-  <h2>{{ id ? 'Temsilci Düzenle' : 'Yeni Temsilci' }}</h2>
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-  <form [formGroup]="form" (ngSubmit)="save()">
-    <label>Ad</label>
-    <input formControlName="firstName" />
-
-    <label>Soyad</label>
-    <input formControlName="lastName" />
-
-    <label>E-posta</label>
-    <input type="email" formControlName="email" />
-
-    <label>Telefon</label>
-    <input formControlName="phone" />
-
-    <label>Şifre</label>
-    <input type="password" formControlName="password" [required]="!id" />
-
-    <label>Şube</label>
-    <select formControlName="branchId">
-      <option [ngValue]="null">Şube seçiniz</option>
-      <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
-    </select>
-
-    <label>Supervisor</label>
-    <select formControlName="supervisorId">
-      <option [ngValue]="null">Supervisor seçiniz</option>
-      <option *ngFor="let s of supervisors" [ngValue]="s.id">{{ s.nickname }}</option>
-    </select>
-
-    <label>Nickname</label>
-    <input formControlName="nickname" />
-
-    <label>Seviye</label>
-    <select formControlName="agentLevel">
-      <option [ngValue]="null">Seviye seçiniz</option>
-      <option *ngFor="let l of agentLevels" [ngValue]="l.value">{{ l.label }}</option>
-    </select>
-
-    <label>Dil Grubu</label>
-    <select formControlName="languageGroupId">
-      <option [ngValue]="null">Dil grubu seçiniz</option>
-      <option *ngFor="let lg of languageGroups" [ngValue]="lg.id">{{ lg.name }}</option>
-    </select>
-
-    <div class="form-actions">
-      <button type="submit" [disabled]="loading || form.invalid">
-        {{ id ? 'Güncelle' : 'Kaydet' }}
-      </button>
-    <button type="button" (click)="cancel()">İptal</button>
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Temsilci Düzenle' : 'Yeni Temsilci' }}</h2>
+          <p class="modern-subtitle">Temsilci ve hesap bilgilerini düzenleyin.</p>
+        </div>
+      </div>
     </div>
-  </form>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
+
+        <!-- Personal Info -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Kişisel Bilgiler
+        </h3>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Ad</label>
+            <input formControlName="firstName" class="modern-input" placeholder="Ad">
+          </div>
+          <div class="modern-field">
+            <label class="modern-label">Soyad</label>
+            <input formControlName="lastName" class="modern-input" placeholder="Soyad">
+          </div>
+        </div>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">E-posta</label>
+            <input type="email" formControlName="email" class="modern-input" placeholder="ornek@email.com">
+          </div>
+          <div class="modern-field">
+            <label class="modern-label">Telefon</label>
+            <input formControlName="phone" class="modern-input" placeholder="5xx xxx xx xx">
+          </div>
+        </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Account Info -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker bg-indigo-500"></span>
+          Hesap Bilgileri
+        </h3>
+
+        <div class="modern-grid-2">
+           <div class="modern-field">
+            <label class="modern-label">Nickname</label>
+            <input formControlName="nickname" class="modern-input" placeholder="Kullanıcı adı">
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Şifre</label>
+            <input type="password" formControlName="password" class="modern-input" [placeholder]="id ? 'Değiştirmek için giriniz' : '******'">
+          </div>
+        </div>
+
+        <div class="modern-grid-3">
+          <div class="modern-field">
+            <label class="modern-label">Şube</label>
+            <select formControlName="branchId" class="modern-select">
+              <option [ngValue]="null">Şube seçiniz</option>
+              <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+            </select>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Supervisor</label>
+            <select formControlName="supervisorId" class="modern-select">
+              <option [ngValue]="null">Supervisor seçiniz</option>
+              <option *ngFor="let s of supervisors" [ngValue]="s.id">{{ s.nickname }}</option>
+            </select>
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Seviye</label>
+            <select formControlName="agentLevel" class="modern-select">
+              <option [ngValue]="null">Seviye seçiniz</option>
+              <option *ngFor="let l of agentLevels" [ngValue]="l.value">{{ l.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modern-field">
+            <label class="modern-label">Dil Grubu</label>
+            <select formControlName="languageGroupId" class="modern-select">
+              <option [ngValue]="null">Dil grubu seçiniz</option>
+              <option *ngFor="let lg of languageGroups" [ngValue]="lg.id">{{ lg.name }}</option>
+            </select>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">İptal</button>
+        <button type="submit" class="modern-btn-primary" [disabled]="loading || form.invalid">
+          {{ id ? 'Güncelle' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>

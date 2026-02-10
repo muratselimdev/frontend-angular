@@ -1,0 +1,164 @@
+
+@layer components {
+  /* Page Layout */
+  .modern-page {
+    @apply min-h-screen bg-gray-50/50 p-6 md:p-8;
+  }
+  
+  .modern-page-inner {
+    @apply mx-auto max-w-5xl;
+  }
+
+  /* Header */
+  .modern-header {
+    @apply flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8;
+  }
+
+  .modern-header-content {
+    @apply flex items-center gap-4;
+  }
+
+  .modern-icon-box {
+    @apply flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 text-primary-600 shadow-sm border border-primary-100;
+  }
+
+  .modern-title {
+    @apply text-2xl font-bold text-gray-900 tracking-tight;
+  }
+
+  .modern-subtitle {
+    @apply text-sm text-gray-500 mt-0.5;
+  }
+
+  /* Form Card */
+  .modern-card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden;
+  }
+
+  .modern-card-body {
+    @apply p-8 space-y-8;
+  }
+
+  /* Sections */
+  .modern-section-title {
+    @apply text-base font-semibold text-gray-900 mb-4 flex items-center gap-2;
+  }
+
+  .modern-section-marker {
+    @apply w-1 h-5 rounded-full bg-primary-500 block;
+  }
+
+  .modern-divider {
+    @apply border-t border-gray-100 my-8;
+  }
+
+  /* Grid Layouts */
+  .modern-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+  }
+
+  .modern-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .modern-grid-1 {
+    @apply grid grid-cols-1 gap-6;
+  }
+
+  /* Form Controls */
+  .modern-field {
+    @apply space-y-2;
+  }
+
+  .modern-label {
+    @apply text-sm font-medium text-gray-700 block;
+  }
+  
+  .modern-req {
+    @apply text-red-500 ml-0.5;
+  }
+
+  .modern-input-wrapper {
+    @apply relative;
+
+    &:hover .modern-input {
+      @apply bg-white;
+    }
+  }
+
+  .modern-input {
+    @apply w-full h-11 px-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border 
+           focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 
+           transition-all duration-200 outline-none placeholder:text-gray-400;
+  }
+
+  .modern-textarea {
+    @apply w-full p-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border 
+           focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 
+           transition-all duration-200 outline-none resize-y min-h-[100px];
+  }
+  
+  .modern-select {
+    @apply w-full h-11 px-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border 
+           focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 
+           transition-all duration-200 outline-none appearance-none bg-no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em 1.5em;
+  }
+
+  /* Toggle Switch */
+  .modern-toggle-wrapper {
+    @apply bg-gray-50 p-4 rounded-xl border border-gray-100;
+  }
+
+  .modern-toggle-label {
+    @apply flex items-center gap-3 cursor-pointer;
+  }
+
+  .modern-toggle {
+    @apply sr-only;
+  }
+
+  .modern-toggle-bg {
+    @apply w-11 h-6 bg-gray-200 rounded-full transition-all relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      @apply bg-white border-gray-300 border rounded-full h-5 w-5 transition-all;
+    }
+  }
+
+  .modern-toggle:focus + .modern-toggle-bg {
+    @apply outline-none ring-4 ring-primary-300;
+  }
+
+  .modern-toggle:checked + .modern-toggle-bg {
+    @apply bg-primary-600;
+
+    &::after {
+      @apply translate-x-full border-white;
+    }
+  }
+
+
+  /* Actions */
+  .modern-actions {
+    @apply px-8 py-5 bg-gray-50/50 border-t border-gray-100 flex items-center justify-end gap-3;
+  }
+
+  .modern-btn-ghost {
+    @apply px-5 py-2.5 rounded-xl text-sm font-medium text-gray-700 bg-white border border-gray-200 
+           hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all duration-200 shadow-sm
+           cursor-pointer;
+  }
+
+  .modern-btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium text-white 
+           bg-primary-600 hover:bg-primary-700 active:bg-primary-800 transition-all duration-200 
+           shadow-md shadow-primary-500/20 disabled:opacity-70 disabled:cursor-not-allowed
+           cursor-pointer;
+  }
+}

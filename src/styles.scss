@@ -5,6 +5,9 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+// Form Theme
+@use './styles/form-theme.scss';
+
 // Tailwind CSS
 @tailwind base;
 @tailwind components;

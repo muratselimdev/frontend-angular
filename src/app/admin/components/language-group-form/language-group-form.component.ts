@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { LanguageGroupService } from '../../services/language-group.service';
 
 @Component({
@@ -41,11 +42,19 @@ export class LanguageGroupFormComponent implements OnInit {
   save() {
     if (this.form.invalid) return;
 
+    this.loading = true;
     const data = this.form.value;
+
+    let req$: Observable<any>;
     if (this.id) {
-      this.svc.update(this.id, data).subscribe(() => this.router.navigate(['/admin/language-groups']));
+      req$ = this.svc.update(this.id, data);
     } else {
-      this.svc.create(data).subscribe(() => this.router.navigate(['/admin/language-groups']));
+      req$ = this.svc.create(data);
     }
+
+    req$.subscribe({
+      next: () => this.router.navigate(['/admin/language-groups']),
+      error: () => (this.loading = false)
+    });
   }
 }

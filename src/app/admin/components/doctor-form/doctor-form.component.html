@@ -1,40 +1,118 @@
-<div class="form-container" *ngIf="!loading">
-  <h2>{{ id ? 'Doktor Düzenle' : 'Yeni Doktor' }}</h2>
-  <form [formGroup]="form" (ngSubmit)="save()">
-    <label>Ad</label>
-    <input formControlName="firstName" />
+<div class="modern-page" *ngIf="form">
+  <div class="modern-page-inner">
 
-    <label>Soyad</label>
-    <input formControlName="lastName" />
-
-    <label>Email</label>
-    <input formControlName="email" type="email" />
-
-    <label>Telefon</label>
-    <input formControlName="phone" />
-
-    <label *ngIf="!id">Şifre</label>
-    <input *ngIf="!id" formControlName="password" type="password" />
-
-    <label>Klinik</label>
-    <select formControlName="clinicId">
-      <option [ngValue]="null">Seçiniz</option>
-      <option *ngFor="let c of clinics" [ngValue]="c.id">{{ c.name }}</option>
-    </select>
-
-    <label>Hastane</label>
-    <select formControlName="hospitalId">
-      <option [ngValue]="null">Seçiniz</option>
-      <option *ngFor="let h of hospitals" [ngValue]="h.id">{{ h.name }}</option>
-    </select>
-
-    <label>
-      <input type="checkbox" formControlName="isActive" /> Aktif
-    </label>
-
-    <div class="actions">
-      <button type="submit" [disabled]="form.invalid">Kaydet</button>
-      <button type="button" (click)="cancel()">İptal</button>
+    <div class="modern-header">
+      <div class="modern-header-content">
+        <div class="modern-icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="modern-title">{{ id ? 'Doktor Düzenle' : 'Yeni Doktor' }}</h2>
+          <p class="modern-subtitle">Doktor profilini, iletişim bilgilerini ve atamalarını yönetin.</p>
+        </div>
+      </div>
     </div>
-  </form>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="modern-card">
+      <div class="modern-card-body">
+
+        <!-- Kişisel Bilgiler -->
+        <h3 class="modern-section-title">
+          <span class="modern-section-marker"></span>
+          Kişisel Bilgiler
+        </h3>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">Ad <span class="modern-req">*</span></label>
+            <input type="text" formControlName="firstName" class="modern-input" placeholder="Ad giriniz">
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Soyad <span class="modern-req">*</span></label>
+            <input type="text" formControlName="lastName" class="modern-input" placeholder="Soyad giriniz">
+          </div>
+        </div>
+
+        <div class="modern-grid-2">
+          <div class="modern-field">
+            <label class="modern-label">E-Posta <span class="modern-req">*</span></label>
+            <input type="email" formControlName="email" class="modern-input" placeholder="ornek@email.com">
+          </div>
+
+          <div class="modern-field">
+            <label class="modern-label">Telefon</label>
+            <input type="text" formControlName="phone" class="modern-input" placeholder="+90 5XX XXX XX XX">
+          </div>
+        </div>
+
+        <div class="modern-field" *ngIf="!id">
+           <label class="modern-label">Şifre <span class="modern-req">*</span></label>
+           <input type="password" formControlName="password" class="modern-input" placeholder="******">
+           <p class="mt-1 text-xs text-gray-500">Yeni doktor için giriş şifresi belirleyin.</p>
+        </div>
+
+         <!-- Kurum Bilgileri -->
+         <div class="modern-divider"></div>
+
+         <h3 class="modern-section-title">
+           <span class="modern-section-marker bg-teal-500"></span>
+           Görev & Kurum
+         </h3>
+
+         <div class="modern-grid-2">
+           <div class="modern-field">
+             <label class="modern-label">Klinik</label>
+             <div class="modern-select-wrapper">
+               <select formControlName="clinicId" class="modern-select">
+                 <option [ngValue]="null">Klinik Seçiniz</option>
+                 <option *ngFor="let c of clinics" [ngValue]="c.id">{{ c.name }}</option>
+               </select>
+             </div>
+           </div>
+
+           <div class="modern-field">
+             <label class="modern-label">Hastane</label>
+             <div class="modern-select-wrapper">
+                <select formControlName="hospitalId" class="modern-select">
+                  <option [ngValue]="null">Hastane Seçiniz</option>
+                  <option *ngFor="let h of hospitals" [ngValue]="h.id">{{ h.name }}</option>
+                </select>
+             </div>
+           </div>
+         </div>
+
+        <div class="modern-divider"></div>
+
+        <!-- Status -->
+        <div class="modern-toggle-wrapper">
+          <label class="modern-toggle-label">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="modern-toggle">
+              <div class="modern-toggle-bg"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">Aktif (Giriş Yapabilir)</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modern-actions">
+        <button type="button" class="modern-btn-ghost" (click)="cancel()">
+          Vazgeç
+        </button>
+        <button type="submit" class="modern-btn-primary" [disabled]="form.invalid || loading">
+           <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ loading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
+

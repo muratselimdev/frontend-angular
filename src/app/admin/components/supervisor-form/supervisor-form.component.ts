@@ -18,6 +18,7 @@ export class SupervisorFormComponent implements OnInit {
   form!: FormGroup;
   branches: Branch[] = [];
   langs: LanguageGroup[] = [];
+  loading = false;
 
   constructor(
     private http: HttpClient,
@@ -68,7 +69,10 @@ export class SupervisorFormComponent implements OnInit {
 
   save() {
     if (this.form.invalid) return;
+    this.loading = true;
     const v = this.form.value;
+
+    let req$;
 
     if (this.isEdit && this.id) {
       const dto = {
@@ -82,7 +86,7 @@ export class SupervisorFormComponent implements OnInit {
         nickname: v.nickname || undefined,
         isActive: !!v.isActive
       };
-      this.api.update(this.id, dto).subscribe(() => this.router.navigate(['/admin/supervisors']));
+      req$ = this.api.update(this.id, dto);
     } else {
       const dto = {
         firstName: v.firstName,
@@ -94,12 +98,17 @@ export class SupervisorFormComponent implements OnInit {
         languageGroupId: v.languageGroupId,
         nickname: v.nickname || undefined
       };
-      this.api.create(dto).subscribe(() => this.router.navigate(['/admin/supervisors']));
+      req$ = this.api.create(dto);
     }
+
+    req$.subscribe({
+      next: () => this.router.navigate(['/admin/supervisors']),
+      error: () => (this.loading = false)
+    });
   }
 
   cancel() {
     this.router.navigate(['/admin/supervisors']);
   }
-  
+
 }

@@ -15,6 +15,7 @@ export class HospitalFormComponent implements OnInit {
   form!: FormGroup;
   branches: Branch[] = [];
   id?: number;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -46,12 +47,19 @@ export class HospitalFormComponent implements OnInit {
 
   save() {
     if (this.form.invalid) return;
+    this.loading = true;
     const dto = this.form.value;
 
     if (this.id) {
-      this.hospitalSvc.update(this.id, dto).subscribe(() => this.router.navigate(['/admin/hospitals']));
+      this.hospitalSvc.update(this.id, dto).subscribe({
+        next: () => this.router.navigate(['/admin/hospitals']),
+        error: () => (this.loading = false)
+      });
     } else {
-      this.hospitalSvc.create(dto).subscribe(() => this.router.navigate(['/admin/hospitals']));
+      this.hospitalSvc.create(dto).subscribe({
+        next: () => this.router.navigate(['/admin/hospitals']),
+        error: () => (this.loading = false)
+      });
     }
   }
 
