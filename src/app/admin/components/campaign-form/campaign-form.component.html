@@ -1,66 +1,246 @@
-<div class="page">
+<div class="min-h-screen bg-gray-50/50 p-6 md:p-8">
+  <div class="mx-auto max-w-5xl">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 text-primary-600 shadow-sm border border-primary-100">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 tracking-tight">{{ campaignId ? 'Kampanya Düzenle' : 'Yeni Kampanya' }}</h2>
+          <p class="text-sm text-gray-500 mt-0.5">Kampanya detaylarını ve görsellerini yönetin.</p>
+        </div>
+      </div>
 
-  <h2>
-    {{ campaignId ? 'Kampanya Düzenle' : 'Yeni Kampanya' }}
-  </h2>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-
-    <label>
-      Başlık *
-      <input type="text" formControlName="title">
-    </label>
-
-    <label>
-      Açıklama
-      <textarea rows="3" formControlName="description"></textarea>
-    </label>
-
-    <label>
-      İndirim (%) *
-      <input type="number" formControlName="discountRate">
-    </label>
-
-  <label>Kampanya Görseli</label>
-
-  <div class="image-picker" (click)="fileInput.click()">
-    <img *ngIf="previewUrl" [src]="previewUrl" />
-    <span *ngIf="!previewUrl">Resim Seç</span>
-  </div>
-
-  <input
-    #fileInput
-    type="file"
-    accept="image/*"
-    hidden
-    (change)="onFileSelected($event)"
-  />
-
-    <label>
-      Başlangıç Tarihi
-      <input type="date" formControlName="startDate">
-    </label>
-
-    <label>
-      Bitiş Tarihi
-      <input type="date" formControlName="endDate">
-    </label>
-
-    <label class="checkbox">
-      <input type="checkbox" formControlName="isActive">
-      Aktif
-    </label>
-
-    <div class="actions">
-      <button type="submit" class="btn primary" [disabled]="loading">
-        Kaydet
-      </button>
-
-      <button type="button" class="btn" (click)="cancel()">
-        Vazgeç
-      </button>
+      <div class="flex items-center gap-3">
+        <span
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold border shadow-sm transition-all duration-200"
+          [class.bg-green-50]="form.value.isActive"
+          [class.text-green-700]="form.value.isActive"
+          [class.border-green-200]="form.value.isActive"
+          [class.bg-gray-50]="!form.value.isActive"
+          [class.text-gray-600]="!form.value.isActive"
+          [class.border-gray-200]="!form.value.isActive"
+        >
+          <span class="w-1.5 h-1.5 rounded-full" [class.bg-green-600]="form.value.isActive" [class.bg-gray-500]="!form.value.isActive"></span>
+          {{ form.value.isActive ? 'Yayında' : 'Pasif' }}
+        </span>
+      </div>
     </div>
 
-  </form>
+    <!-- Main Card -->
+    <form [formGroup]="form" (ngSubmit)="submit()" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Form Content -->
+      <div class="p-8 space-y-8">
 
+        <!-- Basic Info Section -->
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="w-1 h-5 rounded-full bg-primary-500 block"></span>
+            Temel Bilgiler
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="space-y-2">
+              <label for="title" class="text-sm font-medium text-gray-700 block">
+                Başlık <span class="text-red-500">*</span>
+              </label>
+              <div class="relative group">
+                <input
+                  id="title"
+                  type="text"
+                  formControlName="title"
+                  class="w-full h-11 px-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none placeholder:text-gray-400 group-hover:bg-white"
+                  placeholder="Kampanya başlığı"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="discountRate" class="text-sm font-medium text-gray-700 block">
+                İndirim Oranı <span class="text-red-500">*</span>
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <span class="text-gray-400 font-medium">%</span>
+                </div>
+                <input
+                  id="discountRate"
+                  type="number"
+                  formControlName="discountRate"
+                  class="w-full h-11 pl-9 pr-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none placeholder:text-gray-400 group-hover:bg-white"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="price" class="text-sm font-medium text-gray-700 block">
+                Tutar
+              </label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <span class="text-gray-400 font-medium">₺</span>
+                </div>
+                <input
+                  id="price"
+                  type="number"
+                  formControlName="price"
+                  class="w-full h-11 pl-8 pr-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none placeholder:text-gray-400 group-hover:bg-white"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Date & Description Section -->
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="w-1 h-5 rounded-full bg-indigo-500 block"></span>
+            Zamanlama ve İçerik
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="space-y-2">
+              <label for="startDate" class="text-sm font-medium text-gray-700 block">Başlangıç Tarihi</label>
+              <input
+                id="startDate"
+                type="date"
+                formControlName="startDate"
+                class="w-full h-11 px-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label for="endDate" class="text-sm font-medium text-gray-700 block">Bitiş Tarihi</label>
+              <input
+                id="endDate"
+                type="date"
+                formControlName="endDate"
+                class="w-full h-11 px-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            <div class="space-y-2">
+              <label for="description" class="text-sm font-medium text-gray-700 block">Kısa Açıklama</label>
+              <textarea
+                id="description"
+                rows="3"
+                formControlName="description"
+                class="w-full p-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none resize-y min-h-[100px]"
+                placeholder="Kampanya hakkında kısa bir özet..."
+              ></textarea>
+            </div>
+
+            <div class="space-y-2">
+              <label for="detail" class="text-sm font-medium text-gray-700 block">Detaylı Bilgi</label>
+              <textarea
+                id="detail"
+                rows="5"
+                formControlName="detail"
+                class="w-full p-4 rounded-xl border-gray-200 bg-gray-50 text-gray-900 border focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all duration-200 outline-none resize-y min-h-[140px]"
+                placeholder="Tüm kampanya koşulları ve detayları..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Media Section -->
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="w-1 h-5 rounded-full bg-pink-500 block"></span>
+            Medya
+          </h3>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700 block">Kampanya Görseli</label>
+            <div
+              class="group relative flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-primary-50/30 hover:border-primary-300 transition-all duration-300 cursor-pointer overflow-hidden"
+              (click)="fileInput.click()"
+            >
+
+              <div *ngIf="previewUrl; else emptyPreview" class="relative z-10 w-full max-w-sm aspect-video rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                <img [src]="previewUrl" alt="Kampanya görseli" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gray-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 backdrop-blur-sm">
+                  <span class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium backdrop-blur-md border border-white/30">Görseli Değiştir</span>
+                </div>
+              </div>
+
+              <ng-template #emptyPreview>
+                <div class="flex flex-col items-center text-center space-y-3 z-10 transition-transform duration-300 group-hover:scale-105">
+                  <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-400 group-hover:text-primary-500 group-hover:scale-110 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="text-gray-900 font-medium cursor-pointer hover:text-primary-600 hover:underline">Bir dosya seçin</span>
+                    <span class="text-gray-500"> veya sürükleyip bırakın</span>
+                    <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF • maks. 10MB</p>
+                  </div>
+                </div>
+              </ng-template>
+
+              <button type="button" class="mt-6 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 group-hover:border-primary-200 transition-colors z-10">
+                Dosya Seç
+              </button>
+            </div>
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              hidden
+              (change)="onFileSelected($event)"
+            />
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100"></div>
+
+        <!-- Settings Section -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isActive" class="peer sr-only" />
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+            </div>
+            <div class="select-none">
+              <span class="block text-sm font-medium text-gray-900 group-hover:text-primary-700 transition-colors">Kampanyayı Yayına Al</span>
+            </div>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="px-8 py-5 bg-gray-50/50 border-t border-gray-100 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all duration-200 shadow-sm"
+        >
+          Vazgeç
+        </button>
+        <button
+          type="submit"
+          [disabled]="loading"
+          class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 active:bg-primary-800 transition-all duration-200 shadow-md shadow-primary-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          <svg *ngIf="loading" class="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span *ngIf="!loading">Değişiklikleri Kaydet</span>
+          <span *ngIf="loading">Kaydediliyor...</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

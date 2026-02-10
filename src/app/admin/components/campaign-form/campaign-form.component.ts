@@ -31,18 +31,20 @@ export class CampaignFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.campaignId = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     this.form = this.fb.group({
       id: this.campaignId,
       title: [''],
       description: [''],
       discountRate: [0],
-      imageUrl: [''], 
+      imageUrl: [''],
       startDate: [''],
       endDate: [''],
-      isActive: [true]
+      isActive: [true],
+      price: [0],
+      detail: ['']
     });
-    
+
      if (this.campaignId) {
       this.loadCampaign(this.campaignId);
     }
@@ -97,6 +99,8 @@ submit() {
   formData.append('discountRate', this.form.value.discountRate.toString());
   formData.append('startDate', this.form.value.startDate);
   formData.append('endDate', this.form.value.endDate);
+  formData.append('price', this.form.value.price.toString());
+  formData.append('detail', this.form.value.detail);
 
   if (this.selectedFile) {
     formData.append('image', this.selectedFile);

@@ -19,17 +19,17 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let b of campaigns">
+    <tr *ngFor="let b of campaigns; trackBy: trackById">
       <td>{{ b.title }}</td>
       <td>
         %{{ b.discountRate }}
       </td>
         <td>
         {{ b.imageUrl }}
-      </td>        
+      </td>
       <td>
         {{ b.startDate | date:'dd.MM.yyyy'}}
-      </td>        
+      </td>
       <td>
         {{ b.endDate | date:'dd.MM.yyyy'}}
       </td>
@@ -44,7 +44,7 @@
       </td>
     </tr>
           <tr *ngIf="campaigns.length === 0">
-        <td colspan="5" class="empty">
+        <td colspan="7" class="empty">
           Henüz kampanya yok
         </td>
       </tr>
