@@ -42,6 +42,10 @@ import { CategoryListComponent } from './components/category-list/category-list.
 import { CampaignListComponent } from './components/campaing-list/campaing-list.component';
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
 import { CategoryFormComponent } from './components/category-form/category-form.component';
+import { CategoryItemListComponent } from './components/category-item-list/category-item-list.component';
+import { CategoryItemFormComponent } from './components/category-item-form/category-item-form.component';
+import { CategoryItemDetailListComponent } from './components/category-item-detail-list/category-item-detail-list.component';
+import { CategoryItemDetailFormComponent } from './components/category-item-detail-form/category-item-detail-form.component';
 import { AdminPanel } from './components/admin-panel/admin-panel';
 import { PopulersListComponent } from './components/populers-list/populers-list.component';
 import { PopulersFormComponent } from './components/populers-form/populers-form.component';
@@ -90,6 +94,14 @@ const routes: Routes = [
       { path: 'categories', component: CategoryListComponent },
       { path: 'categories/new', component: CategoryFormComponent },
       { path: 'categories/:id', component: CategoryFormComponent },
+
+      { path: 'category-items', component: CategoryItemListComponent },
+      { path: 'category-items/new', component: CategoryItemFormComponent },
+      { path: 'category-items/:id', component: CategoryItemFormComponent },
+
+      { path: 'category-item-details', component: CategoryItemDetailListComponent },
+      { path: 'category-item-details/new', component: CategoryItemDetailFormComponent },
+      { path: 'category-item-details/:id', component: CategoryItemDetailFormComponent },
 
       { path: 'campaigns', component: CampaignListComponent },
       { path: 'campaigns/new', component: CampaignFormComponent },

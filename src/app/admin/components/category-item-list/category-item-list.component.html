@@ -1,0 +1,66 @@
+<div class="breadcrumb">
+  <a routerLink="/admin/dashboard">Dashboard</a>
+  <span class="separator">›</span>
+  <a routerLink="/admin/categories">Kategoriler</a>
+  <span class="separator">›</span>
+  <span class="current">Kategori Öğeleri</span>
+</div>
+
+<div class="header">
+  <div>
+    <h2>Kategori Öğeleri</h2>
+    <p *ngIf="categoryName" class="subtitle">Kategori: <strong>{{ categoryName }}</strong></p>
+  </div>
+  <button class="btn-primary" (click)="newCategoryItem()">
+    + Yeni Kategori Öğesi
+  </button>
+</div>
+
+<div class="filter-section">
+  <label for="categoryFilter">Kategori Filtrele:</label>
+  <select id="categoryFilter" (change)="filterByCategory($any($event.target).value ? +$any($event.target).value : null)" class="filter-select">
+    <option [value]="null">Tüm Kategoriler</option>
+    <option *ngFor="let cat of categories; trackBy: trackByCategoryId" [value]="cat.id" [selected]="cat.id === categoryId">
+      {{ cat.name }}
+    </option>
+  </select>
+</div>
+
+<div *ngIf="loading" class="loading">Yükleniyor...</div>
+
+<table class="modern-table" *ngIf="!loading">
+  <thead>
+    <tr>
+      <th>Başlık</th>
+      <th>Açıklama</th>
+      <th>Kategori</th>
+      <th>Icon</th>
+      <th>Durum</th>
+      <th>İşlemler</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of categoryItems; trackBy: trackByItemId">
+      <td class="font-medium">{{ item.name }}</td>
+      <td>{{ item.description }}</td>
+      <td><span class="category-badge">{{ getCategoryName(item.categoryId) }}</span></td>
+      <td><span class="icon-badge">{{ item.icon }}</span></td>
+      <td>
+        <span [class]="item.isActive ? 'badge-success' : 'badge-danger'">
+          {{ item.isActive ? 'Aktif' : 'Pasif' }}
+        </span>
+      </td>
+      <td>
+        <button class="btn-action btn-info" (click)="viewDetails(item)">Detaylar</button>
+        <button class="btn-action btn-warning" (click)="toggle(item)">Aktif/Pasif</button>
+        <button class="btn-action btn-edit" (click)="edit(item)">Düzenle</button>
+      </td>
+    </tr>
+    <tr *ngIf="categoryItems.length === 0">
+      <td colspan="6" class="empty-state">
+        <div class="empty-icon">📄</div>
+        <p>Henüz kategori öğesi yok</p>
+      </td>
+    </tr>
+  </tbody>
+</table>

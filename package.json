@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production --base-href /frontend-angular/",
+    "deploy": "ng build --configuration production --base-href /frontend-angular/ && npx angular-cli-ghpages --dir=dist/oneportal/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -47,6 +49,7 @@
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@types/jasmine": "~5.1.0",
+    "angular-cli-ghpages": "^3.0.2",
     "autoprefixer": "^10.4.23",
     "baseline-browser-mapping": "^2.9.15",
     "jasmine-core": "~5.9.0",

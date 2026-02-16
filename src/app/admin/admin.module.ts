@@ -50,6 +50,10 @@ import { CampaignListComponent } from './components/campaing-list/campaing-list.
 import { CampaignFormComponent } from './components/campaign-form/campaign-form.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { CategoryFormComponent } from './components/category-form/category-form.component';
+import { CategoryItemListComponent } from './components/category-item-list/category-item-list.component';
+import { CategoryItemFormComponent } from './components/category-item-form/category-item-form.component';
+import { CategoryItemDetailListComponent } from './components/category-item-detail-list/category-item-detail-list.component';
+import { CategoryItemDetailFormComponent } from './components/category-item-detail-form/category-item-detail-form.component';
 import { AdminPanel } from './components/admin-panel/admin-panel';
 import { PopulersListComponent } from './components/populers-list/populers-list.component';
 import { PopulersFormComponent } from './components/populers-form/populers-form.component';
@@ -97,6 +101,10 @@ import { PopulersFormComponent } from './components/populers-form/populers-form.
     TreatmentFormComponent,
     CategoryListComponent,
     CategoryFormComponent,
+    CategoryItemListComponent,
+    CategoryItemFormComponent,
+    CategoryItemDetailListComponent,
+    CategoryItemDetailFormComponent,
     CampaignListComponent,
     CampaignFormComponent,
     AdminPanel,

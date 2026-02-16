@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
   <div class="card p-4 shadow register-card">
 
-    <img src="logo.png" class="login-logo mb-2" alt="Logo" />
+    <img src="assets/../logo.png" class="login-logo mb-2" alt="Logo" />
     <h6 class="text-center text-success mb-3">Yeni Hesap Oluştur</h6>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
@@ -120,7 +120,7 @@
       <button class="btn btn-success w-100" [disabled]="form.invalid || loading">
         <ng-container *ngIf="!loading; else loadingTpl">Kayıt Ol</ng-container>
         <ng-template #loadingTpl>
-          <span class="spinner-border spinner-border-sm me-1"></span> 
+          <span class="spinner-border spinner-border-sm me-1"></span>
           Kayıt yapılıyor...
         </ng-template>
       </button>

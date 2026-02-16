@@ -52,10 +52,21 @@ export class AuthInterceptor implements HttpInterceptor {
     else if (token) {
       console.log('[STAFF INTERCEPTOR] Token bulundu, header eklendi');
       authReq = req.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
     } else {
       console.warn('[STAFF INTERCEPTOR] Token yok → çıplak request gidiyor:', req.url);
+      // Still add cache control headers even without token
+      authReq = req.clone({
+        setHeaders: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
     }
 
     // 🔹 Hata yakalama

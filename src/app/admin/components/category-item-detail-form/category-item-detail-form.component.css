@@ -1,0 +1,37 @@
+/* Modern Form Styles - Matching branch-form design */
+
+.modern-image-preview {
+  margin-top: 12px;
+  max-width: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.modern-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.modern-input-file {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: white;
+  cursor: pointer;
+}
+
+.modern-input-file:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.modern-input-file:hover {
+  border-color: #9ca3af;
+}

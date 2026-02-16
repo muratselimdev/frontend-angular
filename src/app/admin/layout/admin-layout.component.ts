@@ -71,9 +71,10 @@ export class AdminLayoutComponent implements OnInit {
       icon: 'mobile',
       isOpen: true,
       items: [
-        { label: 'Kategoriler', path: '/admin/categories', icon: '🚐' },
-        { label: 'Kampanyalar', path: '/admin/campaigns', icon: '🚐' },
-        { label: 'Popüller', path: '/admin/populers', icon: '🚐' }
+        { label: 'Kategoriler', path: '/admin/categories', icon: '�' },
+
+        { label: 'Kampanyalar', path: '/admin/campaigns', icon: '🎯' },
+        { label: 'Popüller', path: '/admin/populers', icon: '⭐' }
       ]
     },
     {

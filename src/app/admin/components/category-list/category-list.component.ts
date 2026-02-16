@@ -22,7 +22,17 @@ export class CategoryListComponent implements OnInit {
   }
 
   load() {
-    this.service.getAll().subscribe(res => this.categories = res);
+    this.loading = true;
+    this.service.getAll().subscribe({
+      next: (res) => {
+        this.categories = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.loading = false;
+      }
+    });
   }
 
   toggle(item: any) {

@@ -3,7 +3,7 @@
 
     <!-- Logo -->
     <div class="text-center mb-3">
-      <img src="logo.png" alt="Logo" class="login-logo mb-2">
+      <img src="assets/../logo.png" alt="Logo" class="login-logo mb-2">
     </div>
 
     <!-- Hata -->
@@ -18,7 +18,7 @@
 
     <!-- FORM -->
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      
+
       <!-- E-posta -->
       <div class="mb-3">
         <label class="form-label">E-posta</label>
@@ -28,7 +28,7 @@
           formControlName="email"
           placeholder="you@company.com"
         />
-        <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" 
+        <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
              class="text-danger small">
           Geçerli bir e-posta adresi giriniz.
         </div>
