@@ -1,0 +1,804 @@
+[
+  {
+    "name": "Afghanistan",
+    "iso2": "AF",
+    "iso3": "AFG",
+    "phoneCode": "+93",
+    "regions": []
+  },
+  {
+    "name": "Albania",
+    "iso2": "AL",
+    "iso3": "ALB",
+    "phoneCode": "+355",
+    "regions": []
+  },
+  {
+    "name": "Algeria",
+    "iso2": "DZ",
+    "iso3": "DZA",
+    "phoneCode": "+213",
+    "regions": []
+  },
+  {
+    "name": "Andorra",
+    "iso2": "AD",
+    "iso3": "AND",
+    "phoneCode": "+376",
+    "regions": []
+  },
+  {
+    "name": "Angola",
+    "iso2": "AO",
+    "iso3": "AGO",
+    "phoneCode": "+244",
+    "regions": []
+  },
+  {
+    "name": "Argentina",
+    "iso2": "AR",
+    "iso3": "ARG",
+    "phoneCode": "+54",
+    "regions": []
+  },
+  {
+    "name": "Armenia",
+    "iso2": "AM",
+    "iso3": "ARM",
+    "phoneCode": "+374",
+    "regions": []
+  },
+  {
+    "name": "Australia",
+    "iso2": "AU",
+    "iso3": "AUS",
+    "phoneCode": "+61",
+    "regions": [
+      { "name": "New South Wales", "areaCode": "2" },
+      { "name": "Victoria", "areaCode": "3" },
+      { "name": "Queensland", "areaCode": "7" },
+      { "name": "Western Australia", "areaCode": "8" }
+    ]
+  },
+  {
+    "name": "Austria",
+    "iso2": "AT",
+    "iso3": "AUT",
+    "phoneCode": "+43",
+    "regions": []
+  },
+  {
+    "name": "Azerbaijan",
+    "iso2": "AZ",
+    "iso3": "AZE",
+    "phoneCode": "+994",
+    "regions": []
+  },
+  {
+    "name": "Bahamas",
+    "iso2": "BS",
+    "iso3": "BHS",
+    "phoneCode": "+1-242",
+    "regions": []
+  },
+  {
+    "name": "Bahrain",
+    "iso2": "BH",
+    "iso3": "BHR",
+    "phoneCode": "+973",
+    "regions": []
+  },
+  {
+    "name": "Bangladesh",
+    "iso2": "BD",
+    "iso3": "BGD",
+    "phoneCode": "+880",
+    "regions": []
+  },
+  {
+    "name": "Belarus",
+    "iso2": "BY",
+    "iso3": "BLR",
+    "phoneCode": "+375",
+    "regions": []
+  },
+  {
+    "name": "Belgium",
+    "iso2": "BE",
+    "iso3": "BEL",
+    "phoneCode": "+32",
+    "regions": []
+  },
+  {
+    "name": "Belize",
+    "iso2": "BZ",
+    "iso3": "BLZ",
+    "phoneCode": "+501",
+    "regions": []
+  },
+  {
+    "name": "Benin",
+    "iso2": "BJ",
+    "iso3": "BEN",
+    "phoneCode": "+229",
+    "regions": []
+  },
+  {
+    "name": "Bhutan",
+    "iso2": "BT",
+    "iso3": "BTN",
+    "phoneCode": "+975",
+    "regions": []
+  },
+  {
+    "name": "Bolivia",
+    "iso2": "BO",
+    "iso3": "BOL",
+    "phoneCode": "+591",
+    "regions": []
+  },
+  {
+    "name": "Bosnia and Herzegovina",
+    "iso2": "BA",
+    "iso3": "BIH",
+    "phoneCode": "+387",
+    "regions": []
+  },
+  {
+    "name": "Brazil",
+    "iso2": "BR",
+    "iso3": "BRA",
+    "phoneCode": "+55",
+    "regions": [
+      { "name": "São Paulo", "areaCode": "11" },
+      { "name": "Rio de Janeiro", "areaCode": "21" },
+      { "name": "Brasília", "areaCode": "61" }
+    ]
+  },
+  {
+    "name": "Bulgaria",
+    "iso2": "BG",
+    "iso3": "BGR",
+    "phoneCode": "+359",
+    "regions": []
+  },
+  {
+    "name": "Cambodia",
+    "iso2": "KH",
+    "iso3": "KHM",
+    "phoneCode": "+855",
+    "regions": []
+  },
+  {
+    "name": "Cameroon",
+    "iso2": "CM",
+    "iso3": "CMR",
+    "phoneCode": "+237",
+    "regions": []
+  },
+  {
+    "name": "Canada",
+    "iso2": "CA",
+    "iso3": "CAN",
+    "phoneCode": "+1",
+    "regions": [
+      { "name": "Ontario", "areaCode": "416" },
+      { "name": "Quebec", "areaCode": "418" },
+      { "name": "British Columbia", "areaCode": "604" }
+    ]
+  },
+  {
+    "name": "Cape Verde",
+    "iso2": "CV",
+    "iso3": "CPV",
+    "phoneCode": "+238",
+    "regions": []
+  },
+  {
+    "name": "Chile",
+    "iso2": "CL",
+    "iso3": "CHL",
+    "phoneCode": "+56",
+    "regions": []
+  },
+  {
+    "name": "China",
+    "iso2": "CN",
+    "iso3": "CHN",
+    "phoneCode": "+86",
+    "regions": []
+  },
+  {
+    "name": "Colombia",
+    "iso2": "CO",
+    "iso3": "COL",
+    "phoneCode": "+57",
+    "regions": []
+  },
+  {
+    "name": "Costa Rica",
+    "iso2": "CR",
+    "iso3": "CRI",
+    "phoneCode": "+506",
+    "regions": []
+  },
+  {
+    "name": "Croatia",
+    "iso2": "HR",
+    "iso3": "HRV",
+    "phoneCode": "+385",
+    "regions": []
+  },
+  {
+    "name": "Cyprus",
+    "iso2": "CY",
+    "iso3": "CYP",
+    "phoneCode": "+357",
+    "regions": []
+  },
+  {
+    "name": "Czech Republic",
+    "iso2": "CZ",
+    "iso3": "CZE",
+    "phoneCode": "+420",
+    "regions": []
+  },
+  {
+    "name": "Denmark",
+    "iso2": "DK",
+    "iso3": "DNK",
+    "phoneCode": "+45",
+    "regions": []
+  },
+  {
+    "name": "Dominican Republic",
+    "iso2": "DO",
+    "iso3": "DOM",
+    "phoneCode": "+1-809",
+    "regions": []
+  },
+  {
+    "name": "Ecuador",
+    "iso2": "EC",
+    "iso3": "ECU",
+    "phoneCode": "+593",
+    "regions": []
+  },
+  {
+    "name": "Egypt",
+    "iso2": "EG",
+    "iso3": "EGY",
+    "phoneCode": "+20",
+    "regions": []
+  },
+  {
+    "name": "Estonia",
+    "iso2": "EE",
+    "iso3": "EST",
+    "phoneCode": "+372",
+    "regions": []
+  },
+  {
+    "name": "Ethiopia",
+    "iso2": "ET",
+    "iso3": "ETH",
+    "phoneCode": "+251",
+    "regions": []
+  },
+  {
+    "name": "Finland",
+    "iso2": "FI",
+    "iso3": "FIN",
+    "phoneCode": "+358",
+    "regions": []
+  },
+  {
+    "name": "France",
+    "iso2": "FR",
+    "iso3": "FRA",
+    "phoneCode": "+33",
+    "regions": []
+  },
+  {
+    "name": "Georgia",
+    "iso2": "GE",
+    "iso3": "GEO",
+    "phoneCode": "+995",
+    "regions": []
+  },
+  {
+    "name": "Germany",
+    "iso2": "DE",
+    "iso3": "DEU",
+    "phoneCode": "+49",
+    "regions": []
+  },
+  {
+    "name": "Greece",
+    "iso2": "GR",
+    "iso3": "GRC",
+    "phoneCode": "+30",
+    "regions": []
+  },
+  {
+    "name": "Hong Kong",
+    "iso2": "HK",
+    "iso3": "HKG",
+    "phoneCode": "+852",
+    "regions": []
+  },
+  {
+    "name": "Hungary",
+    "iso2": "HU",
+    "iso3": "HUN",
+    "phoneCode": "+36",
+    "regions": []
+  },
+  {
+    "name": "Iceland",
+    "iso2": "IS",
+    "iso3": "ISL",
+    "phoneCode": "+354",
+    "regions": []
+  },
+  {
+    "name": "India",
+    "iso2": "IN",
+    "iso3": "IND",
+    "phoneCode": "+91",
+    "regions": []
+  },
+  {
+    "name": "Indonesia",
+    "iso2": "ID",
+    "iso3": "IDN",
+    "phoneCode": "+62",
+    "regions": []
+  },
+  {
+    "name": "Iran",
+    "iso2": "IR",
+    "iso3": "IRN",
+    "phoneCode": "+98",
+    "regions": []
+  },
+  {
+    "name": "Iraq",
+    "iso2": "IQ",
+    "iso3": "IRQ",
+    "phoneCode": "+964",
+    "regions": []
+  },
+  {
+    "name": "Ireland",
+    "iso2": "IE",
+    "iso3": "IRL",
+    "phoneCode": "+353",
+    "regions": []
+  },
+  {
+    "name": "Israel",
+    "iso2": "IL",
+    "iso3": "ISR",
+    "phoneCode": "+972",
+    "regions": []
+  },
+  {
+    "name": "Italy",
+    "iso2": "IT",
+    "iso3": "ITA",
+    "phoneCode": "+39",
+    "regions": []
+  },
+  {
+    "name": "Japan",
+    "iso2": "JP",
+    "iso3": "JPN",
+    "phoneCode": "+81",
+    "regions": []
+  },
+  {
+    "name": "Jordan",
+    "iso2": "JO",
+    "iso3": "JOR",
+    "phoneCode": "+962",
+    "regions": []
+  },
+  {
+    "name": "Kazakhstan",
+    "iso2": "KZ",
+    "iso3": "KAZ",
+    "phoneCode": "+7",
+    "regions": []
+  },
+  {
+    "name": "Kenya",
+    "iso2": "KE",
+    "iso3": "KEN",
+    "phoneCode": "+254",
+    "regions": []
+  },
+  {
+    "name": "Kuwait",
+    "iso2": "KW",
+    "iso3": "KWT",
+    "phoneCode": "+965",
+    "regions": []
+  },
+  {
+    "name": "Kyrgyzstan",
+    "iso2": "KG",
+    "iso3": "KGZ",
+    "phoneCode": "+996",
+    "regions": []
+  },
+  {
+    "name": "Latvia",
+    "iso2": "LV",
+    "iso3": "LVA",
+    "phoneCode": "+371",
+    "regions": []
+  },
+  {
+    "name": "Lebanon",
+    "iso2": "LB",
+    "iso3": "LBN",
+    "phoneCode": "+961",
+    "regions": []
+  },
+  {
+    "name": "Libya",
+    "iso2": "LY",
+    "iso3": "LBY",
+    "phoneCode": "+218",
+    "regions": []
+  },
+  {
+    "name": "Lithuania",
+    "iso2": "LT",
+    "iso3": "LTU",
+    "phoneCode": "+370",
+    "regions": []
+  },
+  {
+    "name": "Luxembourg",
+    "iso2": "LU",
+    "iso3": "LUX",
+    "phoneCode": "+352",
+    "regions": []
+  },
+  {
+    "name": "Malaysia",
+    "iso2": "MY",
+    "iso3": "MYS",
+    "phoneCode": "+60",
+    "regions": []
+  },
+  {
+    "name": "Mexico",
+    "iso2": "MX",
+    "iso3": "MEX",
+    "phoneCode": "+52",
+    "regions": []
+  },
+  {
+    "name": "Moldova",
+    "iso2": "MD",
+    "iso3": "MDA",
+    "phoneCode": "+373",
+    "regions": []
+  },
+  {
+    "name": "Morocco",
+    "iso2": "MA",
+    "iso3": "MAR",
+    "phoneCode": "+212",
+    "regions": []
+  },
+  {
+    "name": "Nepal",
+    "iso2": "NP",
+    "iso3": "NPL",
+    "phoneCode": "+977",
+    "regions": []
+  },
+  {
+    "name": "Netherlands",
+    "iso2": "NL",
+    "iso3": "NLD",
+    "phoneCode": "+31",
+    "regions": []
+  }  ,
+  {
+    "name": "New Zealand",
+    "iso2": "NZ",
+    "iso3": "NZL",
+    "phoneCode": "+64",
+    "regions": []
+  },
+  {
+    "name": "Nigeria",
+    "iso2": "NG",
+    "iso3": "NGA",
+    "phoneCode": "+234",
+    "regions": []
+  },
+  {
+    "name": "North Macedonia",
+    "iso2": "MK",
+    "iso3": "MKD",
+    "phoneCode": "+389",
+    "regions": []
+  },
+  {
+    "name": "Norway",
+    "iso2": "NO",
+    "iso3": "NOR",
+    "phoneCode": "+47",
+    "regions": []
+  },
+  {
+    "name": "Oman",
+    "iso2": "OM",
+    "iso3": "OMN",
+    "phoneCode": "+968",
+    "regions": []
+  },
+  {
+    "name": "Pakistan",
+    "iso2": "PK",
+    "iso3": "PAK",
+    "phoneCode": "+92",
+    "regions": []
+  },
+  {
+    "name": "Panama",
+    "iso2": "PA",
+    "iso3": "PAN",
+    "phoneCode": "+507",
+    "regions": []
+  },
+  {
+    "name": "Peru",
+    "iso2": "PE",
+    "iso3": "PER",
+    "phoneCode": "+51",
+    "regions": []
+  },
+  {
+    "name": "Philippines",
+    "iso2": "PH",
+    "iso3": "PHL",
+    "phoneCode": "+63",
+    "regions": []
+  },
+  {
+    "name": "Poland",
+    "iso2": "PL",
+    "iso3": "POL",
+    "phoneCode": "+48",
+    "regions": []
+  },
+  {
+    "name": "Portugal",
+    "iso2": "PT",
+    "iso3": "PRT",
+    "phoneCode": "+351",
+    "regions": []
+  },
+  {
+    "name": "Qatar",
+    "iso2": "QA",
+    "iso3": "QAT",
+    "phoneCode": "+974",
+    "regions": []
+  },
+  {
+    "name": "Romania",
+    "iso2": "RO",
+    "iso3": "ROU",
+    "phoneCode": "+40",
+    "regions": []
+  },
+  {
+    "name": "Russia",
+    "iso2": "RU",
+    "iso3": "RUS",
+    "phoneCode": "+7",
+    "regions": []
+  },
+  {
+    "name": "Saudi Arabia",
+    "iso2": "SA",
+    "iso3": "SAU",
+    "phoneCode": "+966",
+    "regions": []
+  },
+  {
+    "name": "Serbia",
+    "iso2": "RS",
+    "iso3": "SRB",
+    "phoneCode": "+381",
+    "regions": []
+  },
+  {
+    "name": "Singapore",
+    "iso2": "SG",
+    "iso3": "SGP",
+    "phoneCode": "+65",
+    "regions": []
+  },
+  {
+    "name": "Slovakia",
+    "iso2": "SK",
+    "iso3": "SVK",
+    "phoneCode": "+421",
+    "regions": []
+  },
+  {
+    "name": "Slovenia",
+    "iso2": "SI",
+    "iso3": "SVN",
+    "phoneCode": "+386",
+    "regions": []
+  },
+  {
+    "name": "South Africa",
+    "iso2": "ZA",
+    "iso3": "ZAF",
+    "phoneCode": "+27",
+    "regions": []
+  },
+  {
+    "name": "South Korea",
+    "iso2": "KR",
+    "iso3": "KOR",
+    "phoneCode": "+82",
+    "regions": []
+  },
+  {
+    "name": "Spain",
+    "iso2": "ES",
+    "iso3": "ESP",
+    "phoneCode": "+34",
+    "regions": []
+  },
+  {
+    "name": "Sri Lanka",
+    "iso2": "LK",
+    "iso3": "LKA",
+    "phoneCode": "+94",
+    "regions": []
+  },
+  {
+    "name": "Sweden",
+    "iso2": "SE",
+    "iso3": "SWE",
+    "phoneCode": "+46",
+    "regions": []
+  },
+  {
+    "name": "Switzerland",
+    "iso2": "CH",
+    "iso3": "CHE",
+    "phoneCode": "+41",
+    "regions": []
+  },
+  {
+    "name": "Syria",
+    "iso2": "SY",
+    "iso3": "SYR",
+    "phoneCode": "+963",
+    "regions": []
+  },
+  {
+    "name": "Taiwan",
+    "iso2": "TW",
+    "iso3": "TWN",
+    "phoneCode": "+886",
+    "regions": []
+  },
+  {
+    "name": "Tajikistan",
+    "iso2": "TJ",
+    "iso3": "TJK",
+    "phoneCode": "+992",
+    "regions": []
+  },
+  {
+    "name": "Thailand",
+    "iso2": "TH",
+    "iso3": "THA",
+    "phoneCode": "+66",
+    "regions": []
+  },
+  {
+    "name": "Tunisia",
+    "iso2": "TN",
+    "iso3": "TUN",
+    "phoneCode": "+216",
+    "regions": []
+  },
+  {
+    "name": "Turkey",
+    "iso2": "TR",
+    "iso3": "TUR",
+    "phoneCode": "+90",
+    "regions": []
+  },
+  {
+    "name": "Turkmenistan",
+    "iso2": "TM",
+    "iso3": "TKM",
+    "phoneCode": "+993",
+    "regions": []
+  },
+  {
+    "name": "Ukraine",
+    "iso2": "UA",
+    "iso3": "UKR",
+    "phoneCode": "+380",
+    "regions": []
+  },
+  {
+    "name": "United Arab Emirates",
+    "iso2": "AE",
+    "iso3": "ARE",
+    "phoneCode": "+971",
+    "regions": []
+  },
+  {
+    "name": "United Kingdom",
+    "iso2": "GB",
+    "iso3": "GBR",
+    "phoneCode": "+44",
+    "regions": []
+  },
+  {
+    "name": "United States",
+    "iso2": "US",
+    "iso3": "USA",
+    "phoneCode": "+1",
+    "regions": [
+      { "name": "California", "code": "CA", "areaCodes": ["+1-209", "+1-213", "+1-279", "+1-310", "+1-323", "+1-408", "+1-415", "+1-424", "+1-442", "+1-510", "+1-530", "+1-559", "+1-562"] },
+      { "name": "Texas", "code": "TX", "areaCodes": ["+1-210", "+1-214", "+1-254", "+1-281", "+1-325"] },
+      { "name": "New York", "code": "NY", "areaCodes": ["+1-212", "+1-315", "+1-332", "+1-518", "+1-585"] }
+    ]
+  },
+  {
+    "name": "Uzbekistan",
+    "iso2": "UZ",
+    "iso3": "UZB",
+    "phoneCode": "+998",
+    "regions": []
+  },
+  {
+    "name": "Venezuela",
+    "iso2": "VE",
+    "iso3": "VEN",
+    "phoneCode": "+58",
+    "regions": []
+  },
+  {
+    "name": "Vietnam",
+    "iso2": "VN",
+    "iso3": "VNM",
+    "phoneCode": "+84",
+    "regions": []
+  },
+  {
+    "name": "Yemen",
+    "iso2": "YE",
+    "iso3": "YEM",
+    "phoneCode": "+967",
+    "regions": []
+  },
+  {
+    "name": "Zimbabwe",
+    "iso2": "ZW",
+    "iso3": "ZWE",
+    "phoneCode": "+263",
+    "regions": []
+  }
+]
+

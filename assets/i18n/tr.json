@@ -1,0 +1,23 @@
+{
+  "PROFILE": {
+    "FULLNAME": "Ad Soyad",
+    "EMAIL": "Email",
+    "PHONE": "Telefon",
+    "COUNTRY": "Ülke",
+    "LANGUAGE": "Dil",
+    "UPDATE": "Güncelle"
+  },
+  "LANGUAGES": {
+    "tr": "Türkçe",
+    "en": "İngilizce",
+    "de": "Almanca",
+    "fr": "Fransızca",
+    "ar": "Arapça"
+  },
+  "USER_MENU": {
+    "EDIT_PROFILE": "Profili düzenle",
+    "ACCOUNT_SETTINGS": "Hesap ayarları",
+    "SUPPORT": "Destek",
+    "SIGN_OUT": "Çıkış yap"
+  }
+}
