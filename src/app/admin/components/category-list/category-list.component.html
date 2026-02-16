@@ -7,14 +7,6 @@
 <div class="header">
   <div>
     <h2>Kategoriler</h2>
-    <div class="quick-actions">
-      <button class="btn-quick" routerLink="/admin/category-items">
-        📄 Tüm Kategori Öğeleri
-      </button>
-      <button class="btn-quick" routerLink="/admin/category-item-details">
-        📝 Tüm Öğe Detayları
-      </button>
-    </div>
   </div>
   <button class="btn-primary" routerLink="/admin/categories/new">
     + Yeni Kategori
@@ -35,18 +27,18 @@
   </thead>
   <tbody>
     <tr *ngFor="let c of categories">
-      <td class="font-medium">{{ c.name }}</td>
-      <td>{{ c.description }}</td>
-      <td><span class="icon-badge">{{ c.icon }}</span></td>
-      <td>
+      <td data-label="Başlık" class="font-medium">{{ c.name }}</td>
+      <td data-label="Açıklama">{{ c.description }}</td>
+      <td data-label="Icon"><span class="icon-badge">{{ c.icon }}</span></td>
+      <td data-label="Durum">
         <span [class]="c.isActive ? 'badge-success' : 'badge-danger'">
           {{ c.isActive ? 'Aktif' : 'Pasif' }}
         </span>
       </td>
-      <td>
-        <button class="btn-action btn-info" [routerLink]="['/admin/category-items']" [queryParams]="{ categoryId: c.id }">Öğeler</button>
+      <td data-label="İşlemler">
         <button class="btn-action btn-warning" (click)="toggle(c)">Aktif/Pasif</button>
         <button class="btn-action btn-edit" (click)="edit(c)">Düzenle</button>
+        <button class="btn-action btn-info" [routerLink]="['/admin/category-items']" [queryParams]="{ categoryId: c.id }">Alt Kategoriler</button>
       </td>
     </tr>
     <tr *ngIf="categories.length === 0">
