@@ -83,7 +83,7 @@ export class PopulersFormComponent implements OnInit {
 
     formData.append('id', this.populerId?.toString() ?? '0');
     formData.append('title', this.form.value.title);
-    formData.append('rating', this.form.value.rating?.toString() ?? '0');
+    formData.append('rating', this.form.value.rating?.toString().replace('.', ',') ?? '0');
     formData.append('price', this.form.value.price?.toString() ?? '0');
     formData.append('reviews', this.form.value.reviews?.toString() ?? '0');
     formData.append('imageUrl', this.form.value.imageUrl ?? '');
