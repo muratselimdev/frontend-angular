@@ -18,6 +18,11 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modern-card">
       <div class="modern-card-body">
 
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger" style="margin-bottom: 20px; padding: 12px; border-radius: 4px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+          {{ errorMessage }}
+        </div>
+
         <!-- Temel Bilgiler -->
         <h3 class="modern-section-title">
           <span class="modern-section-marker"></span>
@@ -41,41 +46,45 @@
 
         <div class="modern-grid-1">
           <div class="modern-field">
-            <label class="modern-label">Başlık <span class="modern-req">*</span></label>
+            <label class="modern-label">Etiket <span class="modern-req">*</span></label>
             <input
               type="text"
-              formControlName="title"
+              formControlName="label"
               class="modern-input"
-              placeholder="Başlık giriniz"
+              placeholder="Etiket giriniz"
               required
             />
-            <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="modern-error">
-              Başlık zorunludur
+            <div *ngIf="form.get('label')?.invalid && form.get('label')?.touched" class="modern-error">
+              Etiket zorunludur
             </div>
           </div>
         </div>
 
         <div class="modern-grid-1">
           <div class="modern-field">
-            <label class="modern-label">Kısa Açıklama</label>
+            <label class="modern-label">Detay</label>
             <textarea
-              formControlName="description"
+              formControlName="detail"
               class="modern-input"
               rows="3"
-              placeholder="Kısa açıklama giriniz"
+              placeholder="Detay giriniz"
             ></textarea>
           </div>
         </div>
 
         <div class="modern-grid-1">
           <div class="modern-field">
-            <label class="modern-label">İçerik</label>
-            <textarea
-              formControlName="content"
+            <label class="modern-label">Video URL</label>
+            <input
+              type="text"
+              formControlName="videoUrl"
               class="modern-input"
-              rows="6"
-              placeholder="Detaylı içerik giriniz"
-            ></textarea>
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            <small style="display:block; margin-top:6px; color:#6b7280;">YouTube watch/share/shorts linkleri kabul edilir, kaydederken embed formatina cevrilir.</small>
+            <div *ngIf="form.get('videoUrl')?.errors?.['youtubeUrl'] && form.get('videoUrl')?.touched" class="modern-error">
+              Video baglantisi sadece YouTube linki olmalidir.
+            </div>
           </div>
         </div>
 
@@ -87,7 +96,7 @@
           Ek Bilgiler
         </h3>
 
-        <div class="modern-grid-2">
+        <div class="modern-grid-1">
           <div class="modern-field">
             <label class="modern-label">Resim</label>
             <input
@@ -96,19 +105,19 @@
               accept="image/*"
               class="modern-input-file"
             />
-            <div *ngIf="previewUrl" class="modern-image-preview">
-              <img [src]="previewUrl" alt="Preview" />
+            <small style="display:block; margin-top:6px; color:#6b7280;">
+              Gorsel URL otomatik olusturulur ve Backblaze yoluna kaydedilir.
+            </small>
+            <div *ngIf="categoryItemDetailId && previewUrl && !selectedFile" style="margin-top:10px;">
+              <label class="modern-label" style="font-size:0.78rem; color:#6b7280;">Mevcut Resim URL</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" [value]="previewUrl" readonly class="modern-input" style="font-size:0.8rem; color:#374151; background:#f9fafb;" />
+                <a [href]="previewUrl" target="_blank" rel="noopener noreferrer" style="flex-shrink:0; color:#6366f1; font-size:0.8rem; text-decoration:underline; white-space:nowrap;">Goruntule</a>
+              </div>
             </div>
-          </div>
-
-          <div class="modern-field">
-            <label class="modern-label">Sıra</label>
-            <input
-              type="number"
-              formControlName="order"
-              class="modern-input"
-              placeholder="Sıra numarası"
-            />
+            <div *ngIf="previewUrl && showPreview" class="modern-image-preview" style="margin-top:10px;">
+              <img [src]="previewUrl" alt="Onizleme" (error)="onPreviewLoadError()" />
+            </div>
           </div>
         </div>
 

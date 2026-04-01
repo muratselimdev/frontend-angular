@@ -33,20 +33,29 @@
 <table class="modern-table" *ngIf="!loading">
   <thead>
     <tr>
-      <th>Başlık</th>
-      <th>Açıklama</th>
+      <th>Etiket</th>
+      <th>Detay</th>
       <th>Kategori Öğesi</th>
-      <th>Sıra</th>
+      <th>Görsel</th>
       <th>Durum</th>
       <th>İşlemler</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let detail of categoryItemDetails; trackBy: trackByDetailId">
-      <td class="font-medium">{{ detail.title }}</td>
-      <td>{{ detail.description }}</td>
+      <td class="font-medium">{{ detail.label || detail.title }}</td>
+      <td class="detail-cell" [title]="detail.detail || detail.description || ''">{{ detail.detail || detail.description }}</td>
       <td><span class="category-badge">{{ getCategoryItemName(detail.categoryItemId) }}</span></td>
-      <td><span class="order-badge">{{ detail.order }}</span></td>
+      <td>
+        <ng-container *ngIf="getImageUrl(detail.imageUrl || '') as imgSrc; else noImg">
+          <a [href]="imgSrc" target="_blank" rel="noopener noreferrer" class="thumb-link" title="Görseli aç">
+            <img [src]="imgSrc" alt="Görsel" class="image-thumb" (error)="$any($event.target).style.display='none'" />
+          </a>
+        </ng-container>
+        <ng-template #noImg>
+          <span class="no-image">-</span>
+        </ng-template>
+      </td>
       <td>
         <span [class]="detail.isActive ? 'badge-success' : 'badge-danger'">
           {{ detail.isActive ? 'Aktif' : 'Pasif' }}

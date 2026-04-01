@@ -74,7 +74,8 @@ export class AdminLayoutComponent implements OnInit {
         { label: 'Kategoriler', path: '/admin/categories', icon: '�' },
 
         { label: 'Kampanyalar', path: '/admin/campaigns', icon: '🎯' },
-        { label: 'Popüller', path: '/admin/populers', icon: '⭐' }
+        { label: 'Popüller', path: '/admin/populers', icon: '⭐' },
+        { label: 'Hikayeler', path: '/admin/stories', icon: '📚' }
       ]
     },
     {

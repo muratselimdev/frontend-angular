@@ -5,6 +5,7 @@ import { timeout, catchError, retry, takeUntil, debounceTime, distinctUntilChang
 import { CategoryItemDetailService } from '../../services/category-item-detail.service';
 import { CategoryItemService } from '../../services/category-item.service';
 import { CategoryItemDetail } from '../../models/category-item-detail.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'admin-category-item-detail-list',
@@ -119,6 +120,13 @@ export class CategoryItemDetailListComponent implements OnInit, OnDestroy {
 
   getCategoryItemName(categoryItemId: number): string {
     return this.categoryItemsMap.get(categoryItemId)?.name || 'N/A';
+  }
+
+  getImageUrl(imageUrl: string | undefined): string | null {
+    if (!imageUrl) return null;
+    const trimmed = imageUrl.trim();
+    if (!trimmed || ['string', 'null', 'undefined'].includes(trimmed.toLowerCase())) return null;
+    return trimmed.startsWith('http') ? trimmed : `${environment.storageBaseUrl}/${trimmed}`;
   }
 
   trackByDetailId(index: number, detail: CategoryItemDetail): number {

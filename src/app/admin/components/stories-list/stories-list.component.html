@@ -1,0 +1,157 @@
+<div class="stories-page">
+  <div class="header">
+    <div>
+      <h2>Hikayeler</h2>
+      <p class="subtitle">Story ve StoryItems yonetimi</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">Yeni Hikaye</h3>
+    <div class="grid">
+      <div class="field">
+        <label>Description</label>
+        <input [(ngModel)]="newStory.description" placeholder="Description" />
+      </div>
+      <div class="field">
+        <label>Created At</label>
+        <input type="datetime-local" [(ngModel)]="newStory.createdAt" (ngModelChange)="onStoryCreatedAtChanged()" />
+      </div>
+      <div class="field">
+        <label>End Date</label>
+        <input type="datetime-local" [(ngModel)]="newStory.endDate" [disabled]="!newStory.temp" />
+      </div>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="newStory.isActive" /> Aktif
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="newStory.temp" (change)="onStoryTempChanged()" /> Temp
+      </label>
+      <button class="btn-action btn-primary" (click)="createStory()" [disabled]="savingStory">
+        {{ savingStory ? 'Kaydediliyor...' : '+ Hikaye Ekle' }}
+      </button>
+
+      <div class="temp-helper-row">
+        <small class="helper-text" *ngIf="newStory.temp">Temp acikken otomatik: Created At + 24 saat</small>
+        <small class="helper-text" *ngIf="!newStory.temp">Temp kapaliyken hikaye suresizdir.</small>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loadingStories" class="loading">Hikayeler yükleniyor...</div>
+  <table class="modern-table" *ngIf="!loadingStories">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Description</th>
+        <th>CreatedAt</th>
+        <th>EndDate</th>
+        <th>Temp</th>
+        <th>Durum</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let s of stories; trackBy: trackById">
+        <tr>
+          <td data-label="ID" class="font-medium">{{ s.id }}</td>
+          <td data-label="Description">{{ s.description || '-' }}</td>
+          <td data-label="CreatedAt">{{ s.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td data-label="EndDate">{{ s.endDate | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td data-label="Temp">{{ s.temp ? 'true' : 'false' }}</td>
+          <td data-label="Durum">
+            <span [class]="s.isActive ? 'badge-success' : 'badge-danger'">
+              {{ s.isActive ? 'Aktif' : 'Pasif' }}
+            </span>
+          </td>
+          <td data-label="İşlemler">
+            <button class="btn-action btn-secondary" (click)="toggleStoryItemsPanel(s.id)">
+              {{ expandedStoryId === s.id ? 'Öğeleri Gizle' : 'Öğeleri Göster' }}
+            </button>
+            <button class="btn-action btn-warning" (click)="toggleStory(s)">Aktif/Pasif</button>
+          </td>
+        </tr>
+        <tr *ngIf="expandedStoryId === s.id" class="sub-row">
+          <td colspan="7" class="sub-cell">
+            <div class="sub-card">
+              <h4 class="sub-title">Yeni Hikaye Öğesi</h4>
+              <div class="grid sub-grid">
+                <div class="field">
+                  <label>Story Link</label>
+                  <input [(ngModel)]="getStoryItemDraft(s.id).storyLink" placeholder="StoryLink" />
+                </div>
+                <div class="field">
+                  <label>Like</label>
+                  <input type="number" [(ngModel)]="getStoryItemDraft(s.id).like" placeholder="Like" />
+                </div>
+                <div class="field">
+                  <label>Comment</label>
+                  <input [(ngModel)]="getStoryItemDraft(s.id).comment" placeholder="Comment" />
+                </div>
+                <div class="field">
+                  <label>Created At</label>
+                  <input type="datetime-local" [(ngModel)]="getStoryItemDraft(s.id).createdAt" />
+                </div>
+                <div class="field">
+                  <label>End Date</label>
+                  <input type="datetime-local" [(ngModel)]="getStoryItemDraft(s.id).endDate" />
+                </div>
+                <div class="field file-field">
+                  <label>File</label>
+                  <input type="file" (change)="onStoryItemFileSelected(s.id, $event)" />
+                </div>
+                <label class="check">
+                  <input type="checkbox" [(ngModel)]="getStoryItemDraft(s.id).isActive" /> Aktif
+                </label>
+                <button class="btn-action btn-primary" (click)="createStoryItem(s.id)" [disabled]="isStoryItemSaving(s.id)">
+                  {{ isStoryItemSaving(s.id) ? 'Kaydediliyor...' : '+ Hikaye Öğesi Ekle' }}
+                </button>
+              </div>
+
+              <div *ngIf="loadingStoryItems" class="loading sub-loading">Hikaye öğeleri yükleniyor...</div>
+              <table class="modern-table sub-table" *ngIf="!loadingStoryItems">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>StoryLink</th>
+                    <th>Like</th>
+                    <th>Comment</th>
+                    <th>CreatedAt</th>
+                    <th>EndDate</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let si of getStoryItemsByStoryId(s.id); trackBy: trackById">
+                    <td data-label="ID" class="font-medium">{{ si.id }}</td>
+                    <td data-label="StoryLink" class="truncate-cell">{{ si.storyLink || '-' }}</td>
+                    <td data-label="Like">{{ si.like ?? 0 }}</td>
+                    <td data-label="Comment" class="truncate-cell">{{ si.comment || '-' }}</td>
+                    <td data-label="CreatedAt">{{ si.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+                    <td data-label="EndDate">{{ si.endDate | date:'dd.MM.yyyy HH:mm' }}</td>
+                    <td data-label="Durum">
+                      <span [class]="si.isActive ? 'badge-success' : 'badge-danger'">
+                        {{ si.isActive ? 'Aktif' : 'Pasif' }}
+                      </span>
+                    </td>
+                    <td data-label="İşlemler">
+                      <button class="btn-action btn-warning" (click)="toggleStoryItem(si)">Aktif/Pasif</button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="getStoryItemsByStoryId(s.id).length === 0">
+                    <td colspan="8" class="empty-state">Bu hikayeye ait öğe yok</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+      <tr *ngIf="stories.length === 0">
+        <td colspan="7" class="empty-state">Henüz hikaye yok</td>
+      </tr>
+    </tbody>
+  </table>
+
+  </div>

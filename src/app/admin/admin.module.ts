@@ -57,6 +57,7 @@ import { CategoryItemDetailFormComponent } from './components/category-item-deta
 import { AdminPanel } from './components/admin-panel/admin-panel';
 import { PopulersListComponent } from './components/populers-list/populers-list.component';
 import { PopulersFormComponent } from './components/populers-form/populers-form.component';
+import { StoriesListComponent } from './components/stories-list/stories-list.component';
 
 @NgModule({
   declarations: [
@@ -109,7 +110,8 @@ import { PopulersFormComponent } from './components/populers-form/populers-form.
     CampaignFormComponent,
     AdminPanel,
     PopulersListComponent,
-    PopulersFormComponent
+    PopulersFormComponent,
+    StoriesListComponent
   ],
   imports: [
     CommonModule,

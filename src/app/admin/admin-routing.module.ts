@@ -49,6 +49,7 @@ import { CategoryItemDetailFormComponent } from './components/category-item-deta
 import { AdminPanel } from './components/admin-panel/admin-panel';
 import { PopulersListComponent } from './components/populers-list/populers-list.component';
 import { PopulersFormComponent } from './components/populers-form/populers-form.component';
+import { StoriesListComponent } from './components/stories-list/stories-list.component';
 
 const routes: Routes = [
   {
@@ -110,6 +111,8 @@ const routes: Routes = [
       { path: 'populers', component: PopulersListComponent },
       { path: 'populers/new', component: PopulersFormComponent },
       { path: 'populers/:id', component: PopulersFormComponent },
+
+      { path: 'stories', component: StoriesListComponent },
 
       // Oteller
       { path: 'hotels', component: HotelsListComponent },
