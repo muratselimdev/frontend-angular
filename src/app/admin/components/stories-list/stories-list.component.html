@@ -39,7 +39,7 @@
   </div>
 
   <div *ngIf="loadingStories" class="loading">Hikayeler yükleniyor...</div>
-  <table class="modern-table" *ngIf="!loadingStories">
+  <table class="modern-table main-table" *ngIf="!loadingStories">
     <thead>
       <tr>
         <th>ID</th>
@@ -53,7 +53,7 @@
     </thead>
     <tbody>
       <ng-container *ngFor="let s of stories; trackBy: trackById">
-        <tr>
+        <tr class="story-row">
           <td data-label="ID" class="font-medium">{{ s.id }}</td>
           <td data-label="Description">{{ s.description || '-' }}</td>
           <td data-label="CreatedAt">{{ s.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
@@ -113,7 +113,7 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>StoryLink</th>
+                    <th>Media</th>
                     <th>Like</th>
                     <th>Comment</th>
                     <th>CreatedAt</th>
@@ -125,7 +125,31 @@
                 <tbody>
                   <tr *ngFor="let si of getStoryItemsByStoryId(s.id); trackBy: trackById">
                     <td data-label="ID" class="font-medium">{{ si.id }}</td>
-                    <td data-label="StoryLink" class="truncate-cell">{{ si.storyLink || '-' }}</td>
+                    <td data-label="Media" class="media-cell">
+                      <ng-container *ngIf="getStoryItemMedia(si) as media; else noStoryMedia">
+                        <div class="media-preview" [ngSwitch]="media.type">
+                          <a *ngSwitchCase="'image'" class="media-preview-link" [href]="media.url" target="_blank" rel="noopener noreferrer">
+                            <img [src]="media.url" alt="Story media" class="media-preview-image" loading="lazy" />
+                          </a>
+
+                          <div *ngSwitchCase="'video'" class="media-preview-stack">
+                            <video class="media-preview-video" [src]="media.url" controls preload="metadata"></video>
+                            <a class="media-open-link" [href]="media.url" target="_blank" rel="noopener noreferrer">Open video</a>
+                          </div>
+
+                          <div *ngSwitchCase="'loading'" class="media-preview-stack">
+                            <span class="media-status">Preview loading...</span>
+                            <a class="media-open-link" [href]="media.url" target="_blank" rel="noopener noreferrer">Open media</a>
+                          </div>
+
+                          <a *ngSwitchDefault class="media-open-link" [href]="media.url" target="_blank" rel="noopener noreferrer">Open media</a>
+                        </div>
+                      </ng-container>
+
+                      <ng-template #noStoryMedia>
+                        -
+                      </ng-template>
+                    </td>
                     <td data-label="Like">{{ si.like ?? 0 }}</td>
                     <td data-label="Comment" class="truncate-cell">{{ si.comment || '-' }}</td>
                     <td data-label="CreatedAt">{{ si.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>

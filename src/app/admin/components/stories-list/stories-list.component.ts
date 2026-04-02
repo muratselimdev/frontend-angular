@@ -4,6 +4,13 @@ import { Story } from '../../models/story.model';
 import { StoryItem } from '../../models/story-item.model';
 import { StoryService } from '../../services/story.service';
 
+type StoryItemMediaType = 'image' | 'video' | 'other' | 'loading';
+
+interface StoryItemMediaPreview {
+  url: string;
+  type: StoryItemMediaType;
+}
+
 @Component({
   selector: 'admin-stories-list',
   templateUrl: './stories-list.component.html',
@@ -14,6 +21,8 @@ export class StoriesListComponent implements OnInit {
   stories: Story[] = [];
   storyItems: StoryItem[] = [];
   expandedStoryId: number | null = null;
+  storyItemMediaMap: Record<number, StoryItemMediaPreview> = {};
+  private storyItemMediaDetectionInFlight: Record<number, boolean> = {};
 
   loadingStories = false;
   loadingStoryItems = false;
@@ -273,10 +282,102 @@ export class StoriesListComponent implements OnInit {
     return this.storyItemDrafts[storyId];
   }
 
+  getStoryItemMedia(item: StoryItem): StoryItemMediaPreview | null {
+    const url = this.getStoryItemMediaUrl(item);
+    if (!url) {
+      return null;
+    }
+
+    const cached = this.storyItemMediaMap[item.id];
+    if (cached?.url === url) {
+      return cached;
+    }
+
+    const type = this.inferMediaType(url);
+    const preview: StoryItemMediaPreview = {
+      url,
+      type: type ?? 'loading'
+    };
+
+    this.storyItemMediaMap[item.id] = preview;
+
+    if (preview.type === 'loading') {
+      this.detectMediaType(item.id, url);
+    }
+
+    return preview;
+  }
+
   private appendIfPresent(formData: FormData, key: string, value?: string) {
     if (value && value.trim().length > 0) {
       formData.append(key, value.trim());
     }
+  }
+
+  private getStoryItemMediaUrl(item: StoryItem): string {
+    return item.storyLink?.trim() || item.fileUrl?.trim() || '';
+  }
+
+  private inferMediaType(url: string): StoryItemMediaType | null {
+    const normalizedUrl = url.toLowerCase();
+
+    if (normalizedUrl.startsWith('data:image/')) {
+      return 'image';
+    }
+
+    if (normalizedUrl.startsWith('data:video/')) {
+      return 'video';
+    }
+
+    if (/\.(avif|bmp|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(url)) {
+      return 'image';
+    }
+
+    if (/\.(m4v|mov|mp4|ogg|ogv|webm)(\?|#|$)/i.test(url)) {
+      return 'video';
+    }
+
+    return null;
+  }
+
+  private detectMediaType(storyItemId: number, url: string) {
+    if (this.storyItemMediaDetectionInFlight[storyItemId]) {
+      return;
+    }
+
+    this.storyItemMediaDetectionInFlight[storyItemId] = true;
+
+    const image = new Image();
+    image.onload = () => this.updateStoryItemMediaType(storyItemId, url, 'image');
+    image.onerror = () => this.detectVideoType(storyItemId, url);
+    image.src = url;
+  }
+
+  private detectVideoType(storyItemId: number, url: string) {
+    const video = document.createElement('video');
+    const finalize = (type: StoryItemMediaType) => {
+      video.removeAttribute('src');
+      video.load();
+      this.updateStoryItemMediaType(storyItemId, url, type);
+    };
+
+    video.preload = 'metadata';
+    video.onloadeddata = () => finalize('video');
+    video.onerror = () => finalize('other');
+    video.src = url;
+    video.load();
+  }
+
+  private updateStoryItemMediaType(storyItemId: number, url: string, type: StoryItemMediaType) {
+    this.ngZone.run(() => {
+      const current = this.storyItemMediaMap[storyItemId];
+      if (current?.url === url) {
+        this.storyItemMediaMap[storyItemId] = { url, type };
+      }
+
+      this.storyItemMediaDetectionInFlight[storyItemId] = false;
+      this.cdr.detectChanges();
+    });
   }
 
   private normalizeArray<T>(res: any): T[] {
