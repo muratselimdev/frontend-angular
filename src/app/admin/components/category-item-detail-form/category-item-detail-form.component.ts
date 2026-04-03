@@ -243,6 +243,7 @@ export class CategoryItemDetailFormComponent implements OnInit, OnDestroy {
       categoryItemId: Number(this.form.value.categoryItemId),
       label: cleanedLabel,
       detail: cleanedDetail,
+      imageUrl: this.selectedFile ? '' : this.cleanInputValue(this.previewUrl),
       videoUrl: normalizedVideoUrl,
       isActive: !!this.form.value.isActive,
       imageFile: this.selectedFile

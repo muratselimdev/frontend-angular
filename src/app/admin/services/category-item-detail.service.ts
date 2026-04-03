@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { CategoryItemDetail } from '../models/category-item-detail.model';
 
@@ -45,17 +46,24 @@ export class CategoryItemDetailService {
   }
 
   private toFormData(data: {
+    id?: number;
     categoryItemId: number;
     label: string;
     detail?: string;
+    imageUrl?: string;
     videoUrl?: string;
     isActive: boolean;
     imageFile?: File;
   }): FormData {
     const formData = new FormData();
+    if (data.id !== undefined && data.id !== null) {
+      formData.append('Id', String(data.id));
+      formData.append('id', String(data.id));
+    }
     formData.append('CategoryItemId', String(data.categoryItemId));
     formData.append('Label', data.label ?? '');
     formData.append('Detail', data.detail ?? '');
+    formData.append('ImageUrl', data.imageUrl ?? '');
     formData.append('VideoUrl', data.videoUrl ?? '');
     formData.append('IsActive', String(data.isActive));
 
@@ -64,6 +72,10 @@ export class CategoryItemDetailService {
     }
 
     return formData;
+  }
+
+  private isRouteOrMethodError(err: any): boolean {
+    return err?.status === 404 || err?.status === 405;
   }
 
   getAll(categoryItemId?: number): Observable<CategoryItemDetail[]> {
@@ -91,6 +103,7 @@ export class CategoryItemDetailService {
     categoryItemId: number;
     label: string;
     detail?: string;
+    imageUrl?: string;
     videoUrl?: string;
     isActive: boolean;
     imageFile?: File;
@@ -109,14 +122,16 @@ export class CategoryItemDetailService {
     categoryItemId: number;
     label: string;
     detail?: string;
+    imageUrl?: string;
     videoUrl?: string;
     isActive: boolean;
     imageFile?: File;
   }) {
-    return this.http.post(`${this.baseUrl}/update/${id}`, this.toFormData(data)).pipe(
+    // Backend currently exposes only POST /create for writes on this resource.
+    return this.http.post(`${this.baseUrl}/create`, this.toFormData({ ...data, id })).pipe(
       catchError((err) => {
-        if (err?.status === 404 || err?.status === 405) {
-          return this.http.put(`${this.baseUrl}/${id}`, this.toFormData(data));
+        if (this.isRouteOrMethodError(err)) {
+          return this.http.post(this.baseUrl, this.toFormData({ ...data, id }));
         }
         return throwError(() => err);
       })
@@ -128,6 +143,15 @@ export class CategoryItemDetailService {
   }
 
   toggle(id: number) {
-    return this.http.patch(`${this.baseUrl}/${id}/toggle`, {});
+    return this.getById(id).pipe(
+      switchMap((item) => this.update(id, {
+        categoryItemId: Number(item.categoryItemId),
+        label: item.label ?? item.title ?? '',
+        detail: item.detail ?? item.description ?? item.content ?? '',
+        imageUrl: item.imageUrl ?? item.image ?? '',
+        videoUrl: item.videoUrl ?? '',
+        isActive: !Boolean(item.isActive),
+      }))
+    );
   }
 }
