@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { CategoryItemDetailService } from '../../services/category-item-detail.service';
 import { CategoryItemService } from '../../services/category-item.service';
-import { timeout, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { timeout, Subject, of } from 'rxjs';
+import { catchError, retry, takeUntil } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -17,6 +17,7 @@ export class CategoryItemDetailFormComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   categoryItemDetailId?: number;
   loading = false;
+  loadingCategoryItems = false;
   selectedFile?: File;
   previewUrl?: string;
   showPreview = false;
@@ -55,14 +56,31 @@ export class CategoryItemDetailFormComponent implements OnInit, OnDestroy {
   }
 
   loadCategoryItems() {
-    this.categoryItemService.getAll()
+    this.loadingCategoryItems = true;
+    this.form.get('categoryItemId')?.disable({ emitEvent: false });
+
+    this.categoryItemService.getAllCached()
       .pipe(
         timeout(10000), // 10 second timeout
+        retry(1),
+        catchError((err) => {
+          console.error('Failed to load category items:', err);
+          return of([]);
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe({
-        next: (res) => this.categoryItems = res,
-        error: (err) => console.error('Failed to load category items:', err)
+        next: (res) => {
+          this.categoryItems = res;
+          this.loadingCategoryItems = false;
+          this.form.get('categoryItemId')?.enable({ emitEvent: false });
+
+          const currentValue = this.form.get('categoryItemId')?.value;
+          if (currentValue !== null && currentValue !== undefined) {
+            const normalized = Number(currentValue);
+            this.form.patchValue({ categoryItemId: Number.isNaN(normalized) ? null : normalized }, { emitEvent: false });
+          }
+        }
       });
   }
 

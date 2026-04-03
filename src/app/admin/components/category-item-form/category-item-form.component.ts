@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { catchError, retry, timeout } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { CategoryItemService } from '../../services/category-item.service';
 import { CategoryService } from '../../services/category.service';
 
@@ -16,10 +16,10 @@ export class CategoryItemFormComponent implements OnInit {
   form!: FormGroup;
   categoryItemId?: number;
   loading = false;
+  loadingCategories = false;
   selectedFile?: File;
   previewUrl?: string;
   categories: any[] = [];
-  private baseUrl = `${environment.apiUrl}/api/admin/category-items`;
 
   constructor(
     private fb: FormBuilder,
@@ -27,7 +27,6 @@ export class CategoryItemFormComponent implements OnInit {
     private router: Router,
     private categoryItemService: CategoryItemService,
     private categoryService: CategoryService,
-    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -54,8 +53,25 @@ export class CategoryItemFormComponent implements OnInit {
   }
 
   loadCategories() {
-    this.categoryService.getAll().subscribe(res => {
+    this.loadingCategories = true;
+    this.form.get('categoryId')?.disable({ emitEvent: false });
+    this.categoryService.getAllCached().pipe(
+      timeout(10000),
+      retry(1),
+      catchError((err) => {
+        console.error('Error loading categories:', err);
+        return of([]);
+      })
+    ).subscribe((res) => {
       this.categories = res;
+      this.loadingCategories = false;
+      this.form.get('categoryId')?.enable({ emitEvent: false });
+
+      const currentValue = this.form.get('categoryId')?.value;
+      if (currentValue !== null && currentValue !== undefined) {
+        const normalized = Number(currentValue);
+        this.form.patchValue({ categoryId: Number.isNaN(normalized) ? null : normalized }, { emitEvent: false });
+      }
     });
   }
 
@@ -83,28 +99,19 @@ export class CategoryItemFormComponent implements OnInit {
     });
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.form.invalid) return;
 
     this.loading = true;
-    let imageUrl = this.form.value.image;
-
-    // Upload image if selected
-    if (this.selectedFile) {
-      const formData = new FormData();
-      formData.append('file', this.selectedFile);
-
-      try {
-        const uploadRes: any = await this.http.post(`${environment.apiUrl}/api/upload`, formData).toPromise();
-        imageUrl = uploadRes.url || uploadRes.path;
-      } catch (error) {
-        console.error('Upload error:', error);
-        this.loading = false;
-        return;
-      }
-    }
-
-    const data = { ...this.form.value, image: imageUrl };
+    const data = {
+      categoryId: Number(this.form.value.categoryId),
+      name: (this.form.value.name || '').trim(),
+      description: this.form.value.description || '',
+      icon: this.form.value.icon || '',
+      image: this.form.value.image || '',
+      isActive: !!this.form.value.isActive,
+      imageFile: this.selectedFile,
+    };
 
     const request = this.categoryItemId
       ? this.categoryItemService.update(this.categoryItemId, data)

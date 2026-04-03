@@ -28,11 +28,14 @@
           <div class="modern-field">
             <label class="modern-label">Kategori <span class="modern-req">*</span></label>
             <select formControlName="categoryId" class="modern-input" required>
-              <option [value]="null">Kategori Seçin</option>
-              <option *ngFor="let cat of categories" [value]="cat.id">
+              <option [ngValue]="null">{{ loadingCategories ? 'Kategoriler yukleniyor...' : 'Kategori Secin' }}</option>
+              <option *ngFor="let cat of categories" [ngValue]="cat.id">
                 {{ cat.name }}
               </option>
             </select>
+            <div *ngIf="!loadingCategories && categories.length === 0" class="modern-error">
+              Kategori listesi yuklenemedi. Lutfen sayfayi yenileyin.
+            </div>
             <div *ngIf="form.get('categoryId')?.invalid && form.get('categoryId')?.touched" class="modern-error">
               Kategori seçimi zorunludur
             </div>
