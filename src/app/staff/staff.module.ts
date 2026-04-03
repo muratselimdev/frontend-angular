@@ -12,8 +12,6 @@ import { CallsListComponent } from '../staff/agent/components/calls-list/calls-l
 import { CallDetailComponent } from '../staff/agent/components/call-detail/call-detail.component';
 import { SupervisorDashboardComponent } from '../staff/supervisor/supervisor-dashboard/supervisor-dashboard.component';
 import { SalesManagerDashboardComponent } from '../staff/management/sales-manager-dashboard/sales-manager-dashboard.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from '../auth/auth.interceptor';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from '../shared/shared.module';
@@ -38,9 +36,6 @@ import { CallIncomingModalComponent } from '../shared/components/call-incoming-m
     MatTabsModule,
     MatIconModule,
     SharedModule
-    ],
-    providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true } // 🔹 Sadece staff için aktif
-  ]
+    ]
 })
 export class StaffModule {}

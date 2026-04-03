@@ -31,14 +31,9 @@ export class AuthInterceptor implements HttpInterceptor {
     req.url.startsWith(`${environment.apiUrl}/api/staff`) ||
     req.url.startsWith(`${environment.apiUrl}/api/agent`) ||
     req.url.startsWith(`${environment.apiUrl}/api/admin`);
+    const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
     if (!isStaffEndpoint) {
-      return next.handle(req);
-    }
-
-    // 🚫 Eğer customer veya public API isteği ise, hiç müdahale etme
-    if (!isStaffEndpoint && !req.url.includes('/auth/')) {
-      console.log('[STAFF INTERCEPTOR] Bu istek staff ile ilgili değil, pas geçiliyor.');
       return next.handle(req);
     }
 
@@ -53,20 +48,14 @@ export class AuthInterceptor implements HttpInterceptor {
       console.log('[STAFF INTERCEPTOR] Token bulundu, header eklendi');
       authReq = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          Authorization: `Bearer ${token}`
         }
       });
     } else {
-      console.warn('[STAFF INTERCEPTOR] Token yok → çıplak request gidiyor:', req.url);
-      // Still add cache control headers even without token
-      authReq = req.clone({
-        setHeaders: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      });
+      if (!isAuthEndpoint) {
+        console.warn('[STAFF INTERCEPTOR] Token yok → çıplak request gidiyor:', req.url);
+      }
+      authReq = req;
     }
 
     // 🔹 Hata yakalama

@@ -23,7 +23,7 @@ export class CategoryListComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.service.getAll().subscribe({
+    this.service.getAllCached().subscribe({
       next: (res) => {
         this.categories = res;
         this.loading = false;
@@ -36,7 +36,19 @@ export class CategoryListComponent implements OnInit {
   }
 
   toggle(item: any) {
-    this.service.toggle(item.id).subscribe(() => this.load());
+    this.service.toggle(item.id).subscribe(() => {
+      this.loading = true;
+      this.service.getAllCached(true).subscribe({
+        next: (res) => {
+          this.categories = res;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error reloading categories:', err);
+          this.loading = false;
+        }
+      });
+    });
   }
 
   edit(c: Category) {

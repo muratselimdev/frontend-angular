@@ -11,8 +11,6 @@ import { CustomerLoginComponent } from './components/customer-login/customer-log
 import { CustomerDashboardComponent } from './components/customer-dashboard/customer-dashboard.component';
 import { CustomerRequestsComponent } from './components/customer-requests/customer-requests.component';
 import { CustomerRequestFormComponent } from './components/customer-request-form/customer-request-form.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { CustomerAuthInterceptor } from './interceptors/customer-auth.interceptor';
 import { SharedModule } from "../shared/shared.module";
 import { CustomerRegisterComponent } from './components/customer-register/customer-register.component';
 
@@ -32,9 +30,6 @@ import { CustomerRegisterComponent } from './components/customer-register/custom
     RouterModule,
     CustomerRoutingModule,
     SharedModule
-],
-    providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: CustomerAuthInterceptor, multi: true }
-  ]
+]
 })
 export class CustomerModule {}

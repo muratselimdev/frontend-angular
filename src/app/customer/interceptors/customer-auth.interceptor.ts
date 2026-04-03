@@ -23,6 +23,7 @@ export class CustomerAuthInterceptor implements HttpInterceptor {
 
     // 🔹 Sadece /api/customer ile başlayan istekleri işleme al
     const isCustomerApi = req.url.startsWith(`${environment.apiUrl}/api/customer`);
+    const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
     if (!isCustomerApi) {
       // Diğer tüm istekleri (staff, agent, login vb.) dokunmadan devam ettir
       return next.handle(req);
@@ -37,7 +38,9 @@ export class CustomerAuthInterceptor implements HttpInterceptor {
         setHeaders: { Authorization: `Bearer ${token}` }
       });
     } else {
-      console.warn('[CUSTOMER INTERCEPTOR] Token bulunamadı, çıplak istek gidiyor:', req.url);
+      if (!isAuthEndpoint) {
+        console.warn('[CUSTOMER INTERCEPTOR] Token bulunamadı, çıplak istek gidiyor:', req.url);
+      }
     }
 
     return next.handle(authReq).pipe(
