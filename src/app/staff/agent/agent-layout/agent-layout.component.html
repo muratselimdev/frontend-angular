@@ -19,6 +19,7 @@
         <li *ngFor="let item of menuItems">
           <a
             [routerLink]="item.path"
+            (click)="navigateTo(item.path, $event)"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: !item.children?.length }"
             class="d-flex align-items-center px-3 py-2">
@@ -30,6 +31,7 @@
             <li *ngFor="let child of item.children">
               <a
                 [routerLink]="child.path"
+                (click)="navigateTo(child.path, $event)"
                 routerLinkActive="active"
                 class="submenu-link d-flex align-items-center px-3 py-2">
                 <span *ngIf="child.icon" class="me-2">{{ child.icon }}</span>

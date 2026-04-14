@@ -143,6 +143,22 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
+  navigateTo(path: string, event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (this.router.url === path) {
+      this.router.navigateByUrl('/agent', { skipLocationChange: true }).then(() => {
+        this.router.navigateByUrl(path);
+      });
+      return;
+    }
+
+    this.router.navigateByUrl(path);
+  }
+
   // ✅ Çağrı kabul edildi
   onAcceptCall() {
     if (!this.currentIncomingCall) {

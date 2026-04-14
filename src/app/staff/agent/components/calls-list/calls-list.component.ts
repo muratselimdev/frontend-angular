@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AgentCallsService } from '../../../services/agent-calls.service';
 
@@ -24,7 +24,12 @@ export class CallsListComponent implements OnInit {
   calls: AgentCallVm[] = [];
   loading = false;
 
-  constructor(private api: AgentCallsService, private router: Router) {}
+  constructor(
+    private api: AgentCallsService,
+    private router: Router,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.load();
@@ -39,14 +44,24 @@ export class CallsListComponent implements OnInit {
   }
 
   load() {
-    this.loading = true;
+    this.zone.run(() => {
+      this.loading = true;
+      this.cdr.detectChanges();
+    });
+
     this.api.getMyCalls().subscribe({
       next: res => {
-        this.calls = res;
-        this.loading = false;
+        this.zone.run(() => {
+          this.calls = res;
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       },
       error: _ => {
-        this.loading = false;
+        this.zone.run(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       }
     });
   }

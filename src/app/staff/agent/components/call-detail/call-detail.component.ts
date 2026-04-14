@@ -61,9 +61,6 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   // INIT
   // ===========================================================
   async ngOnInit() {
-    this.callId = Number(this.route.snapshot.paramMap.get('id'));
-    this.requestId = this.callId;
-
     const token = this.auth.token;
     if (!token) {
       this.toastr.error('Oturum geçersiz.');
@@ -119,7 +116,18 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     window.addEventListener('agent-status-changed', this.onAgentStatusChanged.bind(this));
 
-    this.load();
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (!id) {
+        return;
+      }
+
+      this.zone.run(() => {
+        this.callId = id;
+        this.requestId = id;
+        this.load();
+      });
+    });
   }
 
   // ===========================================================
@@ -146,25 +154,33 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   // LOAD DETAILS
   // ===========================================================
   load() {
-    this.loading = true;
+    this.zone.run(() => {
+      this.loading = true;
+      this.data = null;
+      this.cdr.detectChanges();
+    });
 
     this.api.getCallDetail(this.callId).subscribe({
       next: res => {
-        this.data = res;
-        this.requestId = res.id;
+        this.zone.run(() => {
+          this.data = res;
+          this.requestId = res.id;
+          this.data.messages = this.data.messages || [];
 
-        this.data.messages = this.data.messages || [];
+          this.chatService.loadMessageHistory(this.requestId);
+          this.chatService.markAllAsRead(this.requestId, this.agentId);
 
-        this.chatService.loadMessageHistory(this.requestId);
-        this.chatService.markAllAsRead(this.requestId, this.agentId);
-
-        this.loading = false;
-
-        setTimeout(() => this.scrollToBottom(), 200);
+          this.loading = false;
+          this.cdr.detectChanges();
+          setTimeout(() => this.scrollToBottom(), 200);
+        });
       },
       error: () => {
-        this.toastr.error('Detay yüklenemedi');
-        this.loading = false;
+        this.zone.run(() => {
+          this.toastr.error('Detay yüklenemedi');
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
