@@ -1,0 +1,79 @@
+<div class="agent-topbar">
+  <form class="search-form" (ngSubmit)="performSearch()">
+    <span class="search-icon">🔍</span>
+    <input
+      [(ngModel)]="searchTerm"
+      name="topbarSearch"
+      type="search"
+      placeholder="Ara..."
+      aria-label="Ara" />
+  </form>
+
+  <div class="topbar-actions">
+    <button type="button" class="icon-button" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Light mode' : 'Dark mode'">
+      <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+    </button>
+
+    <div class="menu-wrapper">
+      <button type="button" class="icon-button" (click)="toggleNotifications($event)" aria-label="Bildirimler">
+        <span>🔔</span>
+        <span *ngIf="unreadCount > 0" class="notification-dot">{{ unreadCount }}</span>
+      </button>
+
+      <div *ngIf="notificationsOpen" class="dropdown-panel notifications-panel">
+        <div class="dropdown-header">
+          <strong>Bildirimler</strong>
+        </div>
+        <div *ngFor="let item of notifications" class="notification-item">
+          <div>
+            <div class="item-title">{{ item.title }}</div>
+            <div class="item-description">{{ item.description }}</div>
+          </div>
+          <small>{{ item.time }}</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-wrapper">
+      <button type="button" class="icon-button language-button" (click)="toggleLanguageMenu($event)" aria-label="Dil seçimi">
+        <span>🌐</span>
+        <span class="lang-text">{{ currentLanguage | uppercase }}</span>
+      </button>
+
+      <div *ngIf="languageMenuOpen" class="dropdown-panel small-panel">
+        <button type="button" class="dropdown-action" (click)="switchLanguage('tr')">🇹🇷 Türkçe</button>
+        <button type="button" class="dropdown-action" (click)="switchLanguage('en')">🇬🇧 English</button>
+      </div>
+    </div>
+
+    <div class="menu-wrapper user-wrapper">
+      <button type="button" class="user-trigger" (click)="toggleUserMenu($event)">
+        <div class="avatar">{{ getUserInitial() }}</div>
+        <div class="user-meta">
+          <strong>{{ getUserName() }}</strong>
+          <small>{{ getUserEmail() }}</small>
+        </div>
+        <span class="caret">⌄</span>
+      </button>
+
+      <div *ngIf="userMenuOpen" class="dropdown-panel user-panel">
+        <div class="user-summary">
+          <div class="avatar large">{{ getUserInitial() }}</div>
+          <div>
+            <div class="item-title">{{ getUserName() }}</div>
+            <div class="item-description">{{ getUserEmail() }}</div>
+          </div>
+        </div>
+
+        <button type="button" class="dropdown-action" (click)="navigateToProfile()">👤 Profili düzenle</button>
+        <button type="button" class="dropdown-action" (click)="navigateToSettings()">⚙️ Hesap ayarları</button>
+        <button type="button" class="dropdown-action" (click)="navigateToSettings('password')">🔒 Şifre değiştir</button>
+        <button type="button" class="dropdown-action" (click)="navigateToSupport()">❓ Destek</button>
+
+        <div class="dropdown-divider"></div>
+
+        <button type="button" class="dropdown-action danger" (click)="logout()">🚪 Çıkış yap</button>
+      </div>
+    </div>
+  </div>
+</div>

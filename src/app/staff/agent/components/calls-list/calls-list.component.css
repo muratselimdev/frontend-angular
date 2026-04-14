@@ -1,6 +1,233 @@
-.call-detail {
-  display: grid;
-  grid-template-columns: 1fr;
+.requests-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
-.card { border: none; border-radius: 12px; margin-bottom: 12px; }
-.card-header { background-color: #00ffb2; color: #000; font-weight: 600; border-radius: 12px 12px 0 0; }
+
+.requests-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fffd 100%);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.hero-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border-radius: 16px;
+  background: #e8fff7;
+  border: 1px solid #c7f5e6;
+}
+
+.hero-copy h2 {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.hero-copy p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #f9fafb;
+  color: #111827;
+}
+
+.hero-stat strong {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.hero-stat span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.requests-card {
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 13px;
+  color: #64748b;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.customer-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.customer-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.detail-button {
+  border: 0;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: #14b8a6;
+  color: #ffffff;
+  font-weight: 600;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.detail-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 180px;
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+  background: #f8fafc;
+  text-align: center;
+  color: #475569;
+}
+
+.state-loading {
+  min-height: 100px;
+}
+
+.state-empty strong {
+  color: #111827;
+}
+
+.empty-icon {
+  font-size: 28px;
+}
+
+:host-context(.dark-theme) .requests-hero,
+:host-context(.dark-theme) .requests-card {
+  background: #111827;
+  border-color: #374151;
+  box-shadow: none;
+}
+
+:host-context(.dark-theme) .hero-copy h2,
+:host-context(.dark-theme) tbody td,
+:host-context(.dark-theme) .state-empty strong,
+:host-context(.dark-theme) .hero-stat {
+  color: #f9fafb;
+}
+
+:host-context(.dark-theme) .hero-copy p,
+:host-context(.dark-theme) thead th,
+:host-context(.dark-theme) .state-box,
+:host-context(.dark-theme) .hero-stat span {
+  color: #cbd5e1;
+}
+
+:host-context(.dark-theme) .hero-stat,
+:host-context(.dark-theme) .tab-link,
+:host-context(.dark-theme) .state-box,
+:host-context(.dark-theme) tbody tr:hover {
+  background: #1f2937;
+}
+
+:host-context(.dark-theme) thead th,
+:host-context(.dark-theme) tbody td {
+  border-bottom-color: #374151;
+}
+
+@media (max-width: 768px) {
+  .requests-hero {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .hero-stat {
+    align-items: flex-start;
+  }
+}
+

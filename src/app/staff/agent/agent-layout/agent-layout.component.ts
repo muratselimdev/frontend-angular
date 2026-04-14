@@ -11,7 +11,8 @@ import { ToastrService } from 'ngx-toastr';
 interface MenuItem {
   label: string;
   path: string;
-  icon: string;
+  icon?: string;
+  children?: MenuItem[];
 }
 
 @Component({
@@ -22,7 +23,16 @@ interface MenuItem {
 })
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [
-    { label: 'Talepler', path: '/agent/calls', icon: '📋' },
+    {
+      label: 'Talepler',
+      path: '/agent/calls',
+      icon: '📋',
+      children: [
+        { label: 'Açık Talepler', path: '/agent/calls/open', icon: '🟡' },
+        { label: 'Tamamlanmış Talepler', path: '/agent/calls/completed', icon: '✅' },
+        { label: 'İptal Talepler', path: '/agent/calls/cancelled', icon: '❌' }
+      ]
+    },
     { label: 'Mesajlar', path: '/agent/chat', icon: '💬' },
     { label: 'Sesli Arama', path: '/agent/voice', icon: '🎤' }
   ];

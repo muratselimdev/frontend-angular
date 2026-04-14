@@ -1,0 +1,27 @@
+<section class="settings-shell">
+  <div class="settings-header">
+    <div class="settings-icon">⚙️</div>
+    <div>
+      <h3>Hesap Ayarları</h3>
+      <p>Şifre değişikliği ve temel güvenlik ayarlarınızı buradan yönetebilirsiniz.</p>
+    </div>
+  </div>
+
+  <div id="password" class="settings-form">
+    <div class="field full">
+      <label>Mevcut Şifre</label>
+      <input [(ngModel)]="currentPassword" type="password" placeholder="••••••" />
+    </div>
+    <div class="field">
+      <label>Yeni Şifre</label>
+      <input [(ngModel)]="newPassword" type="password" placeholder="En az 6 karakter" />
+    </div>
+    <div class="field">
+      <label>Yeni Şifre Tekrar</label>
+      <input [(ngModel)]="confirmPassword" type="password" placeholder="Yeni şifreyi tekrar girin" />
+    </div>
+    <div class="field full">
+      <button class="primary-btn" (click)="changePassword()">Şifreyi Güncelle</button>
+    </div>
+  </div>
+</section>

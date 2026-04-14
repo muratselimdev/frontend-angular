@@ -127,11 +127,10 @@ export class CategoryItemDetailService {
     isActive: boolean;
     imageFile?: File;
   }) {
-    // Backend currently exposes only POST /create for writes on this resource.
-    return this.http.post(`${this.baseUrl}/create`, this.toFormData({ ...data, id })).pipe(
+    return this.http.put(`${this.baseUrl}/update/${id}`, this.toFormData({ ...data, id })).pipe(
       catchError((err) => {
         if (this.isRouteOrMethodError(err)) {
-          return this.http.post(this.baseUrl, this.toFormData({ ...data, id }));
+          return this.http.put(`${this.baseUrl}/${id}`, this.toFormData({ ...data, id }));
         }
         return throwError(() => err);
       })
@@ -143,15 +142,19 @@ export class CategoryItemDetailService {
   }
 
   toggle(id: number) {
-    return this.getById(id).pipe(
-      switchMap((item) => this.update(id, {
-        categoryItemId: Number(item.categoryItemId),
-        label: item.label ?? item.title ?? '',
-        detail: item.detail ?? item.description ?? item.content ?? '',
-        imageUrl: item.imageUrl ?? item.image ?? '',
-        videoUrl: item.videoUrl ?? '',
-        isActive: !Boolean(item.isActive),
-      }))
+    return this.http.patch(`${this.baseUrl}/${id}/toggle`, {}).pipe(
+      catchError(() => {
+        return this.getById(id).pipe(
+          switchMap((item) => this.update(id, {
+            categoryItemId: Number(item.categoryItemId),
+            label: item.label ?? item.title ?? '',
+            detail: item.detail ?? item.description ?? item.content ?? '',
+            imageUrl: item.imageUrl ?? item.image ?? '',
+            videoUrl: item.videoUrl ?? '',
+            isActive: !Boolean(item.isActive),
+          }))
+        );
+      })
     );
   }
 }

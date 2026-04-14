@@ -1,0 +1,28 @@
+<section class="profile-shell">
+  <div class="profile-header">
+    <div class="profile-icon">👤</div>
+    <div>
+      <h3>Profil Bilgileri</h3>
+      <p>Kullanıcı detaylarınızı buradan görüntüleyebilirsiniz.</p>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <div class="info-card">
+      <label>Ad Soyad</label>
+      <div>{{ auth.profile?.firstName }} {{ auth.profile?.lastName }}</div>
+    </div>
+    <div class="info-card">
+      <label>E-posta</label>
+      <div>{{ auth.profile?.email }}</div>
+    </div>
+    <div class="info-card">
+      <label>Rol</label>
+      <div>{{ auth.profile?.role }}</div>
+    </div>
+    <div class="info-card">
+      <label>Kullanıcı ID</label>
+      <div>{{ auth.profile?.id }}</div>
+    </div>
+  </div>
+</section>

@@ -1,30 +1,59 @@
-<div class="card shadow p-3">
-  <h3>📋 Müşteri Taleplerim</h3>
+<section class="requests-page">
+  <div class="requests-hero">
+    <div class="hero-icon">📋</div>
+    <div class="hero-copy">
+      <h2>{{ title }}</h2>
+      <p>Talepleri durumlarına göre görüntüleyebilirsiniz.</p>
+    </div>
+    <div class="hero-stat">
+      <strong>{{ filteredCalls.length }}</strong>
+      <span>Görüntülenen kayıt</span>
+    </div>
+  </div>
 
-  <table class="table table-hover mt-3" *ngIf="calls.length > 0; else noData">
-    <thead>
-      <tr>
-        <th>Müşteri</th>
-        <th>Tedavi</th>
-        <th>Durum</th>
-        <th>Tarih</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of calls">
-        <td>{{ c.customerName }}</td>
-        <td>{{ c.subject }}</td>
-        <td>{{ c.status }}</td>
-        <td>{{ c.createdAt | date:'short' }}</td>
-        <td>
-          <button class="btn btn-sm btn-primary" (click)="openDetail(c.id)">Detay</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="requests-card">
+    <div *ngIf="loading" class="state-box state-loading">
+      Talepler yükleniyor...
+    </div>
 
-  <ng-template #noData>
-    <div class="alert alert-info">Henüz size atanmış müşteri talebi bulunmamaktadır.</div>
-  </ng-template>
-</div>
+    <div class="table-wrap" *ngIf="!loading && filteredCalls.length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Müşteri</th>
+            <th>Tedavi</th>
+            <th>Durum</th>
+            <th>Tarih</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of filteredCalls">
+            <td>
+              <div class="customer-cell">
+                <span class="customer-avatar">{{ getCustomerInitial(c.customerName) }}</span>
+                <span>{{ c.customerName }}</span>
+              </div>
+            </td>
+            <td>{{ c.subject }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="getStatusBadgeClass(c.status)">{{ c.status }}</span>
+            </td>
+            <td>{{ c.createdAt | date:'short' }}</td>
+            <td>
+              <button class="detail-button" (click)="openDetail(c.id)">Detay</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noData>
+      <div *ngIf="!loading" class="state-box state-empty">
+        <div class="empty-icon">🗂️</div>
+        <strong>{{ title }}</strong>
+        <p>{{ emptyMessage }}</p>
+      </div>
+    </ng-template>
+  </div>
+</section>
