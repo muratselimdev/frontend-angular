@@ -5,6 +5,8 @@ export interface ChatMessage {
   fromUserId: number;
   toUserId: number;
   message: string;
+  messageType?: string;
+  fileUrl?: string | null;
   sentAt: Date;
   isRead?: boolean;         // Okundu bilgisi
 }

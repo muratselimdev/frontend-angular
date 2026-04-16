@@ -15,6 +15,28 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
+.hamburger-button {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #dbe4ea;
+  border-radius: 12px;
+  background: #f8fbfd;
+  color: #1f2937;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 42px;
+}
+
+.hamburger-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hamburger-button:hover {
+  background: #eef4f8;
+}
+
 .search-form {
   position: relative;
   flex: 1;
@@ -229,6 +251,12 @@
   box-shadow: none;
 }
 
+:host-context(.dark-theme) .hamburger-button {
+  background: #1f2937;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
 :host-context(.dark-theme) .search-form input,
 :host-context(.dark-theme) .dropdown-panel {
   background: #1f2937;
@@ -259,25 +287,90 @@
 
 @media (max-width: 900px) {
   .agent-topbar {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'menu search'
+      'actions actions';
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hamburger-button {
+    grid-area: menu;
+    align-self: center;
   }
 
   .search-form {
+    grid-area: search;
     max-width: 100%;
   }
 
   .topbar-actions {
-    justify-content: space-between;
+    grid-area: actions;
+    justify-content: flex-end;
     flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .user-wrapper {
+    margin-left: auto;
+    width: auto;
+  }
+
+  .user-trigger {
+    min-width: min(320px, 100%);
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 1024px) {
+  .agent-topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .hamburger-button {
+    display: inline-flex;
+  }
+
+  .search-form {
+    max-width: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .hamburger-button {
+    align-self: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .agent-topbar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'menu'
+      'search'
+      'actions';
+    align-items: stretch;
+  }
+
+  .hamburger-button {
+    justify-self: flex-start;
+  }
+
+  .topbar-actions {
+    justify-content: space-between;
   }
 
   .user-wrapper {
     width: 100%;
+    margin-left: 0;
   }
 
   .user-trigger {
     width: 100%;
-    justify-content: space-between;
+    min-width: 0;
   }
 }

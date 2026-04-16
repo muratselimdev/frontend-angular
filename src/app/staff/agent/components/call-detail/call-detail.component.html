@@ -2,16 +2,16 @@
 <audio #localAudio autoplay muted playsinline></audio>
 <audio #remoteAudio autoplay playsinline></audio>
 
-<div class="card p-0 shadow" *ngIf="data">
+<div class="card p-0 shadow call-detail-card" *ngIf="data">
 
   <!-- 🔹 Üst Başlık -->
-  <div class="d-flex align-items-center justify-content-between mb-3 p-3 pb-0">
+  <div class="d-flex align-items-center justify-content-between mb-3 p-3 pb-0 call-detail-header">
     <h3>🩺 Talep Detayı</h3>
-    <small class="text-muted">Oluşturulma: {{ data.createdAt | date:'short' }}</small>
+    <small class="text-muted call-detail-created-at">Oluşturulma: {{ data.createdAt | date:'short' }}</small>
   </div>
 
   <!-- 🔹 Agent Durumu -->
-  <div class="d-flex align-items-center gap-2 mb-3 ms-3">
+  <div class="d-flex align-items-center gap-2 mb-3 ms-3 call-detail-status-row">
     <div
       class="status-dot"
       [ngClass]="{
@@ -39,18 +39,18 @@
     <mat-tab>
       <ng-template mat-tab-label> 🧑‍💼 Bilgiler </ng-template>
 
-      <div class="p-4">
+      <div class="p-4 tab-panel-shell">
 
         <h5 class="fw-semibold text-success mb-3">👤 Müşteri Bilgileri</h5>
 
-        <div class="row">
-          <div class="col-md-6">
+        <div class="row detail-info-grid">
+          <div class="col-md-6 detail-info-column">
             <p><b>Ad Soyad:</b> {{ data.customer?.fullName }}</p>
             <p><b>E-posta:</b> {{ data.customer?.email }}</p>
             <p><b>Telefon:</b> {{ data.customer?.phone }}</p>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-6 detail-info-column">
             <p><b>Durum:</b> {{ data.status }}</p>
             <p><b>Oluşturulma:</b> {{ data.createdAt | date:'short' }}</p>
           </div>
@@ -77,26 +77,28 @@
         </span>
       </ng-template>
 
-      <div class="p-4">
+      <div class="p-4 tab-panel-shell">
         <h5 class="fw-semibold text-success mb-3">💊 Tedavi Listesi</h5>
 
-        <table class="table table-striped table-hover text-sm">
-          <thead>
-            <tr>
-              <th>Tedavi</th>
-              <th>Fiyat</th>
-              <th>Not</th>
-            </tr>
-          </thead>
+        <div class="treatment-table-wrap">
+          <table class="table table-striped table-hover text-sm treatment-table">
+            <thead>
+              <tr>
+                <th>Tedavi</th>
+                <th>Fiyat</th>
+                <th>Not</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            <tr *ngFor="let t of data.treatments">
-              <td>{{ t.treatmentName }}</td>
-              <td>{{ t.customPrice }} {{ t.currency }}</td>
-              <td>{{ t.notes }}</td>
-            </tr>
-          </tbody>
-        </table>
+            <tbody>
+              <tr *ngFor="let t of data.treatments">
+                <td>{{ t.treatmentName }}</td>
+                <td>{{ t.customPrice }} {{ t.currency }}</td>
+                <td>{{ t.notes }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </mat-tab>
 
@@ -104,23 +106,300 @@
     <mat-tab>
       <ng-template mat-tab-label>
         📎 Dosyalar
-        <span *ngIf="data.attachments?.length" class="badge bg-info text-dark ms-2">
-          {{ data.attachments.length }}
+        <span *ngIf="getFileEntries().length" class="badge bg-info text-dark ms-2">
+          {{ getFileEntries().length }}
         </span>
       </ng-template>
 
-      <div class="p-4">
+      <div class="p-4 tab-panel-shell">
         <h5 class="fw-semibold text-success mb-3">📎 Yüklenen Dosyalar</h5>
 
-        <ul class="list-group">
-          <li
-            *ngFor="let a of data.attachments"
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <a [href]="a.url" target="_blank">{{ a.fileName }}</a>
-            <small class="text-muted">{{ a.type }}</small>
-          </li>
-        </ul>
+        <div *ngIf="getFileEntries().length; else emptyAttachments" class="attachment-groups">
+          <section *ngIf="getImageAttachments().length" class="attachment-group">
+            <div class="attachment-group-header">
+              <div>
+                <div class="attachment-group-title">Images</div>
+                <div class="attachment-group-copy">Preview uploaded image files in one place.</div>
+              </div>
+              <span class="attachment-group-count">{{ getImageAttachments().length }}</span>
+            </div>
+
+            <div class="attachment-list">
+              <div
+                *ngFor="let a of getImageAttachments()"
+                class="attachment-card"
+              >
+                <div class="attachment-icon-wrap">
+                  <ng-container [ngSwitch]="getAttachmentIcon(a)">
+                    <svg *ngSwitchCase="'image'" class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                      <circle cx="9" cy="10" r="1.5"></circle>
+                      <path d="M21 16l-5.5-5.5L8 18"></path>
+                    </svg>
+                    <svg *ngSwitchCase="'pdf'" class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                      <path d="M8 13h2a1.5 1.5 0 0 1 0 3H8z"></path>
+                      <path d="M13 16v-3h1a1.5 1.5 0 0 1 0 3z"></path>
+                      <path d="M17 16h-1.5a1.5 1.5 0 0 1 0-3H17"></path>
+                    </svg>
+                    <svg *ngSwitchCase="'audio'" class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M11 5 6 9H3v6h3l5 4z"></path>
+                      <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                      <path d="M18 6a8.5 8.5 0 0 1 0 12"></path>
+                    </svg>
+                    <svg *ngSwitchDefault class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                    </svg>
+                  </ng-container>
+                </div>
+
+                <div class="attachment-content">
+                  <a
+                    class="attachment-preview-link"
+                    [href]="getAttachmentUrl(a)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View image in browser"
+                  >
+                    <img
+                      [src]="getAttachmentUrl(a)"
+                      alt="Uploaded image"
+                      class="attachment-preview"
+                    />
+                  </a>
+
+                  <div class="attachment-header-row">
+                    <span class="attachment-extension">{{ getAttachmentExtension(a) }}</span>
+                    <div class="attachment-actions">
+                      <a
+                        class="attachment-action-btn"
+                        [href]="getAttachmentUrl(a)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="View image"
+                        title="View"
+                      >
+                        <svg class="attachment-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </a>
+                      <a
+                        class="attachment-action-btn"
+                        [href]="getAttachmentUrl(a)"
+                        [attr.download]="getAttachmentDisplayName(a)"
+                        aria-label="Download image"
+                        title="Download"
+                      >
+                        <svg class="attachment-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <path d="M12 3v12"></path>
+                          <path d="m7 10 5 5 5-5"></path>
+                          <path d="M5 21h14"></path>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="attachment-meta-row">
+                    <span class="attachment-type">{{ getAttachmentTypeLabel(a) }}</span>
+                    <span class="attachment-open">Open</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section *ngIf="getAudioAttachments().length" class="attachment-group">
+            <div class="attachment-group-header">
+              <div>
+                <div class="attachment-group-title">Audio</div>
+                <div class="attachment-group-copy">Listen to voice notes and audio uploads directly here.</div>
+              </div>
+              <span class="attachment-group-count">{{ getAudioAttachments().length }}</span>
+            </div>
+
+            <div class="attachment-list">
+              <a
+                *ngFor="let a of getAudioAttachments()"
+                class="attachment-card"
+                [href]="getAttachmentUrl(a)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="attachment-icon-wrap">
+                  <ng-container [ngSwitch]="getAttachmentIcon(a)">
+                    <svg *ngSwitchCase="'audio'" class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M11 5 6 9H3v6h3l5 4z"></path>
+                      <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                      <path d="M18 6a8.5 8.5 0 0 1 0 12"></path>
+                    </svg>
+                    <svg *ngSwitchDefault class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                    </svg>
+                  </ng-container>
+                </div>
+
+                <div class="attachment-content">
+                  <audio controls class="attachment-audio-preview">
+                    <source [src]="getAttachmentUrl(a)" />
+                  </audio>
+
+                  <div class="attachment-header-row">
+                    <span class="attachment-extension">{{ getAttachmentExtension(a) }}</span>
+                  </div>
+
+                  <div class="attachment-meta-row">
+                    <span class="attachment-type">{{ getAttachmentTypeLabel(a) }}</span>
+                    <span class="attachment-open">Open</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section *ngIf="getPdfAttachments().length" class="attachment-group">
+            <div class="attachment-group-header">
+              <div>
+                <div class="attachment-group-title">PDF Files</div>
+                <div class="attachment-group-copy">Review uploaded documents separately from media files.</div>
+              </div>
+              <span class="attachment-group-count">{{ getPdfAttachments().length }}</span>
+            </div>
+
+            <div class="attachment-list">
+              <div
+                *ngFor="let a of getPdfAttachments()"
+                class="attachment-card"
+              >
+                <div class="attachment-icon-wrap">
+                  <ng-container [ngSwitch]="getAttachmentIcon(a)">
+                    <svg *ngSwitchCase="'pdf'" class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                      <path d="M8 13h2a1.5 1.5 0 0 1 0 3H8z"></path>
+                      <path d="M13 16v-3h1a1.5 1.5 0 0 1 0 3z"></path>
+                      <path d="M17 16h-1.5a1.5 1.5 0 0 1 0-3H17"></path>
+                    </svg>
+                    <svg *ngSwitchDefault class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                    </svg>
+                  </ng-container>
+                </div>
+
+                <div class="attachment-content">
+                  <a
+                    class="attachment-preview-link"
+                    [href]="getAttachmentUrl(a)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View PDF in browser"
+                  >
+                    <div class="attachment-document-preview">
+                      <iframe
+                        class="attachment-pdf-preview-frame"
+                        [src]="getPdfPreviewUrl(a)"
+                        title="PDF preview"
+                      ></iframe>
+                    </div>
+                  </a>
+
+                  <div class="attachment-header-row">
+                    <span class="attachment-extension">{{ getAttachmentExtension(a) }}</span>
+                    <div class="attachment-actions">
+                      <a
+                        class="attachment-action-btn"
+                        [href]="getAttachmentUrl(a)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="View PDF"
+                        title="View"
+                      >
+                        <svg class="attachment-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </a>
+                      <a
+                        class="attachment-action-btn"
+                        [href]="getAttachmentUrl(a)"
+                        [attr.download]="getAttachmentDisplayName(a)"
+                        aria-label="Download PDF"
+                        title="Download"
+                      >
+                        <svg class="attachment-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                          <path d="M12 3v12"></path>
+                          <path d="m7 10 5 5 5-5"></path>
+                          <path d="M5 21h14"></path>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="attachment-meta-row">
+                    <span class="attachment-type">{{ getAttachmentTypeLabel(a) }}</span>
+                    <span class="attachment-open">Open</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section *ngIf="getOtherAttachments().length" class="attachment-group">
+            <div class="attachment-group-header">
+              <div>
+                <div class="attachment-group-title">Other Files</div>
+                <div class="attachment-group-copy">Files that are not image, audio, or PDF.</div>
+              </div>
+              <span class="attachment-group-count">{{ getOtherAttachments().length }}</span>
+            </div>
+
+            <div class="attachment-list">
+              <a
+                *ngFor="let a of getOtherAttachments()"
+                class="attachment-card"
+                [href]="getAttachmentUrl(a)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="attachment-icon-wrap">
+                  <svg class="attachment-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                    <path d="M14 3v5h5"></path>
+                  </svg>
+                </div>
+
+                <div class="attachment-content">
+                  <div class="attachment-document-preview attachment-document-preview-generic">
+                    <svg class="attachment-document-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                      <path d="M14 3v5h5"></path>
+                    </svg>
+                    <span>File</span>
+                  </div>
+
+                  <div class="attachment-header-row">
+                    <span class="attachment-extension">{{ getAttachmentExtension(a) }}</span>
+                  </div>
+
+                  <div class="attachment-meta-row">
+                    <span class="attachment-type">{{ getAttachmentTypeLabel(a) }}</span>
+                    <span class="attachment-open">Open</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <ng-template #emptyAttachments>
+          <div class="attachment-empty-state">
+            No uploaded files found.
+          </div>
+        </ng-template>
       </div>
     </mat-tab>
 
@@ -133,7 +412,7 @@
         </span>
       </ng-template>
 
-      <div class="p-4">
+      <div class="p-4 tab-panel-shell">
 
         <h5 class="fw-semibold text-success mb-3">💬 Sohbet Geçmişi</h5>
 
@@ -158,7 +437,53 @@
     <!-- Message Bubble -->
     <div class="bubble"
          [ngClass]="msg.fromUserId === agentId ? 'bubble-right' : 'bubble-left'">
-      {{ msg.message }}
+      <ng-container *ngIf="isImageMessage(msg); else nonImageMessage">
+        <a [href]="getMessageAssetUrl(msg)" target="_blank" rel="noopener noreferrer" class="media-link">
+          <img
+            [src]="getMessageAssetUrl(msg)"
+            [alt]="getAttachmentLabel(msg)"
+            class="chat-image"
+          />
+        </a>
+      </ng-container>
+
+      <ng-template #nonImageMessage>
+        <ng-container *ngIf="isAudioMessage(msg); else nonAudioMessage">
+          <audio controls class="chat-audio">
+            <source [src]="getMessageAssetUrl(msg)" />
+          </audio>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #nonAudioMessage>
+        <ng-container *ngIf="isPdfMessage(msg); else nonPdfMessage">
+          <a
+            [href]="getMessageAssetUrl(msg)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="media-link file-link"
+          >
+            PDF: {{ getAttachmentLabel(msg) }}
+          </a>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #nonPdfMessage>
+        <ng-container *ngIf="isFileMessage(msg); else textMessage">
+          <a
+            [href]="getMessageAssetUrl(msg)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="media-link file-link"
+          >
+            Dosya: {{ getAttachmentLabel(msg) }}
+          </a>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #textMessage>
+        {{ msg.message }}
+      </ng-template>
     </div>
 
     <!-- Time + Read Status -->
@@ -176,14 +501,114 @@
 
 
         <!-- Input -->
-        <div class="d-flex gap-2">
+        <div class="chat-composer">
           <input
-            [(ngModel)]="newMessage"
-            placeholder="Mesaj yazın..."
-            class="form-control form-control-sm"
-            (keyup.enter)="sendMessage()"
+            #attachmentInput
+            type="file"
+            class="chat-hidden-input"
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.webp,.jpg,.jpeg,.png"
+            (change)="onAttachmentSelected($event)"
           />
-          <button class="btn btn-primary btn-sm" (click)="sendMessage()">Gönder</button>
+
+          <div *ngIf="pendingAttachmentFile" class="chat-attachment-preview">
+            <div class="chat-attachment-preview-copy">
+              <span class="chat-recording-preview-title">Hazir dosya</span>
+              <span class="chat-recording-preview-subtitle">{{ pendingAttachmentName }}</span>
+            </div>
+
+            <div *ngIf="hasPendingAttachmentPreview()" class="chat-attachment-visual">
+              <img
+                *ngIf="isPendingAttachmentImage()"
+                [src]="pendingAttachmentPreviewUrl"
+                alt="Pending attachment preview"
+                class="chat-attachment-image"
+              />
+              <iframe
+                *ngIf="isPendingAttachmentPdf()"
+                class="chat-attachment-pdf"
+                [src]="getPendingAttachmentPreviewResource()"
+                title="Pending PDF preview"
+              ></iframe>
+            </div>
+
+            <div *ngIf="!hasPendingAttachmentPreview()" class="chat-upload-status">
+              {{ getPendingAttachmentTypeLabel() }} secildi.
+            </div>
+
+            <div class="chat-recording-preview-actions">
+              <button class="chat-secondary-btn" (click)="removePendingAttachment()">Sil</button>
+              <button class="chat-primary-btn" [disabled]="sendingAttachment" (click)="sendPendingAttachment()">Gonder</button>
+            </div>
+          </div>
+
+          <div *ngIf="recordedVoiceUrl" class="chat-recording-preview">
+            <div class="chat-recording-preview-copy">
+              <span class="chat-recording-preview-title">Hazir ses kaydi</span>
+              <span class="chat-recording-preview-subtitle">{{ getRecordingDurationLabel() }}</span>
+            </div>
+            <audio controls class="chat-recording-audio">
+              <source [src]="recordedVoiceUrl" />
+            </audio>
+            <div class="chat-recording-preview-actions">
+              <button class="chat-secondary-btn" (click)="discardRecordedVoice()">Sil</button>
+              <button class="chat-primary-btn" [disabled]="sendingAttachment" (click)="sendRecordedVoice()">Gonder</button>
+            </div>
+          </div>
+
+          <div *ngIf="isRecordingVoice" class="chat-recording-live-panel">
+            <div class="chat-recording-live-top">
+              <div class="chat-recording-live-copy">
+                <span class="chat-recording-live-title">Ses kaydi devam ediyor</span>
+                <span class="chat-recording-live-subtitle">Maksimum 5 dakika kaydedebilirsiniz.</span>
+              </div>
+              <div class="chat-recording-live-timers">
+                <span class="chat-recording-live-timer">{{ getRecordingDurationLabel() }}</span>
+                <span class="chat-recording-live-remaining">Kalan {{ getRemainingRecordingLabel() }}</span>
+              </div>
+            </div>
+
+            <div class="chat-recording-progress-track">
+              <div class="chat-recording-progress-bar" [style.width.%]="getRecordingProgressPercent()"></div>
+            </div>
+          </div>
+
+          <div class="chat-composer-row">
+            <button class="chat-utility-btn" type="button" [disabled]="sendingAttachment || isRecordingVoice" (click)="openAttachmentPicker()">
+              <svg class="chat-utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21.44 11.05 12.25 20.24a6 6 0 1 1-8.49-8.49l9.2-9.19a4 4 0 0 1 5.65 5.66l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+              </svg>
+              <span>Dosya Ekle</span>
+            </button>
+
+            <button class="chat-utility-btn" type="button" [class.chat-recording-live]="isRecordingVoice" [disabled]="sendingAttachment" (click)="toggleVoiceRecording()">
+              <svg class="chat-utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"></path>
+                <path d="M19 10a7 7 0 0 1-14 0"></path>
+                <path d="M12 17v4"></path>
+                <path d="M8 21h8"></path>
+              </svg>
+              <span>{{ isRecordingVoice ? 'Kaydi Durdur' : 'Ses Kaydet' }}</span>
+              <span *ngIf="isRecordingVoice" class="chat-recording-badge">{{ getRecordingDurationLabel() }}</span>
+            </button>
+          </div>
+
+          <div class="chat-composer-row chat-composer-row-main">
+            <div class="chat-message-field">
+              <div class="chat-message-field-top">
+                <span class="chat-message-field-label">Mesaj</span>
+                <span class="chat-message-field-hint">Gondermek icin Ctrl/Cmd + Enter</span>
+              </div>
+              <textarea
+                [(ngModel)]="newMessage"
+                placeholder="Musteriye gondermek istediginiz mesaji yazin..."
+                class="chat-message-textarea"
+                [disabled]="sendingAttachment || isRecordingVoice || !!pendingAttachmentFile"
+                rows="3"
+                (keydown)="handleComposerKeydown($event)"
+              ></textarea>
+            </div>
+            <button class="chat-primary-btn" [disabled]="!canSendMessage()" (click)="sendMessage()">Gönder</button>
+          </div>
         </div>
 
       </div>
@@ -198,36 +623,111 @@
         </span>
       </ng-template>
 
-      <div class="p-4">
+      <div class="p-4 tab-panel-shell">
 
         <h5 class="fw-semibold text-success mb-3">🎧 Sesli Arama Geçmişi</h5>
 
-        <table class="table table-hover table-sm">
-          <thead>
-            <tr>
-              <th>Başlangıç</th>
-              <th>Bitiş</th>
-              <th>Durum</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let v of data.voiceCalls">
-              <td>{{ v.startedAt | date:'short' }}</td>
-              <td>{{ v.endedAt | date:'short' }}</td>
-              <td>{{ v.status }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div *ngIf="data.voiceCalls?.length; else emptyVoiceCalls" class="voice-history-grid">
+          <div class="voice-history-head">
+            <div class="voice-history-title-block">
+              <span class="voice-history-kicker">Call Timeline</span>
+              <span class="voice-history-subtitle">Latest activity for this request</span>
+            </div>
+            <div class="voice-history-count">{{ data.voiceCalls.length }} records</div>
+          </div>
 
-        <!-- 🎤 Arama başlat -->
-        <button class="btn btn-warning btn-sm mt-3" (click)="startVoiceCall()" [disabled]="callActive">
-          🎤 Yeni Arama Başlat
-        </button>
+          <div class="voice-history-table-wrap">
+            <table class="voice-history-table">
+              <thead>
+                <tr>
+                  <th class="voice-col-index">#</th>
+                  <th>Başlangıç</th>
+                  <th>Bitiş</th>
+                  <th>Süre</th>
+                  <th>Durum</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let v of data.voiceCalls; let i = index">
+                  <td class="voice-col-index">
+                    <span class="voice-row-index">{{ i + 1 }}</span>
+                  </td>
+                  <td>
+                    <div class="voice-cell-stack">
+                      <span class="voice-cell-primary">{{ v.startedAt | date:'medium' }}</span>
+                      <span class="voice-cell-secondary">Started</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="voice-cell-stack">
+                      <span class="voice-cell-primary">{{ v.endedAt ? (v.endedAt | date:'medium') : 'Still active' }}</span>
+                      <span class="voice-cell-secondary">{{ v.endedAt ? 'Ended' : 'No end time yet' }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="voice-duration-pill">{{ getVoiceCallDuration(v.startedAt, v.endedAt) }}</span>
+                  </td>
+                  <td>
+                    <span class="voice-status-pill" [ngClass]="getVoiceCallStatusClass(v.status)">
+                      {{ getVoiceCallStatusLabel(v.status) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-        <!-- ❌ Bitir -->
-        <button *ngIf="callActive" class="btn btn-danger ms-2 btn-sm" (click)="endCall()">
-          <i class="bi bi-telephone-x"></i> Bitir
-        </button>
+        <ng-template #emptyVoiceCalls>
+          <div class="voice-history-empty">
+            <div class="voice-history-empty-icon">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div>
+              <div class="voice-history-empty-title">No voice history yet</div>
+              <div class="voice-history-empty-copy">Calls for this request will appear here once they start.</div>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="call-action-bar">
+          <div class="call-action-copy">
+            <span class="call-action-kicker">Voice Actions</span>
+            <span class="call-action-status">
+              {{ callActive ? 'An active call is in progress.' : 'You can start a new voice call for this request.' }}
+            </span>
+          </div>
+
+          <div class="call-action-buttons">
+            <button
+              class="call-action-btn call-action-btn-start"
+              (click)="startVoiceCall()"
+              [disabled]="callActive"
+            >
+              <span class="call-action-icon">
+                <i class="bi bi-mic-fill"></i>
+              </span>
+              <span class="call-action-text">
+                <span class="call-action-title">Yeni Arama Baslat</span>
+                <span class="call-action-subtitle">Request icin sesli gorusme baslat</span>
+              </span>
+            </button>
+
+            <button
+              *ngIf="callActive"
+              class="call-action-btn call-action-btn-end"
+              (click)="endCall()"
+            >
+              <span class="call-action-icon">
+                <i class="bi bi-telephone-x-fill"></i>
+              </span>
+              <span class="call-action-text">
+                <span class="call-action-title">Bitir</span>
+                <span class="call-action-subtitle">Aktif gorusmeyi sonlandir</span>
+              </span>
+            </button>
+          </div>
+        </div>
 
       </div>
     </mat-tab>

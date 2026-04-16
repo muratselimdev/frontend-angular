@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -10,6 +10,10 @@ export class AgentRequestsService {
   constructor(private http: HttpClient) {}
 
   getAssignedRequests(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+    return this.http.get<any[]>(this.baseUrl, {
+      headers: new HttpHeaders({
+        'X-Skip-Auth-Recovery': 'true'
+      })
+    });
   }
 }

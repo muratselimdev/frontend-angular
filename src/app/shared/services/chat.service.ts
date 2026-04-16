@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -7,6 +8,7 @@ import { ChatMessage } from '../../staff/models/chat-message.model';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
+  private readonly chatApiUrl = `${environment.apiUrl}/api/agent/chat`;
   private hubConnection!: signalR.HubConnection;
 
   private messagesSource = new BehaviorSubject<ChatMessage[]>([]);
@@ -25,7 +27,73 @@ export class ChatService {
   // Customer → atanmış agent
   private assignedAgentMap = new Map<number, number>(); // customerId → agentId
 
-  constructor(private auth: AuthService) {}
+  constructor(
+    private auth: AuthService,
+    private http: HttpClient
+  ) {}
+
+  getMessagesForRequest(requestId: number) {
+    return this.http.get<unknown>(`${this.chatApiUrl}/${requestId}`, {
+      headers: new HttpHeaders({
+        'X-Skip-Auth-Recovery': 'true'
+      })
+    });
+  }
+
+  postMessageForRequest(
+    requestId: number,
+    fromUserId: number,
+    toUserId: number,
+    message: string
+  ) {
+    return this.http.post(`${this.chatApiUrl}/${requestId}`, JSON.stringify(message), {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }),
+      params: {
+        fromUserId,
+        toUserId
+      }
+    });
+  }
+
+  uploadMessageAttachment(
+    requestId: number,
+    fromUserId: number,
+    toUserId: number,
+    file: File,
+    type: 'Image' | 'Document' | 'Voice',
+    documentType: string
+  ) {
+    const formData = new FormData();
+    formData.append('RequestId', String(requestId));
+    formData.append('FromUserId', String(fromUserId));
+    formData.append('ToUserId', String(toUserId));
+    formData.append('Type', type);
+    formData.append('DocumentType', documentType);
+    formData.append('File', file, file.name);
+
+    return this.http.post(`${this.chatApiUrl}/${requestId}/upload`, formData, {
+      headers: new HttpHeaders({
+        'X-Skip-Auth-Recovery': 'true'
+      })
+    });
+  }
+
+  normalizeMessages(messages: unknown): ChatMessage[] {
+    return this.extractCollection(messages)
+      .map(message => this.normalizeMessage(message))
+      .sort((left, right) => left.sentAt.getTime() - right.sentAt.getTime());
+  }
+
+  setMessagesForRequest(requestId: number, messages: unknown): ChatMessage[] {
+    const normalized = this.normalizeMessages(messages);
+    const filtered = this.messagesSource.value.filter(message => message.requestId !== requestId);
+
+    this.messagesSource.next([...filtered, ...normalized]);
+    return normalized;
+  }
 
   // ============================================================
   // 🔹 SignalR bağlantısını başlat
@@ -71,16 +139,7 @@ export class ChatService {
 
     // 📜 Mesaj geçmişi
     this.hubConnection.on('MessageHistory', (msgs: any[]) => {
-      const history: ChatMessage[] = msgs.map(m => ({
-        id: Number(m.id ?? m.Id),
-        requestId: m.requestId ?? m.RequestId,
-        callId: m.callId ?? m.CallId,
-        fromUserId: m.fromUserId ?? m.FromUserId,
-        toUserId: m.toUserId ?? m.ToUserId,
-        message: m.message ?? m.Message,
-        sentAt: m.sentAt ? new Date(m.sentAt) : new Date(),
-        isRead: m.isRead ?? m.IsRead ?? false
-      }));
+      const history = this.normalizeMessages(msgs);
 
       if (history.length === 0) return;
 
@@ -103,16 +162,7 @@ export class ChatService {
     // 📩 Mesaj geldi
     this.hubConnection.on('ReceiveMessage', (msg: any) => {
       const id = msg.id ?? msg.Id;
-      const newMsg: ChatMessage = {
-        id: Number(msg.id ?? msg.Id ?? 0),
-        callId: msg.callId ?? msg.CallId,
-        requestId: msg.requestId ?? msg.RequestId,
-        fromUserId: msg.fromUserId ?? msg.FromUserId,
-        toUserId: msg.toUserId ?? msg.ToUserId,
-        message: msg.message ?? msg.Message,
-        sentAt: msg.sentAt ? new Date(msg.sentAt) : new Date(),
-        isRead: msg.isRead ?? msg.IsRead ?? false
-      };
+      const newMsg = this.normalizeMessage(msg);
 
       const current = this.messagesSource.value;
       this.messagesSource.next([...current, newMsg]);
@@ -303,5 +353,44 @@ export class ChatService {
     const assigned = this.assignedAgentMap.get(customerId);
     console.log(`[ChatService] getAssignedAgentId(${customerId}) → ${assigned}`);
     return assigned ?? null;
+  }
+
+  private normalizeMessage(message: any): ChatMessage {
+    return {
+      id: Number(message?.id ?? message?.Id ?? 0),
+      requestId: message?.requestId ?? message?.RequestId,
+      callId: message?.callId ?? message?.CallId ?? null,
+      fromUserId: Number(message?.fromUserId ?? message?.FromUserId ?? 0),
+      toUserId: Number(message?.toUserId ?? message?.ToUserId ?? 0),
+      message: String(message?.message ?? message?.Message ?? ''),
+      messageType: String(message?.messageType ?? message?.MessageType ?? ''),
+      fileUrl: message?.fileUrl ?? message?.FileUrl ?? null,
+      sentAt: message?.sentAt || message?.SentAt ? new Date(message.sentAt ?? message.SentAt) : new Date(),
+      isRead: Boolean(message?.isRead ?? message?.IsRead ?? false)
+    };
+  }
+
+  private extractCollection(payload: any): any[] {
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.$values)) {
+      return payload.$values;
+    }
+
+    if (Array.isArray(payload?.items)) {
+      return payload.items;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    if (Array.isArray(payload?.messages)) {
+      return payload.messages;
+    }
+
+    return [];
   }
 }

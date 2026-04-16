@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -23,6 +23,8 @@ interface QuickLink {
   standalone: false
 })
 export class AgentTopbarComponent implements OnInit {
+  @Output() menuToggle = new EventEmitter<void>();
+
   searchTerm = '';
   isDarkMode = false;
   notificationsOpen = false;
@@ -113,6 +115,10 @@ export class AgentTopbarComponent implements OnInit {
     this.toastr.warning('Eşleşen bir ekran bulunamadı.');
   }
 
+  toggleNavigationMenu(): void {
+    this.menuToggle.emit();
+  }
+
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
     document.documentElement.classList.toggle('dark', this.isDarkMode);
@@ -155,6 +161,9 @@ export class AgentTopbarComponent implements OnInit {
 
   getUserName(): string {
     const profile = this.authService.profile;
+    if (profile?.nickname?.trim()) {
+      return profile.nickname.trim();
+    }
     if (profile?.firstName && profile?.lastName) {
       return `${profile.firstName} ${profile.lastName}`;
     }

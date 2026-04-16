@@ -1,6 +1,14 @@
 <div class="agent-layout">
+  <button
+    *ngIf="isTabletSidebarOpen"
+    type="button"
+    class="sidebar-backdrop"
+    (click)="closeTabletSidebar()"
+    aria-label="Menüyü kapat"
+  ></button>
+
   <!-- 🔹 Sol Menü -->
-  <aside class="sidebar">
+  <aside class="sidebar" [class.sidebar-open]="isTabletSidebarOpen">
     <div class="sidebar-header text-center py-3">
       <h3>🎧 Agent Panel</h3>
     </div>
@@ -46,7 +54,7 @@
 
   <!-- 🔹 İçerik Alanı -->
   <main class="content p-3">
-    <app-agent-topbar></app-agent-topbar>
+    <app-agent-topbar (menuToggle)="toggleTabletSidebar()"></app-agent-topbar>
 
     <!-- 🎧 Aktif Çağrı Bilgisi -->
     <!-- <div *ngIf="callActive" class="alert alert-success text-center p-2 mb-2 shadow-sm">

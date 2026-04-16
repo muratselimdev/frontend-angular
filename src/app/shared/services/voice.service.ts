@@ -1,9 +1,12 @@
 import { Injectable, EventEmitter, NgZone } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
+import { VoiceCall } from '../../staff/models/voice-call.model';
 
 @Injectable({ providedIn: 'root' })
 export class VoiceService {
+  private readonly voiceApiUrl = `${environment.apiUrl}/api/agent/voice`;
 
   private hubConnection!: signalR.HubConnection;
 
@@ -32,7 +35,37 @@ export class VoiceService {
   public callEnded = new EventEmitter<number>();
   public onCallActive = new EventEmitter<boolean>();
 
-  constructor(private zone: NgZone) {}
+  constructor(
+    private zone: NgZone,
+    private http: HttpClient
+  ) {}
+
+  getVoiceCallsForRequest(requestId: number) {
+    return this.http.get<unknown>(`${this.voiceApiUrl}/request/${requestId}`, {
+      headers: new HttpHeaders({
+        'X-Skip-Auth-Recovery': 'true'
+      })
+    });
+  }
+
+  startVoiceCallRequest(requestId: number, fromUserId: number, toUserId: number) {
+    return this.http.post(`${this.voiceApiUrl}/${requestId}/start`, null, {
+      params: {
+        fromUserId,
+        toUserId
+      }
+    });
+  }
+
+  endVoiceCallRequest(id: number) {
+    return this.http.post(`${this.voiceApiUrl}/${id}/end`, null);
+  }
+
+  normalizeVoiceCalls(calls: unknown): VoiceCall[] {
+    return this.extractCollection(calls)
+      .map(call => this.normalizeVoiceCall(call))
+      .sort((left, right) => new Date(right.startedAt).getTime() - new Date(left.startedAt).getTime());
+  }
 
 
   // -------------------------------------------------------------
@@ -379,5 +412,43 @@ export class VoiceService {
       console.error("[VoiceService] Token decode failed:", err);
       return 0;
     }
+  }
+
+  private normalizeVoiceCall(call: any): VoiceCall {
+    return {
+      id: Number(call?.id ?? call?.Id ?? 0),
+      requestId: Number(call?.requestId ?? call?.RequestId ?? 0),
+      fromUserId: Number(call?.fromUserId ?? call?.FromUserId ?? 0),
+      toUserId: Number(call?.toUserId ?? call?.ToUserId ?? 0),
+      startedAt: String(call?.startedAt ?? call?.StartedAt ?? ''),
+      endedAt: call?.endedAt ?? call?.EndedAt,
+      status: String(call?.status ?? call?.Status ?? ''),
+      callerName: call?.callerName ?? call?.CallerName,
+      receiverName: call?.receiverName ?? call?.ReceiverName
+    };
+  }
+
+  private extractCollection(payload: any): any[] {
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.$values)) {
+      return payload.$values;
+    }
+
+    if (Array.isArray(payload?.items)) {
+      return payload.items;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    if (Array.isArray(payload?.voiceCalls)) {
+      return payload.voiceCalls;
+    }
+
+    return [];
   }
 }

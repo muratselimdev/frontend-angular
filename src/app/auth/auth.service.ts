@@ -28,14 +28,16 @@ export class AuthService {
       : null
   );
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.restoreProfileFromToken();
+  }
 
   // ============================================================
   // 🧩 Getter’lar
   // ============================================================
 
   get profile(): StaffProfile | null {
-    return this.profile$.value;
+    return this.profile$.value ?? this.buildProfileFromToken();
   }
 
   get token(): string | null {
@@ -126,16 +128,220 @@ export class AuthService {
   // 🧩 Session set / clear
   // ============================================================
   private setSession(res: StaffAuthResponse) {
+    const profile = this.normalizeProfile(res.profile, res.token, this.profile$.value);
+
     // ✅ LocalStorage’a kaydet
     localStorage.setItem(this.tokenKey, res.token);
     localStorage.setItem(this.expKey, res.expiresAt);
-    localStorage.setItem(this.profileKey, JSON.stringify(res.profile));
+    localStorage.setItem(this.profileKey, JSON.stringify(profile));
 
     // ✅ BehaviorSubject’ları güncelle
     this.token$.next(res.token);
-    this.profile$.next(res.profile);
+    this.profile$.next(profile);
 
-    console.log('[AuthService] 🔐 Oturum kaydedildi:', res.profile?.email);
+    console.log('[AuthService] 🔐 Oturum kaydedildi:', profile?.email);
+  }
+
+  private restoreProfileFromToken() {
+    const hydratedProfile = this.buildProfileFromToken(this.profile$.value);
+    if (!hydratedProfile) {
+      return;
+    }
+
+    const currentProfile = this.profile$.value;
+    const hasChanged = JSON.stringify(currentProfile) !== JSON.stringify(hydratedProfile);
+    if (!hasChanged) {
+      return;
+    }
+
+    localStorage.setItem(this.profileKey, JSON.stringify(hydratedProfile));
+    this.profile$.next(hydratedProfile);
+  }
+
+  private normalizeProfile(
+    profile: Partial<StaffProfile> | null | undefined,
+    token?: string | null,
+    existingProfile?: StaffProfile | null
+  ): StaffProfile {
+    const rawProfile = (profile ?? {}) as Record<string, unknown>;
+    const tokenProfile = this.buildProfileFromToken(existingProfile, token) ?? existingProfile ?? null;
+
+    const rawFullName = this.getRawString(rawProfile, ['fullName', 'FullName', 'name', 'Name']);
+    const parsedName = this.parseName(rawFullName);
+
+    const firstName =
+      this.getRawString(rawProfile, ['firstName', 'FirstName', 'givenName', 'GivenName']) ||
+      parsedName.firstName ||
+      tokenProfile?.firstName ||
+      '';
+
+    const lastName =
+      this.getRawString(rawProfile, ['lastName', 'LastName', 'familyName', 'FamilyName', 'surname', 'Surname']) ||
+      parsedName.lastName ||
+      tokenProfile?.lastName ||
+      '';
+
+    const idValue =
+      this.getRawNumber(rawProfile, ['id', 'Id', 'staffId', 'StaffId', 'userId', 'UserId']) ||
+      tokenProfile?.id ||
+      0;
+
+    return {
+      id: idValue,
+      firstName,
+      lastName,
+      email:
+        this.getRawString(rawProfile, ['email', 'Email', 'userName', 'UserName']) ||
+        tokenProfile?.email ||
+        '',
+      role:
+        this.getRawString(rawProfile, ['role', 'Role']) ||
+        tokenProfile?.role ||
+        '',
+      branchId:
+        this.getRawNumber(rawProfile, ['branchId', 'BranchId']) ??
+        tokenProfile?.branchId ??
+        null,
+      languageGroupId:
+        this.getRawNumber(rawProfile, ['languageGroupId', 'LanguageGroupId']) ??
+        tokenProfile?.languageGroupId ??
+        null,
+      nickname:
+        this.getRawString(rawProfile, ['nickname', 'Nickname']) ||
+        tokenProfile?.nickname ||
+        null,
+      agentLevel:
+        this.getRawString(rawProfile, ['agentLevel', 'AgentLevel']) ||
+        tokenProfile?.agentLevel ||
+        null
+    };
+  }
+
+  private buildProfileFromToken(existingProfile?: StaffProfile | null, tokenOverride?: string | null): StaffProfile | null {
+    const token = tokenOverride ?? this.token$.value;
+    if (!token) {
+      return existingProfile ?? null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const fullName = this.getClaimValue(decoded, [
+        'name',
+        'unique_name',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
+      ]);
+      const parsedName = this.parseName(fullName);
+
+      const firstName =
+        existingProfile?.firstName ||
+        this.getClaimValue(decoded, [
+          'given_name',
+          'firstName',
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'
+        ]) ||
+        parsedName.firstName;
+
+      const lastName =
+        existingProfile?.lastName ||
+        this.getClaimValue(decoded, [
+          'family_name',
+          'lastName',
+          'surname',
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'
+        ]) ||
+        parsedName.lastName;
+
+      const email =
+        existingProfile?.email ||
+        this.getClaimValue(decoded, [
+          'email',
+          'upn',
+          'preferred_username',
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+        ]) ||
+        '';
+
+      const role =
+        existingProfile?.role ||
+        this.getClaimValue(decoded, [
+          'role',
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role',
+          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'
+        ]) ||
+        '';
+
+      const idClaim = this.getClaimValue(decoded, [
+        'sub',
+        'nameid',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+      ]);
+      const id = existingProfile?.id ?? (idClaim ? Number(idClaim) : 0);
+
+      return {
+        id,
+        firstName,
+        lastName,
+        email,
+        role,
+        branchId: existingProfile?.branchId ?? null,
+        languageGroupId: existingProfile?.languageGroupId ?? null,
+        nickname: existingProfile?.nickname ?? null,
+        agentLevel: existingProfile?.agentLevel ?? null
+      };
+    } catch (err) {
+      console.error('[AuthService] Profil hydration hatası:', err);
+      return existingProfile ?? null;
+    }
+  }
+
+  private getClaimValue(decodedToken: any, keys: string[]): string {
+    for (const key of keys) {
+      const value = decodedToken?.[key];
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+
+    return '';
+  }
+
+  private getRawString(source: Record<string, unknown>, keys: string[]): string {
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+
+    return '';
+  }
+
+  private getRawNumber(source: Record<string, unknown>, keys: string[]): number | null {
+    for (const key of keys) {
+      const value = source[key];
+      const parsedValue = Number(value);
+      if (Number.isInteger(parsedValue) && parsedValue > 0) {
+        return parsedValue;
+      }
+    }
+
+    return null;
+  }
+
+  private parseName(fullName: string): { firstName: string; lastName: string } {
+    if (!fullName) {
+      return { firstName: '', lastName: '' };
+    }
+
+    const parts = fullName.split(' ').filter(Boolean);
+    if (!parts.length) {
+      return { firstName: '', lastName: '' };
+    }
+
+    return {
+      firstName: parts[0] || '',
+      lastName: parts.slice(1).join(' ')
+    };
   }
 
   private clearSession() {

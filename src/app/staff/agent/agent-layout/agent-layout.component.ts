@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/auth.service';
 import { environment } from '../../../../environments/environment';
@@ -22,6 +22,8 @@ interface MenuItem {
   standalone: false
 })
 export class AgentLayoutComponent implements OnInit, OnDestroy {
+  isTabletSidebarOpen = false;
+
   menuItems: MenuItem[] = [
     {
       label: 'Talepler',
@@ -132,6 +134,13 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     this.chatService.stopConnection();
   }
 
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (window.innerWidth > 1024 && this.isTabletSidebarOpen) {
+      this.isTabletSidebarOpen = false;
+    }
+  }
+
   private getAgentIdFromToken(): number {
     try {
       const token = localStorage.getItem('staffToken');
@@ -157,6 +166,15 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     }
 
     this.router.navigateByUrl(path);
+    this.closeTabletSidebar();
+  }
+
+  toggleTabletSidebar(): void {
+    this.isTabletSidebarOpen = !this.isTabletSidebarOpen;
+  }
+
+  closeTabletSidebar(): void {
+    this.isTabletSidebarOpen = false;
   }
 
   // ✅ Çağrı kabul edildi

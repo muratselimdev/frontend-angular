@@ -21,7 +21,11 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.auth.token;
-    let authReq = req;
+    const skipAuthRecovery = req.headers.has('X-Skip-Auth-Recovery');
+    const sanitizedHeaders = skipAuthRecovery
+      ? req.headers.delete('X-Skip-Auth-Recovery')
+      : req.headers;
+    let authReq = req.clone({ headers: sanitizedHeaders });
 
     console.log('%c[STAFF INTERCEPTOR] Aktif', 'color: cyan; font-weight: bold;');
     console.log('[STAFF INTERCEPTOR] Gelen istek:', req.url);
@@ -34,11 +38,16 @@ export class AuthInterceptor implements HttpInterceptor {
     const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
     if (!isStaffEndpoint) {
-      return next.handle(req);
+      return next.handle(authReq);
+    }
+
+    // 🔹 Login/Register endpoint'leri temiz gider
+    if (isAuthEndpoint) {
+      authReq = req.clone({ withCredentials: true });
     }
 
     // 🔹 Refresh token endpoint sadece cookie ile gider
-    if (req.url.includes('/auth/refresh')) {
+    else if (req.url.includes('/auth/refresh')) {
       console.log('[STAFF INTERCEPTOR] Refresh request → sadece cookie ile gidiyor');
       authReq = req.clone({ withCredentials: true });
     }
@@ -61,6 +70,10 @@ export class AuthInterceptor implements HttpInterceptor {
     // 🔹 Hata yakalama
     return next.handle(authReq).pipe(
       catchError((err: HttpErrorResponse) => {
+        if (skipAuthRecovery) {
+          return throwError(() => err);
+        }
+
         if (
           err.status === 401 &&
           !req.url.includes('/auth/login') &&

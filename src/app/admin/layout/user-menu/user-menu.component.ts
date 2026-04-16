@@ -46,6 +46,9 @@ export class UserMenuComponent implements OnInit {
 
   getUserName(): string {
     const profile = this.authService.profile;
+    if (profile?.nickname?.trim()) {
+      return profile.nickname.trim();
+    }
     if (profile?.firstName && profile?.lastName) {
       return `${profile.firstName} ${profile.lastName}`;
     }
