@@ -35,6 +35,7 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
         { label: 'İptal Talepler', path: '/agent/calls/cancelled', icon: '❌' }
       ]
     },
+    { label: 'Contacts', path: '/agent/contacts', icon: '📒' },
     { label: 'Mesajlar', path: '/agent/chat', icon: '💬' },
     { label: 'Sesli Arama', path: '/agent/voice', icon: '🎤' }
   ];

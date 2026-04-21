@@ -14,6 +14,7 @@ import { LogoutComponent } from './agent/components/logout/logout.component';
 import { CallDetailComponent } from './agent/components/call-detail/call-detail.component';
 import { ChatComponent } from './agent/components/chat/chat.component';
 import { VoiceComponent } from './agent/components/voice/voice.component';
+import { ContactsComponent } from './agent/components/contacts/contacts.component';
 
 // Supervisor modülü
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
@@ -33,6 +34,7 @@ const routes: Routes = [
       { path: 'calls/cancelled', component: CancelledRequestsComponent },
       { path: 'calls/:id', component: CallDetailComponent },
       { path: 'chat', component: ChatComponent },
+      { path: 'contacts', component: ContactsComponent },
       { path: 'voice', component: VoiceComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
