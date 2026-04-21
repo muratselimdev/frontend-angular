@@ -95,10 +95,13 @@ export class CategoryItemListComponent implements OnInit, OnDestroy {
         console.log(`[CategoryItems] Received ${result.items?.length || 0} items, ${result.categories?.length || 0} categories`);
 
         this.categories = result.categories || [];
-        this.categoryItems = result.items || [];
+        const allItems = result.items || [];
         this.categoriesMap = new Map(this.categories.map(c => [c.id, c]));
         if (this.categoryId) {
           this.categoryName = this.categoriesMap.get(this.categoryId)?.name;
+          this.categoryItems = allItems.filter(item => item.categoryId === this.categoryId);
+        } else {
+          this.categoryItems = allItems;
         }
         this.loading = false;
         this.cdr.markForCheck();

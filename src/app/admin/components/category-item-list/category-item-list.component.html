@@ -18,9 +18,9 @@
 
 <div class="filter-section">
   <label for="categoryFilter">Kategori Filtrele:</label>
-  <select id="categoryFilter" (change)="filterByCategory($any($event.target).value ? +$any($event.target).value : null)" class="filter-select">
-    <option [value]="null">Tüm Kategoriler</option>
-    <option *ngFor="let cat of categories; trackBy: trackByCategoryId" [value]="cat.id" [selected]="cat.id === categoryId">
+  <select id="categoryFilter" [value]="categoryId ?? ''" (change)="filterByCategory($any($event.target).value ? +$any($event.target).value : null)" class="filter-select">
+    <option value="">Tüm Kategoriler</option>
+    <option *ngFor="let cat of categories; trackBy: trackByCategoryId" [value]="cat.id">
       {{ cat.name }}
     </option>
   </select>
