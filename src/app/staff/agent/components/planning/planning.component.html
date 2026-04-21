@@ -1,0 +1,66 @@
+<div class="planning-container">
+  <div class="planning-header">
+    <h2>Planning</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <div *ngIf="loading" class="loading-state">Loading...</div>
+
+    <table *ngIf="!loading" class="planning-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 140 : null">
+            <div class="th-inner">
+              <span class="th-label" (click)="sortBy(col.key)">
+                {{ col.label }}&nbsp;<span class="sort-icon">{{ getSortIcon(col.key) }}</span>
+              </span>
+              <button
+                class="pin-btn"
+                [class.pin-active]="isPinned(col.key)"
+                [disabled]="!canPin(col.key)"
+                (click)="togglePin(col.key, $event)"
+                [title]="isPinned(col.key) ? 'Unpin column' : 'Pin column'">
+                &#128204;
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let planning of sortedPlannings">
+          <td *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 140 : null">
+
+            <ng-container [ngSwitch]="col.key">
+
+              <span *ngSwitchCase="'operationStatus'"
+                    class="badge" [class]="getStatusClass(getCellValue(planning, col.key))">
+                {{ getCellValue(planning, col.key) }}
+              </span>
+
+              <span *ngSwitchCase="'visitType'"
+                    class="badge" [class]="getVisitTypeClass(getCellValue(planning, col.key))">
+                {{ getCellValue(planning, col.key) }}
+              </span>
+
+              <span *ngSwitchCase="'planningName'" class="planning-name">
+                {{ getCellValue(planning, col.key) }}
+              </span>
+
+              <span *ngSwitchDefault>{{ getCellValue(planning, col.key) }}</span>
+
+            </ng-container>
+          </td>
+        </tr>
+        <tr *ngIf="plannings.length === 0">
+          <td [attr.colspan]="orderedColumns.length" class="empty-state">No plannings found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

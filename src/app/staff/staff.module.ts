@@ -21,6 +21,7 @@ import { CallDetailComponent } from './agent/components/call-detail/call-detail.
 import { ContactsComponent } from './agent/components/contacts/contacts.component';
 import { LeadsComponent } from './agent/components/leads/leads.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
+import { PlanningComponent } from './agent/components/planning/planning.component';
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
 import { SalesManagerDashboardComponent } from './management/sales-manager-dashboard/sales-manager-dashboard.component';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -45,6 +46,7 @@ import { SharedModule } from '../shared/shared.module';
     ContactsComponent,
     LeadsComponent,
     DealsComponent,
+    PlanningComponent,
     SupervisorDashboardComponent,
     SalesManagerDashboardComponent
   ],
