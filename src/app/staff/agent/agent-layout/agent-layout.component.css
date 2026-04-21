@@ -14,9 +14,32 @@
     border-right: 1px solid #ddd;
     transition: width 0.25s ease, padding 0.25s ease;
     overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+
+    &.resizing {
+      transition: none;
+      user-select: none;
+    }
+
+    .resize-handle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 100%;
+      cursor: col-resize;
+      z-index: 10;
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    .resize-handle:hover {
+      background: rgba(0, 159, 122, 0.3);
+    }
 
     &.sidebar-collapsed {
-      width: 0;
+      width: 0 !important;
       padding: 0;
     }
 

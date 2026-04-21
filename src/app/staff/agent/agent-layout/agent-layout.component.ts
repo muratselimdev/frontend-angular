@@ -24,6 +24,31 @@ interface MenuItem {
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   isTabletSidebarOpen = false;
   isSidebarCollapsed = false;
+  sidebarWidth = 280;
+
+  isResizing = false;
+  private resizeStartX = 0;
+  private resizeStartWidth = 280;
+
+  startResize(event: MouseEvent): void {
+    this.isResizing = true;
+    this.resizeStartX = event.clientX;
+    this.resizeStartWidth = this.sidebarWidth;
+    event.preventDefault();
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent): void {
+    if (!this.isResizing) return;
+    const delta = event.clientX - this.resizeStartX;
+    const newWidth = Math.min(480, Math.max(160, this.resizeStartWidth + delta));
+    this.sidebarWidth = newWidth;
+  }
+
+  @HostListener('document:mouseup')
+  onMouseUp(): void {
+    this.isResizing = false;
+  }
 
   menuItems: MenuItem[] = [
     {

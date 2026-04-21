@@ -8,10 +8,13 @@
   ></button>
 
   <!-- 🔹 Sol Menü -->
-  <aside class="sidebar" [class.sidebar-open]="isTabletSidebarOpen" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <aside class="sidebar" [class.sidebar-open]="isTabletSidebarOpen" [class.sidebar-collapsed]="isSidebarCollapsed" [class.resizing]="isResizing" [style.width.px]="isSidebarCollapsed ? 0 : sidebarWidth">
     <div class="sidebar-header text-center py-3">
       <h3>🎧 Agent Panel</h3>
     </div>
+
+    <!-- resize handle -->
+    <div class="resize-handle" (mousedown)="startResize($event)"></div>
 
     <!-- 📞 Gelen çağrı popup -->
     <app-call-incoming-modal
