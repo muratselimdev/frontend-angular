@@ -1,4 +1,48 @@
 <div class="contacts-container">
-  <h2>Contacts</h2>
-  <p>Contacts list will appear here.</p>
+  <div class="contacts-header">
+    <h2>Contacts</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <div *ngIf="loading" class="loading-state">Loading...</div>
+
+    <table *ngIf="!loading" class="contacts-table">
+      <thead>
+        <tr>
+          <th>Status-Id</th>
+          <th>Contact-Id</th>
+          <th>Contact Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Lead Source</th>
+          <th>Campaign Name</th>
+          <th>Language</th>
+          <th>Contact Owner</th>
+          <th>Created Time</th>
+          <th>Modified Time</th>
+          <th>Last Activity Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contact of contacts">
+          <td><span class="badge" [class]="getStatusClass(contact.statusId)">{{ contact.statusId }}</span></td>
+          <td>{{ contact.contactId }}</td>
+          <td class="contact-name">{{ contact.contactName }}</td>
+          <td>{{ contact.phone }}</td>
+          <td>{{ contact.email }}</td>
+          <td>{{ contact.leadSource }}</td>
+          <td>{{ contact.campaignName }}</td>
+          <td>{{ contact.language }}</td>
+          <td>{{ contact.contactOwner }}</td>
+          <td>{{ contact.createdTime | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ contact.modifiedTime | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ contact.lastActivityTime | date:'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+        <tr *ngIf="contacts.length === 0">
+          <td colspan="12" class="empty-state">No contacts found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+

@@ -1,3 +1,83 @@
 .contacts-container {
   padding: 1rem;
 }
+
+.contacts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.contacts-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+  min-width: 1200px;
+}
+
+.contacts-table thead tr {
+  background: #f4f6f9;
+  text-align: left;
+}
+
+.contacts-table th {
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.contacts-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  white-space: nowrap;
+}
+
+.contacts-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.contact-name {
+  font-weight: 500;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-active  { background: #d4edda; color: #155724; }
+.badge-closed  { background: #d6d8db; color: #383d41; }
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-default { background: #e2e3e5; color: #383d41; }
+
+.loading-state {
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
