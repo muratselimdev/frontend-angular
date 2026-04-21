@@ -53,9 +53,9 @@
 
 .th-inner {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 }
 
 .th-label {
