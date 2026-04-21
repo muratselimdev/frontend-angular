@@ -23,6 +23,7 @@ interface MenuItem {
 })
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   isTabletSidebarOpen = false;
+  isSidebarCollapsed = false;
 
   menuItems: MenuItem[] = [
     {
@@ -137,7 +138,9 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize')
   onWindowResize(): void {
-    if (window.innerWidth > 1024 && this.isTabletSidebarOpen) {
+    if (window.innerWidth <= 1024) {
+      this.isSidebarCollapsed = false;
+    } else {
       this.isTabletSidebarOpen = false;
     }
   }
@@ -171,7 +174,11 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
   }
 
   toggleTabletSidebar(): void {
-    this.isTabletSidebarOpen = !this.isTabletSidebarOpen;
+    if (window.innerWidth > 1024) {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    } else {
+      this.isTabletSidebarOpen = !this.isTabletSidebarOpen;
+    }
   }
 
   closeTabletSidebar(): void {

@@ -12,6 +12,13 @@
     background-color: #f0fdf9;
     padding: 20px;
     border-right: 1px solid #ddd;
+    transition: width 0.25s ease, padding 0.25s ease;
+    overflow: hidden;
+
+    &.sidebar-collapsed {
+      width: 0;
+      padding: 0;
+    }
 
     .sidebar-header {
       font-size: 18px;
