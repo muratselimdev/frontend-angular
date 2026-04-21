@@ -23,6 +23,9 @@
     ]
   },
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@angular/animations": "^21.0.0",
     "@angular/cdk": "^21.0.0",
