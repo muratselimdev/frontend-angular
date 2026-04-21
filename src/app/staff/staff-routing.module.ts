@@ -15,6 +15,7 @@ import { CallDetailComponent } from './agent/components/call-detail/call-detail.
 import { ChatComponent } from './agent/components/chat/chat.component';
 import { VoiceComponent } from './agent/components/voice/voice.component';
 import { ContactsComponent } from './agent/components/contacts/contacts.component';
+import { LeadsComponent } from './agent/components/leads/leads.component';
 
 // Supervisor modülü
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
@@ -35,6 +36,7 @@ const routes: Routes = [
       { path: 'calls/:id', component: CallDetailComponent },
       { path: 'chat', component: ChatComponent },
       { path: 'contacts', component: ContactsComponent },
+      { path: 'leads', component: LeadsComponent },
       { path: 'voice', component: VoiceComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },

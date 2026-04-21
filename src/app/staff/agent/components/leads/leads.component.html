@@ -1,0 +1,48 @@
+<div class="leads-container">
+  <div class="leads-header">
+    <h2>Leads</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <div *ngIf="loading" class="loading-state">Loading...</div>
+
+    <table *ngIf="!loading" class="leads-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 130 : null">
+            <div class="th-inner">
+              <span class="th-label" (click)="sortBy(col.key)">
+                {{ col.label }}&nbsp;<span class="sort-icon">{{ getSortIcon(col.key) }}</span>
+              </span>
+              <button
+                class="pin-btn"
+                [class.pin-active]="isPinned(col.key)"
+                [disabled]="!canPin(col.key)"
+                (click)="togglePin(col.key, $event)"
+                [title]="isPinned(col.key) ? 'Unpin column' : 'Pin column'">
+                &#128204;
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let lead of sortedLeads">
+          <td *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 130 : null">
+            <span *ngIf="col.key === 'leadStatus'" class="badge" [class]="getStatusClass(getCellValue(lead, col.key))">{{ getCellValue(lead, col.key) }}</span>
+            <span *ngIf="col.key !== 'leadStatus'" [class.lead-name]="col.key === 'leadName'">{{ getCellValue(lead, col.key) }}</span>
+          </td>
+        </tr>
+        <tr *ngIf="leads.length === 0">
+          <td [attr.colspan]="orderedColumns.length" class="empty-state">No leads found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
