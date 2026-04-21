@@ -1,0 +1,73 @@
+<div class="deals-container">
+  <div class="deals-header">
+    <h2>Deals</h2>
+  </div>
+
+  <div class="table-wrapper">
+    <div *ngIf="loading" class="loading-state">Loading...</div>
+
+    <table *ngIf="!loading" class="deals-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 140 : null">
+            <div class="th-inner">
+              <span class="th-label" (click)="sortBy(col.key)">
+                {{ col.label }}&nbsp;<span class="sort-icon">{{ getSortIcon(col.key) }}</span>
+              </span>
+              <button
+                class="pin-btn"
+                [class.pin-active]="isPinned(col.key)"
+                [disabled]="!canPin(col.key)"
+                (click)="togglePin(col.key, $event)"
+                [title]="isPinned(col.key) ? 'Unpin column' : 'Pin column'">
+                &#128204;
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let deal of sortedDeals">
+          <td *ngFor="let col of orderedColumns"
+              [class.pinned-col]="isPinned(col.key)"
+              [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
+              [style.min-width.px]="isPinned(col.key) ? 140 : null">
+
+            <ng-container [ngSwitch]="col.key">
+
+              <span *ngSwitchCase="'activityBadge'"
+                    class="badge act-badge" [class]="getActivityBadgeClass(getCellValue(deal, col.key))">
+                {{ getCellValue(deal, col.key) || '—' }}
+              </span>
+
+              <span *ngSwitchCase="'noteBadge'" class="badge note-badge">
+                {{ getCellValue(deal, col.key) || '—' }}
+              </span>
+
+              <span *ngSwitchCase="'stage'" class="badge" [class]="getStageClass(getCellValue(deal, col.key))">
+                {{ getCellValue(deal, col.key) }}
+              </span>
+
+              <span *ngSwitchCase="'dealName'" class="deal-name">
+                {{ getCellValue(deal, col.key) }}
+              </span>
+
+              <span *ngSwitchCase="'amount'" class="amount">
+                {{ getCellValue(deal, col.key) }}
+              </span>
+
+              <span *ngSwitchDefault>{{ getCellValue(deal, col.key) }}</span>
+
+            </ng-container>
+          </td>
+        </tr>
+        <tr *ngIf="deals.length === 0">
+          <td [attr.colspan]="orderedColumns.length" class="empty-state">No deals found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

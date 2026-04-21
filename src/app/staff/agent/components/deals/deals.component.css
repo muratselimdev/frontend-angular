@@ -1,0 +1,166 @@
+.deals-container {
+  padding: 1rem;
+}
+
+.deals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.deals-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.deals-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+  min-width: 1300px;
+}
+
+.deals-table thead tr {
+  background: #f4f6f9;
+  text-align: left;
+}
+
+.deals-table th {
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.deals-table th:hover {
+  background: #eaecf0;
+}
+
+.th-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.th-label {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.pin-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.25;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.pin-btn:hover:not(:disabled) {
+  opacity: 0.75;
+  transform: rotate(-45deg);
+}
+
+.pin-btn.pin-active {
+  opacity: 1;
+  transform: rotate(-45deg);
+}
+
+.pin-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.1;
+}
+
+.deals-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  white-space: nowrap;
+}
+
+.deals-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.deal-name {
+  font-weight: 500;
+}
+
+.amount {
+  font-weight: 600;
+  color: #0a6b4a;
+}
+
+/* Pinned columns */
+.pinned-col {
+  position: sticky;
+  z-index: 2;
+  background: #eef3ff;
+  border-right: 2px solid #c7d7f5;
+}
+
+thead .pinned-col {
+  z-index: 3;
+  background: #e0eaff;
+}
+
+/* Badges */
+.badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Stage badges */
+.badge-prospect      { background: #e2e3e5; color: #383d41; }
+.badge-qualification { background: #cce5ff; color: #004085; }
+.badge-proposal      { background: #fff3cd; color: #856404; }
+.badge-negotiation   { background: #fde2e4; color: #842029; }
+.badge-won           { background: #d4edda; color: #155724; }
+.badge-lost          { background: #f8d7da; color: #721c24; }
+.badge-default       { background: #e2e3e5; color: #383d41; }
+
+/* Activity badges */
+.act-badge  { font-size: 0.72rem; }
+.act-call    { background: #d1ecf1; color: #0c5460; }
+.act-email   { background: #d4edda; color: #155724; }
+.act-meeting { background: #fff3cd; color: #856404; }
+.act-task    { background: #cce5ff; color: #004085; }
+.act-default { background: #e2e3e5; color: #383d41; }
+
+/* Note badge */
+.note-badge { background: #fef9c3; color: #78350f; }
+
+.loading-state {
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
