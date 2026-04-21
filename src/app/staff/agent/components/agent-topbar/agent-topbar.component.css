@@ -16,7 +16,7 @@
 }
 
 .hamburger-button {
-  display: none;
+  display: flex;
   width: 42px;
   height: 42px;
   border: 1px solid #dbe4ea;
