@@ -9,22 +9,22 @@
     <table *ngIf="!loading" class="contacts-table">
       <thead>
         <tr>
-          <th>Status-Id</th>
-          <th>Contact-Id</th>
-          <th>Contact Name</th>
-          <th>Phone</th>
-          <th>Email</th>
-          <th>Lead Source</th>
-          <th>Campaign Name</th>
-          <th>Language</th>
-          <th>Contact Owner</th>
-          <th>Created Time</th>
-          <th>Modified Time</th>
-          <th>Last Activity Time</th>
+          <th class="sortable" (click)="sortBy('statusId')">Status-Id <span class="sort-icon">{{ getSortIcon('statusId') }}</span></th>
+          <th class="sortable" (click)="sortBy('contactId')">Contact-Id <span class="sort-icon">{{ getSortIcon('contactId') }}</span></th>
+          <th class="sortable" (click)="sortBy('contactName')">Contact Name <span class="sort-icon">{{ getSortIcon('contactName') }}</span></th>
+          <th class="sortable" (click)="sortBy('phone')">Phone <span class="sort-icon">{{ getSortIcon('phone') }}</span></th>
+          <th class="sortable" (click)="sortBy('email')">Email <span class="sort-icon">{{ getSortIcon('email') }}</span></th>
+          <th class="sortable" (click)="sortBy('leadSource')">Lead Source <span class="sort-icon">{{ getSortIcon('leadSource') }}</span></th>
+          <th class="sortable" (click)="sortBy('campaignName')">Campaign Name <span class="sort-icon">{{ getSortIcon('campaignName') }}</span></th>
+          <th class="sortable" (click)="sortBy('language')">Language <span class="sort-icon">{{ getSortIcon('language') }}</span></th>
+          <th class="sortable" (click)="sortBy('contactOwner')">Contact Owner <span class="sort-icon">{{ getSortIcon('contactOwner') }}</span></th>
+          <th class="sortable" (click)="sortBy('createdTime')">Created Time <span class="sort-icon">{{ getSortIcon('createdTime') }}</span></th>
+          <th class="sortable" (click)="sortBy('modifiedTime')">Modified Time <span class="sort-icon">{{ getSortIcon('modifiedTime') }}</span></th>
+          <th class="sortable" (click)="sortBy('lastActivityTime')">Last Activity Time <span class="sort-icon">{{ getSortIcon('lastActivityTime') }}</span></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let contact of contacts">
+        <tr *ngFor="let contact of sortedContacts">
           <td><span class="badge" [class]="getStatusClass(contact.statusId)">{{ contact.statusId }}</span></td>
           <td>{{ contact.contactId }}</td>
           <td class="contact-name">{{ contact.contactName }}</td>

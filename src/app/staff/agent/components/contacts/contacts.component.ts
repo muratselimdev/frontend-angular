@@ -25,8 +25,38 @@ export class ContactsComponent implements OnInit {
   contacts: Contact[] = [];
   loading = false;
 
+  sortColumn: keyof Contact | '' = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   ngOnInit(): void {
     // Data will be loaded from API when backend is ready
+  }
+
+  get sortedContacts(): Contact[] {
+    if (!this.sortColumn) return this.contacts;
+    const col = this.sortColumn;
+    const dir = this.sortDirection === 'asc' ? 1 : -1;
+    return [...this.contacts].sort((a, b) => {
+      const av = a[col] ?? '';
+      const bv = b[col] ?? '';
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
+  }
+
+  sortBy(col: keyof Contact): void {
+    if (this.sortColumn === col) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = col;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  getSortIcon(col: keyof Contact): string {
+    if (this.sortColumn !== col) return '⇅';
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 
   getStatusClass(status: string): string {

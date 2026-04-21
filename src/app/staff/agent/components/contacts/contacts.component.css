@@ -42,6 +42,21 @@
   white-space: nowrap;
 }
 
+.contacts-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.contacts-table th.sortable:hover {
+  background: #eaecf0;
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
 .contacts-table td {
   padding: 9px 12px;
   border-bottom: 1px solid #f0f0f0;
