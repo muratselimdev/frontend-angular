@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import seedData from './leads-seed.json';
 
 export interface Lead {
   leadId: number;
@@ -52,11 +53,13 @@ export class LeadsComponent implements OnInit {
   sortColumn: keyof Lead | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Lead)[] = [];
+  selectedLeads = new Set<number>();
 
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    // Data will be loaded from API when backend is ready
+    // TODO: replace with real API call when backend is ready
+    this.leads = seedData as Lead[];
   }
 
   get orderedColumns(): ColumnDef[] {
@@ -76,6 +79,35 @@ export class LeadsComponent implements OnInit {
       if (av > bv) return  1 * dir;
       return 0;
     });
+  }
+
+  get allSelected(): boolean {
+    return this.leads.length > 0 && this.selectedLeads.size === this.leads.length;
+  }
+
+  get someSelected(): boolean {
+    return this.selectedLeads.size > 0 && !this.allSelected;
+  }
+
+  toggleSelectAll(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.leads.forEach(l => this.selectedLeads.add(l.leadId));
+    } else {
+      this.selectedLeads.clear();
+    }
+  }
+
+  toggleSelectLead(leadId: number): void {
+    if (this.selectedLeads.has(leadId)) {
+      this.selectedLeads.delete(leadId);
+    } else {
+      this.selectedLeads.add(leadId);
+    }
+  }
+
+  isSelected(leadId: number): boolean {
+    return this.selectedLeads.has(leadId);
   }
 
   sortBy(col: keyof Lead): void {
