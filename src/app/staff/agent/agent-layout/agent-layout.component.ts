@@ -52,21 +52,13 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
 
   menuItems: MenuItem[] = [
     {
-      label: 'Talepler',
-      path: '/agent/calls',
-      icon: '📋',
-      children: [
-        { label: 'Açık Talepler', path: '/agent/calls/open', icon: '🟡' },
-        { label: 'Tamamlanmış Talepler', path: '/agent/calls/completed', icon: '✅' },
-        { label: 'İptal Talepler', path: '/agent/calls/cancelled', icon: '❌' }
-      ]
-    },
+      label: 'Leads',
+      path: '/agent/leads',
+      icon: '🎯'},
     { label: 'Contacts', path: '/agent/contacts', icon: '📒' },
-    { label: 'Leads', path: '/agent/leads', icon: '🎯' },
     { label: 'Deals', path: '/agent/deals', icon: '🤝' },
     { label: 'Planning', path: '/agent/planning', icon: '📅' },
-    { label: 'Mesajlar', path: '/agent/chat', icon: '💬' },
-    { label: 'Sesli Arama', path: '/agent/voice', icon: '🎤' }
+    { label: 'Requests', path: '/agent/calls', icon: '📋' }
   ];
 
   incomingVisible = false;

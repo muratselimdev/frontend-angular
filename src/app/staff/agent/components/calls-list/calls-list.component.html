@@ -3,28 +3,28 @@
     <div class="hero-icon">📋</div>
     <div class="hero-copy">
       <h2>{{ title }}</h2>
-      <p>Talepleri durumlarına göre görüntüleyebilirsiniz.</p>
+      <p>You can view requests by their status.</p>
     </div>
     <div class="hero-stat">
       <strong>{{ filteredCalls.length }}</strong>
-      <span>Görüntülenen kayıt</span>
+      <span>Records shown</span>
     </div>
   </div>
 
   <div class="requests-card">
     <div *ngIf="loading" class="state-box state-loading">
-      Talepler yükleniyor...
+      Loading requests...
     </div>
 
     <div class="table-wrap" *ngIf="!loading && filteredCalls.length > 0; else noData">
       <table>
         <thead>
           <tr>
-            <th>Müşteri</th>
-            <th>Tedavi</th>
-            <th>Durum</th>
-            <th>Tarih</th>
-            <th>İşlem</th>
+            <th>Customer</th>
+            <th>Treatment</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -41,7 +41,7 @@
             </td>
             <td>{{ c.createdAt | date:'short' }}</td>
             <td>
-              <button class="detail-button" (click)="openDetail(c.id)">Detay</button>
+              <button class="detail-button" (click)="openDetail(c.id)">Detail</button>
             </td>
           </tr>
         </tbody>

@@ -17,8 +17,8 @@ interface AgentCallVm {
   standalone: false
 })
 export class CallsListComponent implements OnInit {
-  @Input() title = 'Talepler';
-  @Input() emptyMessage = 'Henüz size atanmış müşteri talebi bulunmamaktadır.';
+  @Input() title = 'Requests';
+  @Input() emptyMessage = 'No customer requests have been assigned to you yet.';
   @Input() statusFilter: string[] = [];
 
   calls: AgentCallVm[] = [];
