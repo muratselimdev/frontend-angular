@@ -18,6 +18,7 @@
               title="Select all"
             />
           </th>
+          <th class="task-flag-col">-</th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -46,6 +47,12 @@
               [checked]="isSelected(lead.leadId)"
               (change)="toggleSelectLead(lead.leadId)"
             />
+          </td>
+          <td class="task-flag-col">
+            <div [class]="'task-flag-rectangle ' + getTaskFlagClass(lead)">
+              <span class="flag-month">{{ getTaskFlagMonth(lead) }}</span>
+              <span class="flag-day">{{ getTaskFlagDay(lead) }}</span>
+            </div>
           </td>
           <td *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"

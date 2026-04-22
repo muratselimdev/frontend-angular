@@ -162,4 +162,25 @@ export class LeadsComponent implements OnInit {
     if (s.includes('lost') || s.includes('dead')) return 'badge-lost';
     return 'badge-default';
   }
+
+  getTaskFlagClass(lead: Lead): string {
+    const status = (lead.leadStatus || '').toLowerCase();
+    if (status.includes('converted')) return 'flag-completed';
+    if (status.includes('qualified'))  return 'flag-in-progress';
+    return 'flag-pending';
+  }
+
+  getTaskFlagMonth(lead: Lead): string {
+    const dateStr = lead.lastActivityTime || lead.createdTime;
+    if (!dateStr) return 'N/A';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  }
+
+  getTaskFlagDay(lead: Lead): string {
+    const dateStr = lead.lastActivityTime || lead.createdTime;
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    return String(date.getDate());
+  }
 }

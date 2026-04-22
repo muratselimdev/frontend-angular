@@ -17,6 +17,51 @@
   accent-color: #4a6cf7;
 }
 
+.task-flag-col {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  text-align: center;
+  padding: 0 8px;
+}
+
+.task-flag-rectangle {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.flag-month {
+  font-size: 0.6rem;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.flag-day {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.flag-pending {
+  background-color: #ffc107;
+}
+
+.flag-in-progress {
+  background-color: #17a2b8;
+}
+
+.flag-completed {
+  background-color: #28a745;
+}
+
 .leads-header {
   display: flex;
   align-items: center;
