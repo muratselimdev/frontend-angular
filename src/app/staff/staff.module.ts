@@ -23,6 +23,7 @@ import { ContactsComponent } from './agent/components/contacts/contacts.componen
 import { LeadsComponent } from './agent/components/leads/leads.component';
 import { LeadNoteComponent } from './agent/components/leads/lead-note/lead-note.component';
 import { LeadEditComponent } from './agent/components/leads/lead-edit/lead-edit.component';
+import { LeadTransitionComponent } from './agent/components/leads/lead-transition/lead-transition.component';
 import { ContactEditComponent } from './agent/components/contacts/contact-edit/contact-edit.component';
 import { ContactNoteComponent } from './agent/components/contacts/contact-note/contact-note.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
@@ -56,6 +57,7 @@ import { SharedModule } from '../shared/shared.module';
     LeadsComponent,
     LeadNoteComponent,
     LeadEditComponent,
+    LeadTransitionComponent,
     ContactEditComponent,
     ContactNoteComponent,
     DealsComponent,

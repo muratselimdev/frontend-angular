@@ -1,0 +1,46 @@
+<div class="lt-overlay" *ngIf="visible" (click)="onCancel()">
+  <div class="lt-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+    <div class="lt-header">
+      <div class="lt-header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+          <path d="M9.5 13.5l1.5 1.5 3.5-3.5-1.06-1.06L11 12.88l-.94-.94z"/>
+        </svg>
+      </div>
+      <span class="lt-title">Transition &mdash; {{ lead?.leadName }}</span>
+      <button class="lt-close" (click)="onCancel()" aria-label="Close">&times;</button>
+    </div>
+
+    <form [formGroup]="form" class="lt-body" (ngSubmit)="onSave()">
+
+      <!-- Current State -->
+      <div class="lt-field">
+        <label for="lt-currentState">Current State</label>
+        <input
+          id="lt-currentState"
+          type="text"
+          [value]="lead?.leadStatus || '—'"
+          readonly
+          class="lt-readonly-input"
+        />
+      </div>
+
+      <!-- New State -->
+      <div class="lt-field" [class.lt-field--error]="hasError('newState')">
+        <label for="lt-newState">Transition To *</label>
+        <select id="lt-newState" formControlName="newState">
+          <option value="">— Select new state —</option>
+          <option *ngFor="let s of stateOptions" [value]="s">{{ s }}</option>
+        </select>
+        <span class="lt-error-msg" *ngIf="hasError('newState')">Please select a state</span>
+      </div>
+
+      <div class="lt-footer">
+        <button type="button" class="lt-btn lt-btn--cancel" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="lt-btn lt-btn--save">Apply Transition</button>
+      </div>
+
+    </form>
+  </div>
+</div>

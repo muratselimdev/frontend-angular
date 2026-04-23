@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import seedData from './leads-seed.json';
 import { LeadNote } from './lead-note/lead-note.component';
 import { LeadEditPayload } from './lead-edit/lead-edit.component';
+import { LeadTransitionPayload } from './lead-transition/lead-transition.component';
 
 export interface Lead {
   leadId: number;
@@ -66,6 +67,10 @@ export class LeadsComponent implements OnInit {
   // Edit management
   showEditModal = false;
   selectedLeadForEdit?: Lead;
+
+  // Transition management
+  showTransitionModal = false;
+  selectedLeadForTransition?: Lead;
 
   // Call management
   showCallModal = false;
@@ -259,6 +264,30 @@ export class LeadsComponent implements OnInit {
   closeEditModal(): void {
     this.showEditModal = false;
     this.selectedLeadForEdit = undefined;
+  }
+
+  // ===== Transition Management Methods =====
+
+  openTransitionModal(lead: Lead): void {
+    this.selectedLeadForTransition = lead;
+    this.showTransitionModal = true;
+  }
+
+  onTransitionSave(payload: LeadTransitionPayload): void {
+    if (!this.selectedLeadForTransition) return;
+    const id  = this.selectedLeadForTransition.leadId;
+    const now = new Date().toISOString();
+    this.leads = this.leads.map(l =>
+      l.leadId === id
+        ? { ...l, leadStatus: payload.newState, modifiedTime: now, lastActivityTime: now }
+        : l
+    );
+    this.closeTransitionModal();
+  }
+
+  closeTransitionModal(): void {
+    this.showTransitionModal = false;
+    this.selectedLeadForTransition = undefined;
   }
 
   getNotesCount(lead: Lead): number {

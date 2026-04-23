@@ -21,6 +21,12 @@
           </th>
           <th class="notes-col" title="Notes">📝</th>
           <th class="task-flag-col">-</th>
+          <th class="transition-col" title="Transition">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+              <path d="M9.5 13.5l1.5 1.5 3.5-3.5-1.06-1.06L11 12.88l-.94-.94z"/>
+            </svg>
+          </th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -71,6 +77,14 @@
               <span class="flag-day">{{ getTaskFlagDay(lead) }}</span>
             </div>
           </td>
+          <td class="transition-col">
+            <button class="transition-btn" title="Transition" (click)="openTransitionModal(lead)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                <path d="M9.5 13.5l1.5 1.5 3.5-3.5-1.06-1.06L11 12.88l-.94-.94z"/>
+              </svg>
+            </button>
+          </td>
           <td *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -87,7 +101,7 @@
           </td>
         </tr>
         <tr *ngIf="leads.length === 0">
-          <td [attr.colspan]="orderedColumns.length + 4" class="empty-state">No leads found.</td>
+          <td [attr.colspan]="orderedColumns.length + 5" class="empty-state">No leads found.</td>
         </tr>
       </tbody>
     </table>
@@ -118,3 +132,11 @@
   (save)="onLeadEditSave($event)"
   (cancel)="closeEditModal()">
 </app-lead-edit>
+
+<!-- Lead Transition Modal Component -->
+<app-lead-transition
+  [visible]="showTransitionModal"
+  [lead]="selectedLeadForTransition"
+  (save)="onTransitionSave($event)"
+  (cancel)="closeTransitionModal()">
+</app-lead-transition>
