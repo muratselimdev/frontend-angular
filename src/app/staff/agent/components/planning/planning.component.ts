@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './planning-seed.json';
+import { PlanningEditPayload } from './planning-edit/planning-edit.component';
 
 export interface PlanningNote {
   id?: string;
@@ -60,6 +61,9 @@ export class PlanningComponent implements OnInit {
   plannings: Planning[] = [];
   loading = false;
 
+  showPlanningEditModal = false;
+  selectedPlanningForEdit?: Planning;
+
   sortColumn: keyof Planning | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Planning)[] = [];
@@ -97,6 +101,28 @@ export class PlanningComponent implements OnInit {
 
   isSelected(planningIndex: number): boolean {
     return this.selectedPlannings.has(planningIndex);
+  }
+
+  openPlanningEditModal(planning: Planning): void {
+    this.selectedPlanningForEdit = planning;
+    this.showPlanningEditModal = true;
+  }
+
+  onPlanningEditSave(payload: PlanningEditPayload): void {
+    if (!this.selectedPlanningForEdit) return;
+    const idx = this.plannings.indexOf(this.selectedPlanningForEdit);
+    if (idx > -1) {
+      const now = new Date().toISOString();
+      const updated = [...this.plannings];
+      updated[idx] = { ...this.plannings[idx], ...payload, modifiedTime: now, lastActivityTime: now };
+      this.plannings = updated;
+    }
+    this.closePlanningEditModal();
+  }
+
+  closePlanningEditModal(): void {
+    this.showPlanningEditModal = false;
+    this.selectedPlanningForEdit = undefined;
   }
 
   getTaskFlagClass(planning: Planning): string {

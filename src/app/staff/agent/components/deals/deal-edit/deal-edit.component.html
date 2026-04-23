@@ -1,0 +1,65 @@
+<div class="le-overlay" *ngIf="visible" (click)="onCancel()">
+  <div class="le-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+    <div class="le-header">
+      <span class="le-title">Edit Deal &mdash; {{ deal?.dealName }}</span>
+      <button class="le-close" (click)="onCancel()" aria-label="Close">&times;</button>
+    </div>
+
+    <form [formGroup]="form" class="le-body" (ngSubmit)="onSave()">
+      <div class="le-grid">
+
+        <div class="le-field" [class.le-field--error]="hasError('dealName')">
+          <label for="de-dealName">Deal Name *</label>
+          <input id="de-dealName" type="text" formControlName="dealName" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('dealName')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('serviceCategory')">
+          <label for="de-serviceCategory">Service Category *</label>
+          <input id="de-serviceCategory" type="text" formControlName="serviceCategory" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('serviceCategory')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('amount')">
+          <label for="de-amount">Amount *</label>
+          <input id="de-amount" type="number" min="0" formControlName="amount" />
+          <span class="le-error-msg" *ngIf="hasError('amount')">Required &amp; must be ≥ 0</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('stage')">
+          <label for="de-stage">Stage *</label>
+          <select id="de-stage" formControlName="stage">
+            <option value="">— Select —</option>
+            <option *ngFor="let s of stageOptions" [value]="s">{{ s }}</option>
+          </select>
+          <span class="le-error-msg" *ngIf="hasError('stage')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('leadSource')">
+          <label for="de-leadSource">Lead Source *</label>
+          <input id="de-leadSource" type="text" formControlName="leadSource" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('leadSource')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('language')">
+          <label for="de-language">Language *</label>
+          <input id="de-language" type="text" formControlName="language" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('language')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('dealOwner')">
+          <label for="de-dealOwner">Deal Owner *</label>
+          <input id="de-dealOwner" type="text" formControlName="dealOwner" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('dealOwner')">Required</span>
+        </div>
+
+      </div>
+
+      <div class="le-footer">
+        <button type="button" class="le-btn le-btn--secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="le-btn le-btn--primary">Save Update</button>
+      </div>
+    </form>
+  </div>
+</div>

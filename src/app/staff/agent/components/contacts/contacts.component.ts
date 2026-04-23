@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './contacts-seed.json';
+import { ContactEditPayload } from './contact-edit/contact-edit.component';
 
 export interface ContactNote {
   id?: string;
@@ -60,6 +61,9 @@ export class ContactsComponent implements OnInit {
   contacts: Contact[] = [];
   loading = false;
 
+  showContactEditModal = false;
+  selectedContactForEdit?: Contact;
+
   sortColumn: keyof Contact | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Contact)[] = [];
@@ -97,6 +101,28 @@ export class ContactsComponent implements OnInit {
 
   isSelected(contactId: number): boolean {
     return this.selectedContacts.has(contactId);
+  }
+
+  openContactEditModal(contact: Contact): void {
+    this.selectedContactForEdit = contact;
+    this.showContactEditModal = true;
+  }
+
+  onContactEditSave(payload: ContactEditPayload): void {
+    if (!this.selectedContactForEdit) return;
+    const id = this.selectedContactForEdit.contactId;
+    const now = new Date().toISOString();
+    this.contacts = this.contacts.map(c =>
+      c.contactId === id
+        ? { ...c, ...payload, modifiedTime: now, lastActivityTime: now }
+        : c
+    );
+    this.closeContactEditModal();
+  }
+
+  closeContactEditModal(): void {
+    this.showContactEditModal = false;
+    this.selectedContactForEdit = undefined;
   }
 
   getTaskFlagClass(contact: Contact): string {

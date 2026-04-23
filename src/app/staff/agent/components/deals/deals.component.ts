@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './deals-seed.json';
+import { DealEditPayload } from './deal-edit/deal-edit.component';
 
 export interface DealNote {
   id?: string;
@@ -56,6 +57,9 @@ export class DealsComponent implements OnInit {
   deals: Deal[] = [];
   loading = false;
 
+  showDealEditModal = false;
+  selectedDealForEdit?: Deal;
+
   sortColumn: keyof Deal | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Deal)[] = [];
@@ -93,6 +97,28 @@ export class DealsComponent implements OnInit {
 
   isSelected(dealIndex: number): boolean {
     return this.selectedDeals.has(dealIndex);
+  }
+
+  openDealEditModal(deal: Deal): void {
+    this.selectedDealForEdit = deal;
+    this.showDealEditModal = true;
+  }
+
+  onDealEditSave(payload: DealEditPayload): void {
+    if (!this.selectedDealForEdit) return;
+    const idx = this.deals.indexOf(this.selectedDealForEdit);
+    if (idx > -1) {
+      const now = new Date().toISOString();
+      const updated = [...this.deals];
+      updated[idx] = { ...this.deals[idx], ...payload, modifiedTime: now, lastActivityTime: now };
+      this.deals = updated;
+    }
+    this.closeDealEditModal();
+  }
+
+  closeDealEditModal(): void {
+    this.showDealEditModal = false;
+    this.selectedDealForEdit = undefined;
   }
 
   getTaskFlagClass(deal: Deal): string {

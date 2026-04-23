@@ -1,0 +1,62 @@
+<div class="le-overlay" *ngIf="visible" (click)="onCancel()">
+  <div class="le-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+    <div class="le-header">
+      <span class="le-title">Edit Contact &mdash; #{{ contact?.contactId }}</span>
+      <button class="le-close" (click)="onCancel()" aria-label="Close">&times;</button>
+    </div>
+
+    <form [formGroup]="form" class="le-body" (ngSubmit)="onSave()">
+      <div class="le-grid">
+
+        <div class="le-field" [class.le-field--error]="hasError('contactName')">
+          <label for="ce-contactName">Contact Name *</label>
+          <input id="ce-contactName" type="text" formControlName="contactName" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('contactName')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('phone')">
+          <label for="ce-phone">Phone *</label>
+          <input id="ce-phone" type="text" formControlName="phone" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('phone')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('email')">
+          <label for="ce-email">Email *</label>
+          <input id="ce-email" type="email" formControlName="email" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('email')">Required &amp; must be a valid email</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('leadSource')">
+          <label for="ce-leadSource">Lead Source *</label>
+          <input id="ce-leadSource" type="text" formControlName="leadSource" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('leadSource')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('campaignName')">
+          <label for="ce-campaignName">Campaign Name *</label>
+          <input id="ce-campaignName" type="text" formControlName="campaignName" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('campaignName')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('language')">
+          <label for="ce-language">Language *</label>
+          <input id="ce-language" type="text" formControlName="language" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('language')">Required</span>
+        </div>
+
+        <div class="le-field" [class.le-field--error]="hasError('contactOwner')">
+          <label for="ce-contactOwner">Contact Owner *</label>
+          <input id="ce-contactOwner" type="text" formControlName="contactOwner" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('contactOwner')">Required</span>
+        </div>
+
+      </div>
+
+      <div class="le-footer">
+        <button type="button" class="le-btn le-btn--secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="le-btn le-btn--primary">Save Update</button>
+      </div>
+    </form>
+  </div>
+</div>
