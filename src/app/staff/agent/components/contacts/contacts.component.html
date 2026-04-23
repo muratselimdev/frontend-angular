@@ -9,6 +9,17 @@
     <table *ngIf="!loading" class="contacts-table">
       <thead>
         <tr>
+          <th class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="allSelected"
+              [indeterminate]="someSelected"
+              (change)="toggleSelectAll($event)"
+              title="Select all"
+            />
+          </th>
+          <th class="notes-col" title="Notes">📝</th>
+          <th class="task-flag-col">-</th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -31,16 +42,45 @@
       </thead>
       <tbody>
         <tr *ngFor="let contact of sortedContacts">
+          <td class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="isSelected(contact.contactId)"
+              (change)="toggleSelectContact(contact.contactId)"
+            />
+          </td>
+          <td class="notes-col">
+            <button
+              class="note-btn"
+              [class.has-notes]="hasNotes(contact)"
+              title="Notes">
+              📝
+              <span class="note-count" *ngIf="hasNotes(contact)">{{ getNotesCount(contact) }}</span>
+            </button>
+          </td>
+          <td class="task-flag-col">
+            <div [class]="'task-flag-rectangle ' + getTaskFlagClass(contact)" *ngIf="contact.taskDueDate">
+              <span class="flag-month">{{ getTaskFlagMonth(contact) }}</span>
+              <span class="flag-day">{{ getTaskFlagDay(contact) }}</span>
+            </div>
+          </td>
           <td *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
               [style.min-width.px]="isPinned(col.key) ? 130 : null">
             <span *ngIf="col.key === 'statusId'" class="badge" [class]="getStatusClass(getCellValue(contact, col.key))">{{ getCellValue(contact, col.key) }}</span>
-            <span *ngIf="col.key !== 'statusId'" [class.contact-name]="col.key === 'contactName'">{{ getCellValue(contact, col.key) }}</span>
+            <span *ngIf="col.key === 'phone'" class="phone-cell">
+              <span>{{ getCellValue(contact, col.key) }}</span>
+              <button class="call-btn" (click)="startCall(contact)" title="Call">
+                <div class="call-icon">☎️</div>
+                <div class="call-label">call</div>
+              </button>
+            </span>
+            <span *ngIf="col.key !== 'statusId' && col.key !== 'phone'" [class.contact-name]="col.key === 'contactName'">{{ getCellValue(contact, col.key) }}</span>
           </td>
         </tr>
         <tr *ngIf="contacts.length === 0">
-          <td [attr.colspan]="orderedColumns.length" class="empty-state">No contacts found.</td>
+          <td [attr.colspan]="orderedColumns.length + 3" class="empty-state">No contacts found.</td>
         </tr>
       </tbody>
     </table>

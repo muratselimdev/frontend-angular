@@ -1,0 +1,72 @@
+[
+  {
+    "dealName": "Dental Implants - Ali Kaya",
+    "serviceCategory": "Dental",
+    "amount": 5000,
+    "stage": "Proposal",
+    "leadSource": "Referral",
+    "language": "Turkish",
+    "dealOwner": "Fatih Şahin",
+    "createdTime": "2026-03-20T10:00:00",
+    "modifiedTime": "2026-04-12T14:30:00",
+    "lastActivityTime": "2026-04-12T14:30:00",
+    "taskDueDate": "2026-04-25T16:00:00",
+    "notes": []
+  },
+  {
+    "dealName": "Hair Transplant - Maria Schmidt",
+    "serviceCategory": "Hair Transplant",
+    "amount": 8500,
+    "stage": "Negotiation",
+    "leadSource": "Website",
+    "language": "German",
+    "dealOwner": "Ali Kaya",
+    "createdTime": "2026-02-15T11:20:00",
+    "modifiedTime": "2026-04-11T10:15:00",
+    "lastActivityTime": "2026-04-11T10:15:00",
+    "taskDueDate": "2026-04-23T12:00:00",
+    "notes": []
+  },
+  {
+    "dealName": "Cosmetic Surgery - John Thompson",
+    "serviceCategory": "Cosmetic",
+    "amount": 12000,
+    "stage": "Won",
+    "leadSource": "Social Media",
+    "language": "English",
+    "dealOwner": "Zeynep Kara",
+    "createdTime": "2026-01-10T09:30:00",
+    "modifiedTime": "2026-04-09T16:45:00",
+    "lastActivityTime": "2026-04-09T16:45:00",
+    "taskDueDate": "2026-04-28T14:00:00",
+    "notes": []
+  },
+  {
+    "dealName": "Dental Cleaning Package - Sophie Martin",
+    "serviceCategory": "Dental",
+    "amount": 250,
+    "stage": "Qualification",
+    "leadSource": "Email Campaign",
+    "language": "French",
+    "dealOwner": "Fatih Şahin",
+    "createdTime": "2026-04-05T13:00:00",
+    "modifiedTime": "2026-04-13T11:20:00",
+    "lastActivityTime": "2026-04-13T11:20:00",
+    "taskDueDate": "2026-04-20T10:00:00",
+    "notes": []
+  },
+  {
+    "dealName": "Medical Tourism - Roberto González",
+    "serviceCategory": "Medical Tourism",
+    "amount": 15000,
+    "stage": "Prospect",
+    "leadSource": "Website",
+    "language": "Spanish",
+    "dealOwner": "Ali Kaya",
+    "createdTime": "2026-04-08T14:15:00",
+    "modifiedTime": "2026-04-14T09:30:00",
+    "lastActivityTime": "2026-04-14T09:30:00",
+    "taskDueDate": "2026-04-22T15:00:00",
+    "notes": []
+  }
+]

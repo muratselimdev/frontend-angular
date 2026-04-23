@@ -1,0 +1,45 @@
+<div class="note-modal-overlay" *ngIf="visible" (click)="onCancel()">
+  <div class="note-modal-container" (click)="$event.stopPropagation()">
+    <div class="note-modal-header">
+      <h3>Lead Note</h3>
+      <button class="close-btn" (click)="onCancel()" title="Close">&times;</button>
+    </div>
+
+    <form [formGroup]="noteForm" class="note-form">
+      <div class="form-group">
+        <label for="title">Title <span class="optional">(Optional)</span></label>
+        <input
+          id="title"
+          type="text"
+          class="form-input"
+          formControlName="title"
+          placeholder="Enter note title (optional)"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="content">Content <span class="required">*</span></label>
+        <ckeditor
+          id="content"
+          formControlName="content"
+          [editor]="Editor"
+          [config]="ckEditorConfig"
+          [data]="noteForm.get('content')?.value"
+          (contentDom)="onContentDom($event)"
+        ></ckeditor>
+        <span class="error" *ngIf="noteForm.get('content')?.hasError('required')">
+          Content is required
+        </span>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" [disabled]="!noteForm.valid" (click)="onSave()">
+          Save Note
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

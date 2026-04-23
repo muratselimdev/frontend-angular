@@ -9,6 +9,17 @@
     <table *ngIf="!loading" class="deals-table">
       <thead>
         <tr>
+          <th class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="allSelected"
+              [indeterminate]="someSelected"
+              (change)="toggleSelectAll($event)"
+              title="Select all"
+            />
+          </th>
+          <th class="notes-col" title="Notes">📝</th>
+          <th class="task-flag-col">-</th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -30,22 +41,35 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let deal of sortedDeals">
+        <tr *ngFor="let deal of sortedDeals; let dealIdx = index">
+          <td class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="isSelected(dealIdx)"
+              (change)="toggleSelectDeal(dealIdx)"
+            />
+          </td>
+          <td class="notes-col">
+            <button
+              class="note-btn"
+              [class.has-notes]="hasNotes(deal)"
+              title="Notes">
+              📝
+              <span class="note-count" *ngIf="hasNotes(deal)">{{ getNotesCount(deal) }}</span>
+            </button>
+          </td>
+          <td class="task-flag-col">
+            <div [class]="'task-flag-rectangle ' + getTaskFlagClass(deal)" *ngIf="deal.taskDueDate">
+              <span class="flag-month">{{ getTaskFlagMonth(deal) }}</span>
+              <span class="flag-day">{{ getTaskFlagDay(deal) }}</span>
+            </div>
+          </td>
           <td *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
               [style.min-width.px]="isPinned(col.key) ? 140 : null">
 
             <ng-container [ngSwitch]="col.key">
-
-              <span *ngSwitchCase="'activityBadge'"
-                    class="badge act-badge" [class]="getActivityBadgeClass(getCellValue(deal, col.key))">
-                {{ getCellValue(deal, col.key) || '—' }}
-              </span>
-
-              <span *ngSwitchCase="'noteBadge'" class="badge note-badge">
-                {{ getCellValue(deal, col.key) || '—' }}
-              </span>
 
               <span *ngSwitchCase="'stage'" class="badge" [class]="getStageClass(getCellValue(deal, col.key))">
                 {{ getCellValue(deal, col.key) }}
@@ -65,7 +89,7 @@
           </td>
         </tr>
         <tr *ngIf="deals.length === 0">
-          <td [attr.colspan]="orderedColumns.length" class="empty-state">No deals found.</td>
+          <td [attr.colspan]="orderedColumns.length + 3" class="empty-state">No deals found.</td>
         </tr>
       </tbody>
     </table>

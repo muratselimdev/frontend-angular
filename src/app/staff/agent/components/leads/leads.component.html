@@ -18,6 +18,7 @@
               title="Select all"
             />
           </th>
+          <th class="notes-col" title="Notes">📝</th>
           <th class="task-flag-col">-</th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
@@ -48,6 +49,16 @@
               (change)="toggleSelectLead(lead.leadId)"
             />
           </td>
+          <td class="notes-col">
+            <button
+              class="note-btn"
+              [class.has-notes]="hasNotes(lead)"
+              (click)="openNoteModal(lead)"
+              [title]="'Notes: ' + getNotesCount(lead)">
+              📝
+              <span class="note-count" *ngIf="hasNotes(lead)">{{ getNotesCount(lead) }}</span>
+            </button>
+          </td>
           <td class="task-flag-col">
             <div [class]="'task-flag-rectangle ' + getTaskFlagClass(lead)">
               <span class="flag-month">{{ getTaskFlagMonth(lead) }}</span>
@@ -59,13 +70,37 @@
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
               [style.min-width.px]="isPinned(col.key) ? 130 : null">
             <span *ngIf="col.key === 'leadStatus'" class="badge" [class]="getStatusClass(getCellValue(lead, col.key))">{{ getCellValue(lead, col.key) }}</span>
-            <span *ngIf="col.key !== 'leadStatus'" [class.lead-name]="col.key === 'leadName'">{{ getCellValue(lead, col.key) }}</span>
+            <span *ngIf="col.key === 'phone'" class="phone-cell">
+              <span>{{ getCellValue(lead, col.key) }}</span>
+              <button class="call-btn" (click)="startCall(lead)" title="Call">
+                <div class="call-icon">☎️</div>
+                <div class="call-label">call</div>
+              </button>
+            </span>
+            <span *ngIf="col.key !== 'leadStatus' && col.key !== 'phone'" [class.lead-name]="col.key === 'leadName'">{{ getCellValue(lead, col.key) }}</span>
           </td>
         </tr>
         <tr *ngIf="leads.length === 0">
-          <td [attr.colspan]="orderedColumns.length + 1" class="empty-state">No leads found.</td>
+          <td [attr.colspan]="orderedColumns.length + 3" class="empty-state">No leads found.</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<!-- Lead Note Modal Component -->
+<app-lead-note
+  [visible]="showNoteModal"
+  [leadId]="selectedLeadForNote?.leadId"
+  [note]="selectedNoteForEdit"
+  (save)="onNoteSave($event)"
+  (cancel)="closeNoteModal()">
+</app-lead-note>
+
+<!-- Call Incoming Modal Component -->
+<app-call-incoming-modal
+  [visible]="showCallModal"
+  [callerName]="selectedLeadForCall?.leadName || 'Unknown'"
+  (accept)="acceptCall()"
+  (reject)="rejectCall()">
+</app-call-incoming-modal>

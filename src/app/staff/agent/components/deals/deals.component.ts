@@ -1,9 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import seedData from './deals-seed.json';
+
+export interface DealNote {
+  id?: string;
+  title: string;
+  content: string;
+  createdDate?: Date;
+  modifiedDate?: Date;
+}
 
 export interface Deal {
-  activityBadge: string;
-  noteBadge: string;
   dealName: string;
   serviceCategory: string;
   amount: number | null;
@@ -14,6 +21,8 @@ export interface Deal {
   createdTime: string | null;
   modifiedTime: string | null;
   lastActivityTime: string | null;
+  taskDueDate?: string;
+  notes?: DealNote[];
 }
 
 interface ColumnDef {
@@ -22,10 +31,8 @@ interface ColumnDef {
 }
 
 const ALL_COLUMNS: ColumnDef[] = [
-  { key: 'activityBadge',   label: 'Activity Badge' },
-  { key: 'noteBadge',       label: 'Note Badge' },
   { key: 'dealName',        label: 'Deal Name' },
-  { key: 'serviceCategory', label: 'D.Service Category' },
+  { key: 'serviceCategory', label: 'Service Category' },
   { key: 'amount',          label: 'Amount' },
   { key: 'stage',           label: 'Stage' },
   { key: 'leadSource',      label: 'Lead Source' },
@@ -52,11 +59,72 @@ export class DealsComponent implements OnInit {
   sortColumn: keyof Deal | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Deal)[] = [];
+  selectedDeals: Set<number> = new Set();
 
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    // Data will be loaded from API when backend is ready
+    this.deals = seedData as Deal[];
+  }
+
+  get allSelected(): boolean {
+    return this.deals.length > 0 && this.selectedDeals.size === this.deals.length;
+  }
+
+  get someSelected(): boolean {
+    return this.selectedDeals.size > 0 && this.selectedDeals.size < this.deals.length;
+  }
+
+  toggleSelectAll(event: any): void {
+    if (event.target.checked) {
+      this.deals.forEach((_, idx) => this.selectedDeals.add(idx));
+    } else {
+      this.selectedDeals.clear();
+    }
+  }
+
+  toggleSelectDeal(dealIndex: number): void {
+    if (this.selectedDeals.has(dealIndex)) {
+      this.selectedDeals.delete(dealIndex);
+    } else {
+      this.selectedDeals.add(dealIndex);
+    }
+  }
+
+  isSelected(dealIndex: number): boolean {
+    return this.selectedDeals.has(dealIndex);
+  }
+
+  getTaskFlagClass(deal: Deal): string {
+    if (!deal.taskDueDate) return '';
+    const dueDate = new Date(deal.taskDueDate);
+    const today = new Date();
+    const diffTime = dueDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'flag-pending';
+    if (diffDays <= 3) return 'flag-in-progress';
+    return 'flag-completed';
+  }
+
+  getTaskFlagMonth(deal: Deal): string {
+    if (!deal.taskDueDate) return '';
+    const date = new Date(deal.taskDueDate);
+    return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  }
+
+  getTaskFlagDay(deal: Deal): string {
+    if (!deal.taskDueDate) return '';
+    const date = new Date(deal.taskDueDate);
+    return String(date.getDate());
+  }
+
+  hasNotes(deal: Deal): boolean {
+    return !!(deal.notes && deal.notes.length > 0);
+  }
+
+  getNotesCount(deal: Deal): number {
+    return deal.notes?.length ?? 0;
   }
 
   get orderedColumns(): ColumnDef[] {
@@ -134,14 +202,5 @@ export class DealsComponent implements OnInit {
     if (s.includes('won') || s.includes('closed'))        return 'badge-won';
     if (s.includes('lost'))                               return 'badge-lost';
     return 'badge-default';
-  }
-
-  getActivityBadgeClass(val: string): string {
-    const v = (val || '').toLowerCase();
-    if (v.includes('call'))    return 'act-call';
-    if (v.includes('email'))   return 'act-email';
-    if (v.includes('meeting')) return 'act-meeting';
-    if (v.includes('task'))    return 'act-task';
-    return 'act-default';
   }
 }

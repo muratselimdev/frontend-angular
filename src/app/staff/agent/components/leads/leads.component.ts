@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './leads-seed.json';
+import { LeadNote } from './lead-note/lead-note.component';
 
 export interface Lead {
   leadId: number;
@@ -15,6 +16,7 @@ export interface Lead {
   createdTime: string | null;
   modifiedTime: string | null;
   lastActivityTime: string | null;
+  notes?: LeadNote[];
 }
 
 interface ColumnDef {
@@ -54,6 +56,15 @@ export class LeadsComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Lead)[] = [];
   selectedLeads = new Set<number>();
+
+  // Note management
+  showNoteModal = false;
+  selectedLeadForNote?: Lead;
+  selectedNoteForEdit?: LeadNote;
+
+  // Call management
+  showCallModal = false;
+  selectedLeadForCall?: Lead;
 
   constructor(private datePipe: DatePipe) {}
 
@@ -182,5 +193,78 @@ export class LeadsComponent implements OnInit {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
     return String(date.getDate());
+  }
+
+  // ===== Note Management Methods =====
+
+  openNoteModal(lead: Lead, note?: LeadNote): void {
+    this.selectedLeadForNote = lead;
+    this.selectedNoteForEdit = note;
+    this.showNoteModal = true;
+  }
+
+  onNoteSave(note: LeadNote): void {
+    if (!this.selectedLeadForNote) return;
+
+    // Initialize notes array if it doesn't exist
+    if (!this.selectedLeadForNote.notes) {
+      this.selectedLeadForNote.notes = [];
+    }
+
+    // Check if editing existing note
+    const existingIndex = this.selectedLeadForNote.notes.findIndex(n => n.id === note.id);
+    if (existingIndex > -1) {
+      this.selectedLeadForNote.notes[existingIndex] = note;
+    } else {
+      // Add new note
+      this.selectedLeadForNote.notes.push({
+        ...note,
+        createdDate: new Date()
+      });
+    }
+
+    this.closeNoteModal();
+  }
+
+  closeNoteModal(): void {
+    this.showNoteModal = false;
+    this.selectedLeadForNote = undefined;
+    this.selectedNoteForEdit = undefined;
+  }
+
+  getNotesCount(lead: Lead): number {
+    return lead.notes ? lead.notes.length : 0;
+  }
+
+  hasNotes(lead: Lead): boolean {
+    return this.getNotesCount(lead) > 0;
+  }
+
+  // ===== Call Management Methods =====
+
+  startCall(lead: Lead): void {
+    this.selectedLeadForCall = lead;
+    this.showCallModal = true;
+  }
+
+  acceptCall(): void {
+    // Handle accept call - can integrate with actual voice call service
+    console.log('Call accepted for lead:', this.selectedLeadForCall?.leadName, this.selectedLeadForCall?.phone);
+    this.closeCallModal();
+  }
+
+  rejectCall(): void {
+    // Handle reject call
+    console.log('Call rejected');
+    this.closeCallModal();
+  }
+
+  endCall(): void {
+    this.closeCallModal();
+  }
+
+  closeCallModal(): void {
+    this.showCallModal = false;
+    this.selectedLeadForCall = undefined;
   }
 }

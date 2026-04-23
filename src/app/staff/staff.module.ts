@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 import { AgentLayoutComponent } from './agent/agent-layout/agent-layout.component';
 import { StaffRoutingModule } from './staff-routing.module';
@@ -20,6 +21,7 @@ import { LogoutComponent } from './agent/components/logout/logout.component';
 import { CallDetailComponent } from './agent/components/call-detail/call-detail.component';
 import { ContactsComponent } from './agent/components/contacts/contacts.component';
 import { LeadsComponent } from './agent/components/leads/leads.component';
+import { LeadNoteComponent } from './agent/components/leads/lead-note/lead-note.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
 import { PlanningComponent } from './agent/components/planning/planning.component';
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
@@ -45,6 +47,7 @@ import { SharedModule } from '../shared/shared.module';
     CallDetailComponent,
     ContactsComponent,
     LeadsComponent,
+    LeadNoteComponent,
     DealsComponent,
     PlanningComponent,
     SupervisorDashboardComponent,
@@ -58,7 +61,8 @@ import { SharedModule } from '../shared/shared.module';
     StaffRoutingModule,
     MatTabsModule,
     MatIconModule,
-    SharedModule
+    SharedModule,
+    CKEditorModule
     ]
 })
 export class StaffModule {}

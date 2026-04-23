@@ -1,5 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import seedData from './planning-seed.json';
+
+export interface PlanningNote {
+  id?: string;
+  title: string;
+  content: string;
+  createdDate?: Date;
+  modifiedDate?: Date;
+}
 
 export interface Planning {
   planningName: string;
@@ -14,6 +23,8 @@ export interface Planning {
   createdTime: string | null;
   modifiedTime: string | null;
   lastActivityTime: string | null;
+  taskDueDate?: string;
+  notes?: PlanningNote[];
 }
 
 interface ColumnDef {
@@ -52,11 +63,72 @@ export class PlanningComponent implements OnInit {
   sortColumn: keyof Planning | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Planning)[] = [];
+  selectedPlannings: Set<number> = new Set();
 
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    // Data will be loaded from API when backend is ready
+    this.plannings = seedData as Planning[];
+  }
+
+  get allSelected(): boolean {
+    return this.plannings.length > 0 && this.selectedPlannings.size === this.plannings.length;
+  }
+
+  get someSelected(): boolean {
+    return this.selectedPlannings.size > 0 && this.selectedPlannings.size < this.plannings.length;
+  }
+
+  toggleSelectAll(event: any): void {
+    if (event.target.checked) {
+      this.plannings.forEach((_, idx) => this.selectedPlannings.add(idx));
+    } else {
+      this.selectedPlannings.clear();
+    }
+  }
+
+  toggleSelectPlanning(planningIndex: number): void {
+    if (this.selectedPlannings.has(planningIndex)) {
+      this.selectedPlannings.delete(planningIndex);
+    } else {
+      this.selectedPlannings.add(planningIndex);
+    }
+  }
+
+  isSelected(planningIndex: number): boolean {
+    return this.selectedPlannings.has(planningIndex);
+  }
+
+  getTaskFlagClass(planning: Planning): string {
+    if (!planning.taskDueDate) return '';
+    const dueDate = new Date(planning.taskDueDate);
+    const today = new Date();
+    const diffTime = dueDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'flag-pending';
+    if (diffDays <= 3) return 'flag-in-progress';
+    return 'flag-completed';
+  }
+
+  getTaskFlagMonth(planning: Planning): string {
+    if (!planning.taskDueDate) return '';
+    const date = new Date(planning.taskDueDate);
+    return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  }
+
+  getTaskFlagDay(planning: Planning): string {
+    if (!planning.taskDueDate) return '';
+    const date = new Date(planning.taskDueDate);
+    return String(date.getDate());
+  }
+
+  hasNotes(planning: Planning): boolean {
+    return !!(planning.notes && planning.notes.length > 0);
+  }
+
+  getNotesCount(planning: Planning): number {
+    return planning.notes?.length ?? 0;
   }
 
   get orderedColumns(): ColumnDef[] {

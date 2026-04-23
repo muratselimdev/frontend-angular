@@ -2,6 +2,113 @@
   padding: 1rem;
 }
 
+.checkbox-col {
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  text-align: center;
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.checkbox-col input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #4a6cf7;
+}
+
+.task-flag-col {
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
+  text-align: center;
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.notes-col {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  text-align: center;
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.note-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.note-btn:hover {
+  background-color: rgba(74, 108, 247, 0.1);
+  transform: scale(1.1);
+}
+
+.note-btn.has-notes {
+  color: #4a6cf7;
+}
+
+.note-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4a6cf7;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.task-flag-rectangle {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.flag-month {
+  font-size: 0.6rem;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.flag-day {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.flag-pending {
+  background-color: #ffc107;
+}
+
+.flag-in-progress {
+  background-color: #17a2b8;
+}
+
+.flag-completed {
+  background-color: #28a745;
+}
+
 .contacts-header {
   display: flex;
   align-items: center;
@@ -38,7 +145,7 @@
   padding: 10px 12px;
   font-weight: 600;
   color: #555;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
   white-space: nowrap;
 }
 
@@ -97,6 +204,23 @@
   opacity: 0.1;
 }
 
+.contacts-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.contacts-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.contact-name {
+  font-weight: 500;
+}
+
 .pinned-col {
   position: sticky;
   z-index: 2;
@@ -109,21 +233,6 @@ thead .pinned-col {
   background: #e0eaff;
 }
 
-.contacts-table td {
-  padding: 9px 12px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
-  white-space: nowrap;
-}
-
-.contacts-table tbody tr:hover {
-  background: #f9fbff;
-}
-
-.contact-name {
-  font-weight: 500;
-}
-
 .badge {
   padding: 3px 8px;
   border-radius: 12px;
@@ -131,10 +240,10 @@ thead .pinned-col {
   font-weight: 600;
 }
 
-.badge-active  { background: #d4edda; color: #155724; }
-.badge-closed  { background: #d6d8db; color: #383d41; }
-.badge-pending { background: #fff3cd; color: #856404; }
-.badge-default { background: #e2e3e5; color: #383d41; }
+.badge-active   { background: #d4edda; color: #155724; }
+.badge-closed   { background: #d1ecf1; color: #0c5460; }
+.badge-pending  { background: #cce5ff; color: #004085; }
+.badge-default  { background: #e2e3e5; color: #383d41; }
 
 .loading-state {
   padding: 2rem;
@@ -146,5 +255,64 @@ thead .pinned-col {
   text-align: center;
   padding: 2rem;
   color: #aaa;
+}
+
+.phone-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.call-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 50px;
+  gap: 0;
+}
+
+.call-icon {
+  font-size: 1rem;
+  line-height: 1;
+  margin: 1px;
+}
+
+.call-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #666;
+  letter-spacing: 0.3px;
+}
+
+.phone-cell:hover .call-btn {
+  background-color: #e8eef7;
+  border-color: #4a6cf7;
+  box-shadow: 0 2px 8px rgba(74, 108, 247, 0.15);
+  transform: translateY(-2px);
+}
+
+.call-btn:hover {
+  background-color: #e8eef7;
+  border-color: #4a6cf7;
+  box-shadow: 0 2px 8px rgba(74, 108, 247, 0.15);
+  transform: translateY(-2px);
+}
+
+.call-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(74, 108, 247, 0.1);
 }
 

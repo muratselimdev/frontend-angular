@@ -1,5 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import seedData from './contacts-seed.json';
+
+export interface ContactNote {
+  id?: string;
+  title: string;
+  content: string;
+  createdDate?: Date;
+  modifiedDate?: Date;
+}
 
 export interface Contact {
   statusId: string;
@@ -14,6 +23,8 @@ export interface Contact {
   createdTime: string | null;
   modifiedTime: string | null;
   lastActivityTime: string | null;
+  taskDueDate?: string;
+  notes?: ContactNote[];
 }
 
 interface ColumnDef {
@@ -52,11 +63,76 @@ export class ContactsComponent implements OnInit {
   sortColumn: keyof Contact | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Contact)[] = [];
+  selectedContacts: Set<number> = new Set();
 
   constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {
-    // Data will be loaded from API when backend is ready
+    this.contacts = seedData as Contact[];
+  }
+
+  get allSelected(): boolean {
+    return this.contacts.length > 0 && this.selectedContacts.size === this.contacts.length;
+  }
+
+  get someSelected(): boolean {
+    return this.selectedContacts.size > 0 && this.selectedContacts.size < this.contacts.length;
+  }
+
+  toggleSelectAll(event: any): void {
+    if (event.target.checked) {
+      this.contacts.forEach(c => this.selectedContacts.add(c.contactId));
+    } else {
+      this.selectedContacts.clear();
+    }
+  }
+
+  toggleSelectContact(contactId: number): void {
+    if (this.selectedContacts.has(contactId)) {
+      this.selectedContacts.delete(contactId);
+    } else {
+      this.selectedContacts.add(contactId);
+    }
+  }
+
+  isSelected(contactId: number): boolean {
+    return this.selectedContacts.has(contactId);
+  }
+
+  getTaskFlagClass(contact: Contact): string {
+    if (!contact.taskDueDate) return '';
+    const dueDate = new Date(contact.taskDueDate);
+    const today = new Date();
+    const diffTime = dueDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'flag-pending';
+    if (diffDays <= 3) return 'flag-in-progress';
+    return 'flag-completed';
+  }
+
+  getTaskFlagMonth(contact: Contact): string {
+    if (!contact.taskDueDate) return '';
+    const date = new Date(contact.taskDueDate);
+    return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  }
+
+  getTaskFlagDay(contact: Contact): string {
+    if (!contact.taskDueDate) return '';
+    const date = new Date(contact.taskDueDate);
+    return String(date.getDate());
+  }
+
+  hasNotes(contact: Contact): boolean {
+    return !!(contact.notes && contact.notes.length > 0);
+  }
+
+  getNotesCount(contact: Contact): number {
+    return contact.notes?.length ?? 0;
+  }
+
+  startCall(contact: Contact): void {
+    console.log('Initiating call with:', contact.contactName, contact.phone);
   }
 
   get orderedColumns(): ColumnDef[] {

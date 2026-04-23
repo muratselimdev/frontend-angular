@@ -9,6 +9,17 @@
     <table *ngIf="!loading" class="planning-table">
       <thead>
         <tr>
+          <th class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="allSelected"
+              [indeterminate]="someSelected"
+              (change)="toggleSelectAll($event)"
+              title="Select all"
+            />
+          </th>
+          <th class="notes-col" title="Notes">📝</th>
+          <th class="task-flag-col">-</th>
           <th *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -30,7 +41,29 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let planning of sortedPlannings">
+        <tr *ngFor="let planning of sortedPlannings; let planningIdx = index">
+          <td class="checkbox-col">
+            <input
+              type="checkbox"
+              [checked]="isSelected(planningIdx)"
+              (change)="toggleSelectPlanning(planningIdx)"
+            />
+          </td>
+          <td class="notes-col">
+            <button
+              class="note-btn"
+              [class.has-notes]="hasNotes(planning)"
+              title="Notes">
+              📝
+              <span class="note-count" *ngIf="hasNotes(planning)">{{ getNotesCount(planning) }}</span>
+            </button>
+          </td>
+          <td class="task-flag-col">
+            <div [class]="'task-flag-rectangle ' + getTaskFlagClass(planning)" *ngIf="planning.taskDueDate">
+              <span class="flag-month">{{ getTaskFlagMonth(planning) }}</span>
+              <span class="flag-day">{{ getTaskFlagDay(planning) }}</span>
+            </div>
+          </td>
           <td *ngFor="let col of orderedColumns"
               [class.pinned-col]="isPinned(col.key)"
               [style.left]="isPinned(col.key) ? getPinnedLeft(col.key) : null"
@@ -58,7 +91,7 @@
           </td>
         </tr>
         <tr *ngIf="plannings.length === 0">
-          <td [attr.colspan]="orderedColumns.length" class="empty-state">No plannings found.</td>
+          <td [attr.colspan]="orderedColumns.length + 3" class="empty-state">No plannings found.</td>
         </tr>
       </tbody>
     </table>
