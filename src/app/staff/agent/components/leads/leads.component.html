@@ -9,6 +9,7 @@
     <table *ngIf="!loading" class="leads-table">
       <thead>
         <tr>
+          <th class="edit-col"></th>
           <th class="checkbox-col">
             <input
               type="checkbox"
@@ -42,6 +43,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let lead of sortedLeads">
+          <td class="edit-col">
+            <button class="edit-row-btn" (click)="openEditModal(lead)" title="Edit">
+              ✏️
+            </button>
+          </td>
           <td class="checkbox-col">
             <input
               type="checkbox"
@@ -81,7 +87,7 @@
           </td>
         </tr>
         <tr *ngIf="leads.length === 0">
-          <td [attr.colspan]="orderedColumns.length + 3" class="empty-state">No leads found.</td>
+          <td [attr.colspan]="orderedColumns.length + 4" class="empty-state">No leads found.</td>
         </tr>
       </tbody>
     </table>
@@ -104,3 +110,11 @@
   (accept)="acceptCall()"
   (reject)="rejectCall()">
 </app-call-incoming-modal>
+
+<!-- Lead Edit Modal Component -->
+<app-lead-edit
+  [visible]="showEditModal"
+  [lead]="selectedLeadForEdit"
+  (save)="onLeadEditSave($event)"
+  (cancel)="closeEditModal()">
+</app-lead-edit>

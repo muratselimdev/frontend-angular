@@ -22,6 +22,7 @@ import { CallDetailComponent } from './agent/components/call-detail/call-detail.
 import { ContactsComponent } from './agent/components/contacts/contacts.component';
 import { LeadsComponent } from './agent/components/leads/leads.component';
 import { LeadNoteComponent } from './agent/components/leads/lead-note/lead-note.component';
+import { LeadEditComponent } from './agent/components/leads/lead-edit/lead-edit.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
 import { PlanningComponent } from './agent/components/planning/planning.component';
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
@@ -48,6 +49,7 @@ import { SharedModule } from '../shared/shared.module';
     ContactsComponent,
     LeadsComponent,
     LeadNoteComponent,
+    LeadEditComponent,
     DealsComponent,
     PlanningComponent,
     SupervisorDashboardComponent,

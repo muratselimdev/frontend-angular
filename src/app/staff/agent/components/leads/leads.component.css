@@ -2,6 +2,35 @@
   padding: 1rem;
 }
 
+.edit-col {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  text-align: center;
+  padding: 8px 6px;
+  vertical-align: middle;
+}
+
+.edit-row-btn {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.edit-row-btn:hover {
+  border-color: #4a6cf7;
+  background: #eef2ff;
+  transform: translateY(-1px);
+}
+
 .checkbox-col {
   width: 50px;
   min-width: 50px;

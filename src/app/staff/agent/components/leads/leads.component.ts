@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './leads-seed.json';
 import { LeadNote } from './lead-note/lead-note.component';
+import { LeadEditPayload } from './lead-edit/lead-edit.component';
 
 export interface Lead {
   leadId: number;
@@ -61,6 +62,10 @@ export class LeadsComponent implements OnInit {
   showNoteModal = false;
   selectedLeadForNote?: Lead;
   selectedNoteForEdit?: LeadNote;
+
+  // Edit management
+  showEditModal = false;
+  selectedLeadForEdit?: Lead;
 
   // Call management
   showCallModal = false;
@@ -230,6 +235,30 @@ export class LeadsComponent implements OnInit {
     this.showNoteModal = false;
     this.selectedLeadForNote = undefined;
     this.selectedNoteForEdit = undefined;
+  }
+
+  // ===== Lead Edit Methods =====
+
+  openEditModal(lead: Lead): void {
+    this.selectedLeadForEdit = lead;
+    this.showEditModal = true;
+  }
+
+  onLeadEditSave(payload: LeadEditPayload): void {
+    if (!this.selectedLeadForEdit) return;
+    const id  = this.selectedLeadForEdit.leadId;
+    const now = new Date().toISOString();
+    this.leads = this.leads.map(l =>
+      l.leadId === id
+        ? { ...l, ...payload, modifiedTime: now, lastActivityTime: now }
+        : l
+    );
+    this.closeEditModal();
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.selectedLeadForEdit = undefined;
   }
 
   getNotesCount(lead: Lead): number {
