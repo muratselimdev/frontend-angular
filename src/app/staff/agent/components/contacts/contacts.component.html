@@ -55,7 +55,8 @@
             <button
               class="note-btn"
               [class.has-notes]="hasNotes(contact)"
-              title="Notes">
+              (click)="openNoteModal(contact)"
+              [title]="'Notes: ' + getNotesCount(contact)">
               📝
               <span class="note-count" *ngIf="hasNotes(contact)">{{ getNotesCount(contact) }}</span>
             </button>
@@ -95,3 +96,11 @@
   (save)="onContactEditSave($event)"
   (cancel)="closeContactEditModal()">
 </app-contact-edit>
+
+<app-contact-note
+  [visible]="showNoteModal"
+  [contactId]="selectedContactForNote?.contactId"
+  [note]="selectedNoteForEdit"
+  (save)="onNoteSave($event)"
+  (cancel)="closeNoteModal()">
+</app-contact-note>

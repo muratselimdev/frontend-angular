@@ -55,7 +55,8 @@
             <button
               class="note-btn"
               [class.has-notes]="hasNotes(deal)"
-              title="Notes">
+              (click)="openNoteModal(deal)"
+              [title]="'Notes: ' + getNotesCount(deal)">
               📝
               <span class="note-count" *ngIf="hasNotes(deal)">{{ getNotesCount(deal) }}</span>
             </button>
@@ -104,3 +105,11 @@
   (save)="onDealEditSave($event)"
   (cancel)="closeDealEditModal()">
 </app-deal-edit>
+
+<app-deal-note
+  [visible]="showNoteModal"
+  [dealName]="selectedDealForNote?.dealName"
+  [note]="selectedNoteForEdit"
+  (save)="onNoteSave($event)"
+  (cancel)="closeNoteModal()">
+</app-deal-note>

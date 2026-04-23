@@ -55,7 +55,8 @@
             <button
               class="note-btn"
               [class.has-notes]="hasNotes(planning)"
-              title="Notes">
+              (click)="openNoteModal(planning)"
+              [title]="'Notes: ' + getNotesCount(planning)">
               📝
               <span class="note-count" *ngIf="hasNotes(planning)">{{ getNotesCount(planning) }}</span>
             </button>
@@ -106,3 +107,11 @@
   (save)="onPlanningEditSave($event)"
   (cancel)="closePlanningEditModal()">
 </app-planning-edit>
+
+<app-planning-note
+  [visible]="showNoteModal"
+  [planningName]="selectedPlanningForNote?.planningName"
+  [note]="selectedNoteForEdit"
+  (save)="onNoteSave($event)"
+  (cancel)="closeNoteModal()">
+</app-planning-note>

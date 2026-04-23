@@ -2,14 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './deals-seed.json';
 import { DealEditPayload } from './deal-edit/deal-edit.component';
-
-export interface DealNote {
-  id?: string;
-  title: string;
-  content: string;
-  createdDate?: Date;
-  modifiedDate?: Date;
-}
+import { DealNote } from './deal-note/deal-note.component';
 
 export interface Deal {
   dealName: string;
@@ -59,6 +52,10 @@ export class DealsComponent implements OnInit {
 
   showDealEditModal = false;
   selectedDealForEdit?: Deal;
+
+  showNoteModal = false;
+  selectedDealForNote?: Deal;
+  selectedNoteForEdit?: DealNote;
 
   sortColumn: keyof Deal | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
@@ -119,6 +116,32 @@ export class DealsComponent implements OnInit {
   closeDealEditModal(): void {
     this.showDealEditModal = false;
     this.selectedDealForEdit = undefined;
+  }
+
+  openNoteModal(deal: Deal, note?: DealNote): void {
+    this.selectedDealForNote = deal;
+    this.selectedNoteForEdit = note;
+    this.showNoteModal = true;
+  }
+
+  onNoteSave(note: DealNote): void {
+    if (!this.selectedDealForNote) return;
+    if (!this.selectedDealForNote.notes) {
+      this.selectedDealForNote.notes = [];
+    }
+    const existingIndex = this.selectedDealForNote.notes.findIndex(n => n.id === note.id);
+    if (existingIndex > -1) {
+      this.selectedDealForNote.notes[existingIndex] = note;
+    } else {
+      this.selectedDealForNote.notes.push({ ...note, createdDate: new Date() });
+    }
+    this.closeNoteModal();
+  }
+
+  closeNoteModal(): void {
+    this.showNoteModal = false;
+    this.selectedDealForNote = undefined;
+    this.selectedNoteForEdit = undefined;
   }
 
   getTaskFlagClass(deal: Deal): string {

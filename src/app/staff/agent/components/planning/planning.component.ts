@@ -2,14 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './planning-seed.json';
 import { PlanningEditPayload } from './planning-edit/planning-edit.component';
-
-export interface PlanningNote {
-  id?: string;
-  title: string;
-  content: string;
-  createdDate?: Date;
-  modifiedDate?: Date;
-}
+import { PlanningNote } from './planning-note/planning-note.component';
 
 export interface Planning {
   planningName: string;
@@ -63,6 +56,10 @@ export class PlanningComponent implements OnInit {
 
   showPlanningEditModal = false;
   selectedPlanningForEdit?: Planning;
+
+  showNoteModal = false;
+  selectedPlanningForNote?: Planning;
+  selectedNoteForEdit?: PlanningNote;
 
   sortColumn: keyof Planning | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
@@ -123,6 +120,32 @@ export class PlanningComponent implements OnInit {
   closePlanningEditModal(): void {
     this.showPlanningEditModal = false;
     this.selectedPlanningForEdit = undefined;
+  }
+
+  openNoteModal(planning: Planning, note?: PlanningNote): void {
+    this.selectedPlanningForNote = planning;
+    this.selectedNoteForEdit = note;
+    this.showNoteModal = true;
+  }
+
+  onNoteSave(note: PlanningNote): void {
+    if (!this.selectedPlanningForNote) return;
+    if (!this.selectedPlanningForNote.notes) {
+      this.selectedPlanningForNote.notes = [];
+    }
+    const existingIndex = this.selectedPlanningForNote.notes.findIndex(n => n.id === note.id);
+    if (existingIndex > -1) {
+      this.selectedPlanningForNote.notes[existingIndex] = note;
+    } else {
+      this.selectedPlanningForNote.notes.push({ ...note, createdDate: new Date() });
+    }
+    this.closeNoteModal();
+  }
+
+  closeNoteModal(): void {
+    this.showNoteModal = false;
+    this.selectedPlanningForNote = undefined;
+    this.selectedNoteForEdit = undefined;
   }
 
   getTaskFlagClass(planning: Planning): string {

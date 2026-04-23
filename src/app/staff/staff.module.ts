@@ -24,10 +24,13 @@ import { LeadsComponent } from './agent/components/leads/leads.component';
 import { LeadNoteComponent } from './agent/components/leads/lead-note/lead-note.component';
 import { LeadEditComponent } from './agent/components/leads/lead-edit/lead-edit.component';
 import { ContactEditComponent } from './agent/components/contacts/contact-edit/contact-edit.component';
+import { ContactNoteComponent } from './agent/components/contacts/contact-note/contact-note.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
 import { DealEditComponent } from './agent/components/deals/deal-edit/deal-edit.component';
+import { DealNoteComponent } from './agent/components/deals/deal-note/deal-note.component';
 import { PlanningComponent } from './agent/components/planning/planning.component';
 import { PlanningEditComponent } from './agent/components/planning/planning-edit/planning-edit.component';
+import { PlanningNoteComponent } from './agent/components/planning/planning-note/planning-note.component';
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
 import { SalesManagerDashboardComponent } from './management/sales-manager-dashboard/sales-manager-dashboard.component';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -54,10 +57,13 @@ import { SharedModule } from '../shared/shared.module';
     LeadNoteComponent,
     LeadEditComponent,
     ContactEditComponent,
+    ContactNoteComponent,
     DealsComponent,
     DealEditComponent,
+    DealNoteComponent,
     PlanningComponent,
     PlanningEditComponent,
+    PlanningNoteComponent,
     SupervisorDashboardComponent,
     SalesManagerDashboardComponent
   ],

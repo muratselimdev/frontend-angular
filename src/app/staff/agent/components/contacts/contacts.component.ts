@@ -2,14 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './contacts-seed.json';
 import { ContactEditPayload } from './contact-edit/contact-edit.component';
-
-export interface ContactNote {
-  id?: string;
-  title: string;
-  content: string;
-  createdDate?: Date;
-  modifiedDate?: Date;
-}
+import { ContactNote } from './contact-note/contact-note.component';
 
 export interface Contact {
   statusId: string;
@@ -63,6 +56,10 @@ export class ContactsComponent implements OnInit {
 
   showContactEditModal = false;
   selectedContactForEdit?: Contact;
+
+  showNoteModal = false;
+  selectedContactForNote?: Contact;
+  selectedNoteForEdit?: ContactNote;
 
   sortColumn: keyof Contact | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
@@ -123,6 +120,32 @@ export class ContactsComponent implements OnInit {
   closeContactEditModal(): void {
     this.showContactEditModal = false;
     this.selectedContactForEdit = undefined;
+  }
+
+  openNoteModal(contact: Contact, note?: ContactNote): void {
+    this.selectedContactForNote = contact;
+    this.selectedNoteForEdit = note;
+    this.showNoteModal = true;
+  }
+
+  onNoteSave(note: ContactNote): void {
+    if (!this.selectedContactForNote) return;
+    if (!this.selectedContactForNote.notes) {
+      this.selectedContactForNote.notes = [];
+    }
+    const existingIndex = this.selectedContactForNote.notes.findIndex(n => n.id === note.id);
+    if (existingIndex > -1) {
+      this.selectedContactForNote.notes[existingIndex] = note;
+    } else {
+      this.selectedContactForNote.notes.push({ ...note, createdDate: new Date() });
+    }
+    this.closeNoteModal();
+  }
+
+  closeNoteModal(): void {
+    this.showNoteModal = false;
+    this.selectedContactForNote = undefined;
+    this.selectedNoteForEdit = undefined;
   }
 
   getTaskFlagClass(contact: Contact): string {
