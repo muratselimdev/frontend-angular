@@ -31,6 +31,13 @@
           <span class="le-error-msg" *ngIf="hasError('serviceCategory')">Required</span>
         </div>
 
+        <!-- Service -->
+        <div class="le-field" [class.le-field--error]="hasError('service')">
+          <label for="le-service">Service *</label>
+          <input id="le-service" type="text" formControlName="service" autocomplete="off" />
+          <span class="le-error-msg" *ngIf="hasError('service')">Required</span>
+        </div>
+
         <!-- Language -->
         <div class="le-field" [class.le-field--error]="hasError('language')">
           <label for="le-language">Language *</label>

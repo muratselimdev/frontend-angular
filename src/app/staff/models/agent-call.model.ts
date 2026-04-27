@@ -5,6 +5,7 @@ export interface AgentCall {
   customerEmail?: string;
   customerPhone?: string;
   subject: string;
+  group?: string;
   status: string;
   createdAt: string;
   updatedAt?: string;

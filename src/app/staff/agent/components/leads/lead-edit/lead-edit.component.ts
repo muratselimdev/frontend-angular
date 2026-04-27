@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Lead } from '../leads.component';
 
 export type LeadEditPayload = Pick<Lead,
-  'leadName' | 'phone' | 'serviceCategory' | 'language' |
+  'leadName' | 'phone' | 'serviceCategory' | 'service' | 'language' |
   'leadSource' | 'campaignName' | 'leadStatus' | 'leadOwner'
 >;
 
@@ -34,6 +34,7 @@ export class LeadEditComponent implements OnInit, OnChanges {
       leadName:        ['', Validators.required],
       phone:           ['', Validators.required],
       serviceCategory: ['', Validators.required],
+      service:         ['', Validators.required],
       language:        ['', Validators.required],
       leadSource:      ['', Validators.required],
       campaignName:    ['', Validators.required],
@@ -48,6 +49,7 @@ export class LeadEditComponent implements OnInit, OnChanges {
         leadName:        this.lead.leadName,
         phone:           this.lead.phone,
         serviceCategory: this.lead.serviceCategory,
+        service:         this.lead.service,
         language:        this.lead.language,
         leadSource:      this.lead.leadSource,
         campaignName:    this.lead.campaignName,
@@ -67,6 +69,7 @@ export class LeadEditComponent implements OnInit, OnChanges {
       leadName:        v.leadName.trim(),
       phone:           v.phone.trim(),
       serviceCategory: v.serviceCategory.trim(),
+      service:         v.service.trim(),
       language:        v.language.trim(),
       leadSource:      v.leadSource.trim(),
       campaignName:    v.campaignName.trim(),

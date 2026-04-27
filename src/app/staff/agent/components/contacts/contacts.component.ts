@@ -3,6 +3,8 @@ import { DatePipe } from '@angular/common';
 import seedData from './contacts-seed.json';
 import { ContactEditPayload } from './contact-edit/contact-edit.component';
 import { ContactNote } from './contact-note/contact-note.component';
+import { AgentCallsService } from '../../../services/agent-calls.service';
+import { AgentCall } from '../../../models/agent-call.model';
 
 export interface Contact {
   statusId: string;
@@ -66,10 +68,66 @@ export class ContactsComponent implements OnInit {
   pinnedColumns: (keyof Contact)[] = [];
   selectedContacts: Set<number> = new Set();
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(
+    private datePipe: DatePipe,
+    private agentCallsService: AgentCallsService
+  ) {}
 
   ngOnInit(): void {
-    this.contacts = seedData as Contact[];
+    this.loadContacts();
+  }
+
+  private loadContacts(): void {
+    this.loading = true;
+    this.agentCallsService.getMyCalls().subscribe({
+      next: (calls) => {
+        this.contacts = this.dedupCallsToContacts(calls);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load contacts from API, falling back to seed data', err);
+        this.contacts = seedData as Contact[];
+        this.loading = false;
+      }
+    });
+  }
+
+  private dedupCallsToContacts(calls: AgentCall[]): Contact[] {
+    // Deduplicate by customer email (fallback to customerName) — keep most recent call per customer
+    const map = new Map<string, AgentCall>();
+    for (const c of calls) {
+      const key = (c.customerEmail || c.customerName || String(c.id)).toLowerCase();
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, c);
+        continue;
+      }
+      const existingDate = new Date(existing.createdAt || 0).getTime();
+      const currentDate  = new Date(c.createdAt || 0).getTime();
+      if (currentDate > existingDate) map.set(key, c);
+    }
+    return Array.from(map.values()).map(c => this.mapCallToContact(c));
+  }
+
+  private mapCallToContact(c: AgentCall): Contact {
+    const ownerName = c.agent
+      ? (c.agent.nickName || `${c.agent.firstName ?? ''} ${c.agent.lastName ?? ''}`.trim())
+      : '';
+    return {
+      statusId:         c.status ?? '',
+      contactId:        c.id,
+      contactName:      c.customerName ?? '',
+      phone:            c.customerPhone ?? '',
+      email:            c.customerEmail ?? '',
+      leadSource:       '',
+      campaignName:     '',
+      language:         '',
+      contactOwner:     ownerName,
+      createdTime:      c.createdAt ?? null,
+      modifiedTime:     c.updatedAt ?? null,
+      lastActivityTime: c.updatedAt ?? null,
+      notes:            []
+    };
   }
 
   get allSelected(): boolean {

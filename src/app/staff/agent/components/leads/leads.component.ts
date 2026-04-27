@@ -4,12 +4,15 @@ import seedData from './leads-seed.json';
 import { LeadNote } from './lead-note/lead-note.component';
 import { LeadEditPayload } from './lead-edit/lead-edit.component';
 import { LeadTransitionPayload } from './lead-transition/lead-transition.component';
+import { AgentCallsService } from '../../../services/agent-calls.service';
+import { AgentCall } from '../../../models/agent-call.model';
 
 export interface Lead {
   leadId: number;
   leadName: string;
   phone: string;
   serviceCategory: string;
+  service: string;
   language: string;
   leadSource: string;
   campaignName: string;
@@ -31,6 +34,7 @@ const ALL_COLUMNS: ColumnDef[] = [
   { key: 'leadName',         label: 'Lead Name' },
   { key: 'phone',            label: 'Phone' },
   { key: 'serviceCategory',  label: 'Service Category' },
+  { key: 'service',          label: 'Service' },
   { key: 'language',         label: 'Language' },
   { key: 'leadSource',       label: 'Lead Source' },
   { key: 'campaignName',     label: 'Campaign Name' },
@@ -76,11 +80,50 @@ export class LeadsComponent implements OnInit {
   showCallModal = false;
   selectedLeadForCall?: Lead;
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(
+    private datePipe: DatePipe,
+    private agentCallsService: AgentCallsService
+  ) {}
 
   ngOnInit(): void {
-    // TODO: replace with real API call when backend is ready
-    this.leads = seedData as Lead[];
+    this.loadLeads();
+  }
+
+  private loadLeads(): void {
+    this.loading = true;
+    this.agentCallsService.getMyCalls().subscribe({
+      next: (calls) => {
+        this.leads = calls.map(c => this.mapCallToLead(c));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load leads from API, falling back to seed data', err);
+        this.leads = seedData as Lead[];
+        this.loading = false;
+      }
+    });
+  }
+
+  private mapCallToLead(c: AgentCall): Lead {
+    const ownerName = c.agent
+      ? (c.agent.nickName || `${c.agent.firstName ?? ''} ${c.agent.lastName ?? ''}`.trim())
+      : '';
+    return {
+      leadId:           c.id,
+      leadName:         c.customerName ?? '',
+      phone:            c.customerPhone ?? '',
+      serviceCategory:  c.group ?? '',
+      service:          c.subject ?? '',
+      language:         '',
+      leadSource:       '',
+      campaignName:     '',
+      leadStatus:       c.status ?? '',
+      leadOwner:        ownerName,
+      createdTime:      c.createdAt ?? null,
+      modifiedTime:     c.updatedAt ?? null,
+      lastActivityTime: c.updatedAt ?? null,
+      notes:            []
+    };
   }
 
   get orderedColumns(): ColumnDef[] {
