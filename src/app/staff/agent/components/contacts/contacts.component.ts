@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './contacts-seed.json';
 import { ContactEditPayload } from './contact-edit/contact-edit.component';
@@ -67,6 +67,10 @@ export class ContactsComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Contact)[] = [];
   selectedContacts: Set<number> = new Set();
+
+  // Toolbar dropdowns
+  showTagsDropdown = false;
+  showMoreDropdown = false;
 
   constructor(
     private datePipe: DatePipe,
@@ -311,5 +315,95 @@ export class ContactsComponent implements OnInit {
     if (s.includes('closed') || s.includes('done')) return 'badge-closed';
     if (s.includes('pending')) return 'badge-pending';
     return 'badge-default';
+  }
+
+  // ===== Toolbar Dropdown Management =====
+
+  @HostListener('document:click')
+  closeDropdowns(): void {
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = false;
+  }
+
+  toggleTagsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showMoreDropdown = false;
+    this.showTagsDropdown = !this.showTagsDropdown;
+  }
+
+  toggleMoreDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = !this.showMoreDropdown;
+  }
+
+  // ===== Bulk Action Stubs =====
+
+  sendEmail(): void {
+    console.log('Send Email to', Array.from(this.selectedContacts));
+  }
+
+  addTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Add Tag to', Array.from(this.selectedContacts));
+  }
+
+  removeTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Remove Tag from', Array.from(this.selectedContacts));
+  }
+
+  massUpdate(): void {
+    console.log('Mass Update', Array.from(this.selectedContacts));
+  }
+
+  runMacro(): void {
+    this.showMoreDropdown = false;
+    console.log('Run Macro', Array.from(this.selectedContacts));
+  }
+
+  createTask(): void {
+    this.showMoreDropdown = false;
+    console.log('Create Task', Array.from(this.selectedContacts));
+  }
+
+  changeOwner(): void {
+    this.showMoreDropdown = false;
+    console.log('Change Owner', Array.from(this.selectedContacts));
+  }
+
+  cadences(): void {
+    this.showMoreDropdown = false;
+    console.log('Cadences', Array.from(this.selectedContacts));
+  }
+
+  printMailingLabels(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Mailing Labels', Array.from(this.selectedContacts));
+  }
+
+  printUsingCanvas(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Using Canvas', Array.from(this.selectedContacts));
+  }
+
+  mailMerge(): void {
+    this.showMoreDropdown = false;
+    console.log('Mail Merge', Array.from(this.selectedContacts));
+  }
+
+  massConvert(): void {
+    this.showMoreDropdown = false;
+    console.log('Mass Convert', Array.from(this.selectedContacts));
+  }
+
+  deleteSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Delete', Array.from(this.selectedContacts));
+  }
+
+  exportSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Export Selected Records', Array.from(this.selectedContacts));
   }
 }

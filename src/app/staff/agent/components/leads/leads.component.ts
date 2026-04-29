@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './leads-seed.json';
 import { LeadNote } from './lead-note/lead-note.component';
@@ -79,6 +79,10 @@ export class LeadsComponent implements OnInit {
   // Call management
   showCallModal = false;
   selectedLeadForCall?: Lead;
+
+  // Toolbar dropdowns
+  showTagsDropdown = false;
+  showMoreDropdown = false;
 
   constructor(
     private datePipe: DatePipe,
@@ -367,5 +371,95 @@ export class LeadsComponent implements OnInit {
   closeCallModal(): void {
     this.showCallModal = false;
     this.selectedLeadForCall = undefined;
+  }
+
+  // ===== Toolbar Dropdown Management =====
+
+  @HostListener('document:click')
+  closeDropdowns(): void {
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = false;
+  }
+
+  toggleTagsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showMoreDropdown = false;
+    this.showTagsDropdown = !this.showTagsDropdown;
+  }
+
+  toggleMoreDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = !this.showMoreDropdown;
+  }
+
+  // ===== Bulk Action Stubs =====
+
+  sendEmail(): void {
+    console.log('Send Email to', Array.from(this.selectedLeads));
+  }
+
+  addTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Add Tag to', Array.from(this.selectedLeads));
+  }
+
+  removeTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Remove Tag from', Array.from(this.selectedLeads));
+  }
+
+  massUpdate(): void {
+    console.log('Mass Update', Array.from(this.selectedLeads));
+  }
+
+  runMacro(): void {
+    this.showMoreDropdown = false;
+    console.log('Run Macro', Array.from(this.selectedLeads));
+  }
+
+  createTask(): void {
+    this.showMoreDropdown = false;
+    console.log('Create Task', Array.from(this.selectedLeads));
+  }
+
+  changeOwner(): void {
+    this.showMoreDropdown = false;
+    console.log('Change Owner', Array.from(this.selectedLeads));
+  }
+
+  cadences(): void {
+    this.showMoreDropdown = false;
+    console.log('Cadences', Array.from(this.selectedLeads));
+  }
+
+  printMailingLabels(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Mailing Labels', Array.from(this.selectedLeads));
+  }
+
+  printUsingCanvas(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Using Canvas', Array.from(this.selectedLeads));
+  }
+
+  mailMerge(): void {
+    this.showMoreDropdown = false;
+    console.log('Mail Merge', Array.from(this.selectedLeads));
+  }
+
+  massConvert(): void {
+    this.showMoreDropdown = false;
+    console.log('Mass Convert', Array.from(this.selectedLeads));
+  }
+
+  deleteSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Delete', Array.from(this.selectedLeads));
+  }
+
+  exportSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Export Selected Records', Array.from(this.selectedLeads));
   }
 }

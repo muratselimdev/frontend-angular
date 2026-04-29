@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './deals-seed.json';
 import { DealEditPayload } from './deal-edit/deal-edit.component';
@@ -61,6 +61,10 @@ export class DealsComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Deal)[] = [];
   selectedDeals: Set<number> = new Set();
+
+  // Toolbar dropdowns
+  showTagsDropdown = false;
+  showMoreDropdown = false;
 
   constructor(private datePipe: DatePipe) {}
 
@@ -251,5 +255,95 @@ export class DealsComponent implements OnInit {
     if (s.includes('won') || s.includes('closed'))        return 'badge-won';
     if (s.includes('lost'))                               return 'badge-lost';
     return 'badge-default';
+  }
+
+  // ===== Toolbar Dropdown Management =====
+
+  @HostListener('document:click')
+  closeDropdowns(): void {
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = false;
+  }
+
+  toggleTagsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showMoreDropdown = false;
+    this.showTagsDropdown = !this.showTagsDropdown;
+  }
+
+  toggleMoreDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = !this.showMoreDropdown;
+  }
+
+  // ===== Bulk Action Stubs =====
+
+  sendEmail(): void {
+    console.log('Send Email to', Array.from(this.selectedDeals));
+  }
+
+  addTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Add Tag to', Array.from(this.selectedDeals));
+  }
+
+  removeTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Remove Tag from', Array.from(this.selectedDeals));
+  }
+
+  massUpdate(): void {
+    console.log('Mass Update', Array.from(this.selectedDeals));
+  }
+
+  runMacro(): void {
+    this.showMoreDropdown = false;
+    console.log('Run Macro', Array.from(this.selectedDeals));
+  }
+
+  createTask(): void {
+    this.showMoreDropdown = false;
+    console.log('Create Task', Array.from(this.selectedDeals));
+  }
+
+  changeOwner(): void {
+    this.showMoreDropdown = false;
+    console.log('Change Owner', Array.from(this.selectedDeals));
+  }
+
+  cadences(): void {
+    this.showMoreDropdown = false;
+    console.log('Cadences', Array.from(this.selectedDeals));
+  }
+
+  printMailingLabels(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Mailing Labels', Array.from(this.selectedDeals));
+  }
+
+  printUsingCanvas(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Using Canvas', Array.from(this.selectedDeals));
+  }
+
+  mailMerge(): void {
+    this.showMoreDropdown = false;
+    console.log('Mail Merge', Array.from(this.selectedDeals));
+  }
+
+  massConvert(): void {
+    this.showMoreDropdown = false;
+    console.log('Mass Convert', Array.from(this.selectedDeals));
+  }
+
+  deleteSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Delete', Array.from(this.selectedDeals));
+  }
+
+  exportSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Export Selected Records', Array.from(this.selectedDeals));
   }
 }

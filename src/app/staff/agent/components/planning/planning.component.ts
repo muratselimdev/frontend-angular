@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import seedData from './planning-seed.json';
 import { PlanningEditPayload } from './planning-edit/planning-edit.component';
@@ -65,6 +65,10 @@ export class PlanningComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   pinnedColumns: (keyof Planning)[] = [];
   selectedPlannings: Set<number> = new Set();
+
+  // Toolbar dropdowns
+  showTagsDropdown = false;
+  showMoreDropdown = false;
 
   constructor(private datePipe: DatePipe) {}
 
@@ -259,5 +263,95 @@ export class PlanningComponent implements OnInit {
     if (t.includes('in-person') || t.includes('onsite')) return 'visit-onsite';
     if (t.includes('phone'))    return 'visit-phone';
     return 'visit-default';
+  }
+
+  // ===== Toolbar Dropdown Management =====
+
+  @HostListener('document:click')
+  closeDropdowns(): void {
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = false;
+  }
+
+  toggleTagsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showMoreDropdown = false;
+    this.showTagsDropdown = !this.showTagsDropdown;
+  }
+
+  toggleMoreDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showTagsDropdown = false;
+    this.showMoreDropdown = !this.showMoreDropdown;
+  }
+
+  // ===== Bulk Action Stubs =====
+
+  sendEmail(): void {
+    console.log('Send Email to', Array.from(this.selectedPlannings));
+  }
+
+  addTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Add Tag to', Array.from(this.selectedPlannings));
+  }
+
+  removeTag(): void {
+    this.showTagsDropdown = false;
+    console.log('Remove Tag from', Array.from(this.selectedPlannings));
+  }
+
+  massUpdate(): void {
+    console.log('Mass Update', Array.from(this.selectedPlannings));
+  }
+
+  runMacro(): void {
+    this.showMoreDropdown = false;
+    console.log('Run Macro', Array.from(this.selectedPlannings));
+  }
+
+  createTask(): void {
+    this.showMoreDropdown = false;
+    console.log('Create Task', Array.from(this.selectedPlannings));
+  }
+
+  changeOwner(): void {
+    this.showMoreDropdown = false;
+    console.log('Change Owner', Array.from(this.selectedPlannings));
+  }
+
+  cadences(): void {
+    this.showMoreDropdown = false;
+    console.log('Cadences', Array.from(this.selectedPlannings));
+  }
+
+  printMailingLabels(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Mailing Labels', Array.from(this.selectedPlannings));
+  }
+
+  printUsingCanvas(): void {
+    this.showMoreDropdown = false;
+    console.log('Print Using Canvas', Array.from(this.selectedPlannings));
+  }
+
+  mailMerge(): void {
+    this.showMoreDropdown = false;
+    console.log('Mail Merge', Array.from(this.selectedPlannings));
+  }
+
+  massConvert(): void {
+    this.showMoreDropdown = false;
+    console.log('Mass Convert', Array.from(this.selectedPlannings));
+  }
+
+  deleteSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Delete', Array.from(this.selectedPlannings));
+  }
+
+  exportSelected(): void {
+    this.showMoreDropdown = false;
+    console.log('Export Selected Records', Array.from(this.selectedPlannings));
   }
 }
