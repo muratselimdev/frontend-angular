@@ -4,14 +4,47 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AgentCall } from '../models/agent-call.model';
 
+export interface CrmLead {
+  id: number;
+  customerId: number | null;
+  customerName: string | null;
+  customerEmail: string | null;
+  customerPhone: string | null;
+  country: string | null;
+  treatmentId: number | null;
+  treatmentName: string | null;
+  treatmentGroupName: string | null;
+  statusId: number | null;
+  statusName: string | null;
+  description: string | null;
+  notes: string | null;
+  languageId: number | null;
+  languageCode: string | null;
+  languageName: string | null;
+  isCancelled: boolean;
+  cancelledAt: string | null;
+  cancelReason: string | null;
+  leadSource: string | null;
+  campainName: string | null;
+  createdAt: string | null;
+  modifiedAt: string | null;
+  lastActivityAt: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AgentCallsService {
   private baseUrl = `${environment.apiUrl}/api/agent/calls`;
   private supervisorUrl = `${environment.apiUrl}/api/supervisor/calls`;
+  private crmUrl = `${environment.apiUrl}/api/agent/crmdata`;
 
   constructor(private http: HttpClient) {}
+
+  // 🔹 CRM Data (leads flat list)
+  getCrmData(): Observable<CrmLead[]> {
+    return this.http.get<CrmLead[]>(`${this.crmUrl}`);
+  }
 
   // 🔹 1. Agent → Kendi çağrılarını getir
   getMyCalls(): Observable<AgentCall[]> {

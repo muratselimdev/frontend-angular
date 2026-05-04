@@ -1,10 +1,11 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { timeout } from 'rxjs/operators';
 import seedData from './leads-seed.json';
 import { LeadNote } from './lead-note/lead-note.component';
 import { LeadEditPayload } from './lead-edit/lead-edit.component';
 import { LeadTransitionPayload } from './lead-transition/lead-transition.component';
-import { AgentCallsService } from '../../../services/agent-calls.service';
+import { AgentCallsService, CrmLead } from '../../../services/agent-calls.service';
 import { AgentCall } from '../../../models/agent-call.model';
 
 export interface Lead {
@@ -95,17 +96,37 @@ export class LeadsComponent implements OnInit {
 
   private loadLeads(): void {
     this.loading = true;
-    this.agentCallsService.getMyCalls().subscribe({
-      next: (calls) => {
-        this.leads = calls.map(c => this.mapCallToLead(c));
+    this.agentCallsService.getCrmData().pipe(timeout(10000)).subscribe({
+      next: (data) => {
+        console.log('[CRM] full response:', data);
+        this.leads = data.map(item => this.mapCrmLeadToLead(item));
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to load leads from API, falling back to seed data', err);
+        console.error('Failed to load CRM data, falling back to seed data', err);
         this.leads = seedData as Lead[];
         this.loading = false;
       }
     });
+  }
+
+  private mapCrmLeadToLead(item: CrmLead): Lead {
+    return {
+      leadId:           item.id,
+      leadName:         item.customerName ?? '',
+      phone:            item.customerPhone ?? '',
+      serviceCategory:  item.treatmentGroupName ?? '',
+      service:          item.treatmentName ?? '',
+      language:         item.languageName ?? '',
+      leadSource:       item.leadSource ?? '',
+      campaignName:     item.campainName ?? '',
+      leadStatus:       item.statusName ?? '',
+      leadOwner:        '',
+      createdTime:      item.createdAt ?? null,
+      modifiedTime:     item.modifiedAt ?? null,
+      lastActivityTime: item.lastActivityAt ?? null,
+      notes:            []
+    };
   }
 
   private mapCallToLead(c: AgentCall): Lead {
