@@ -58,7 +58,8 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     { label: 'Contacts', path: '/agent/contacts', icon: '📒' },
     { label: 'Deals', path: '/agent/deals', icon: '🤝' },
     { label: 'Planning', path: '/agent/planning', icon: '📅' },
-    { label: 'Requests', path: '/agent/calls', icon: '📋' }
+    { label: 'Requests', path: '/agent/calls', icon: '📋' },
+    { label: 'Inventory', path: '/staff/inventory', icon: '📦' }
   ];
 
   incomingVisible = false;
