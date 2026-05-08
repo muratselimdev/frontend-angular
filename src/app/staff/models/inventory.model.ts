@@ -1,13 +1,13 @@
 export interface Inventory {
   id: number;
+  customerId: number;
   staffId: number;
   requestId: number;
   ficheNo: string;
-  customerId: number;
   status: number;
   type: number;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt?: string | null;
   lines: InventoryLine[];
 }
 
@@ -16,47 +16,11 @@ export interface InventoryLine {
   inventoryId?: number;
   inventoryItemId: number;
   quantity: number;
-  amount: number;
-  cancel: boolean;
-  cancelReason?: string;
+  amount?: number | null;
+  cancel?: boolean;
+  cancelReason?: string | null;
   createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface InventoryItem {
-  id: number;
-  inventoryLineId?: number;
-  name: string;
-  costPrice?: number;
-  sellingPrice?: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export interface CreateInventoryDto {
-  customerId: number;
-  staffId: number;
-  requestId: number;
-  ficheNo: string;
-  status: number;
-  type: number;
-  lines: CreateInventoryLineDto[];
-}
-
-export interface CreateInventoryLineDto {
-  inventoryItemId: number;
-  quantity: number;
-  amount: number;
-}
-
-export interface UpdateInventoryDto {
-  customerId?: number;
-  staffId?: number;
-  requestId?: number;
-  status?: number;
-  type?: number;
-  lines: InventoryLine[];
+  updatedAt?: string | null;
 }
 
 export interface RequestInfo {
@@ -65,7 +29,52 @@ export interface RequestInfo {
   customerName: string;
   treatmentId: number;
   treatmentName: string;
-  treatmentGroupName: string;
-  assignedAgentId: number;
-  assignedAgentName: string;
+  treatmentGroupName?: string | null;
+  assignedAgentId?: number | null;
+  assignedAgentName?: string | null;
 }
+
+export interface CreateInventoryRequest {
+  customerId: number;
+  staffId: number;
+  requestId: number;
+  ficheNo: string;
+  type: number;
+  lines: CreateInventoryLineRequest[];
+}
+
+export interface CreateInventoryLineRequest {
+  inventoryItemId: number;
+  quantity: number;
+  amount?: number | null;
+}
+
+export interface UpdateInventoryRequest {
+  customerId?: number;
+  staffId?: number;
+  requestId?: number;
+  status?: number;
+  type?: number;
+  lines: UpdateInventoryLineRequest[];
+}
+
+export interface UpdateInventoryLineRequest {
+  inventoryItemId: number;
+  quantity: number;
+  amount?: number | null;
+  cancel?: boolean;
+  cancelReason?: string | null;
+}
+
+export interface InventoryItem {
+  id: number;
+  name: string;
+  costPrice?: number | null;
+  sellingPrice?: number | null;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string | null;
+}
+
+export type CreateInventoryDto = CreateInventoryRequest;
+export type UpdateInventoryDto = UpdateInventoryRequest;

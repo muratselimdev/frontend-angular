@@ -74,6 +74,17 @@ export class AuthService {
     return roles.some(r => r.toLowerCase() === (p.role || '').toLowerCase());
   }
 
+  getCurrentStaffId(): number | null {
+    const profileId = this.profile?.id;
+
+    if (typeof profileId === 'number' && Number.isInteger(profileId) && profileId > 0) {
+      return profileId;
+    }
+
+    const tokenUserId = this.userId;
+    return tokenUserId && Number.isInteger(tokenUserId) && tokenUserId > 0 ? tokenUserId : null;
+  }
+
   // ============================================================
   // 🔹 Login
   // ============================================================

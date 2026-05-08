@@ -1,137 +1,333 @@
-<div class="p-6">
-  <div class="mb-6 flex items-center justify-between">
-    <h2 class="text-2xl font-semibold text-gray-800">
-      {{ isEditMode ? 'Envanter Fişi Düzenle' : 'Yeni Envanter Fişi' }}
-    </h2>
-    <a routerLink="/staff/inventory" class="text-gray-600 hover:text-gray-900">
-      <i class="fas fa-arrow-left mr-2"></i> Listeye Dön
-    </a>
-  </div>
+<section class="min-h-screen bg-slate-50 px-4 py-5 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl space-y-6">
+    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="text-sm font-medium uppercase tracking-wide text-teal-700">Patient Request Inventory Slip</p>
+        <h1 class="mt-1 text-3xl font-semibold text-slate-950">
+          {{ isEditMode ? 'Inventory Slip Detail' : 'New Inventory Slip' }}
+        </h1>
+        <p class="mt-2 max-w-3xl text-sm text-slate-600">
+          Hasta talebine bağlı envanter fişini, satır tutarlarını ve operasyon durumunu yönetin.
+        </p>
+      </div>
 
-  <div *ngIf="isLoading" class="flex justify-center p-8">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-  </div>
+      <a
+        routerLink="/staff/inventory"
+        class="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+      >
+        <mat-icon class="text-[20px]">arrow_back</mat-icon>
+        Listeye dön
+      </a>
+    </header>
 
-  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-    {{ error }}
-  </div>
+    <div *ngIf="error" class="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+      {{ error }}
+    </div>
 
-  <form *ngIf="!isLoading" [formGroup]="inventoryForm" (ngSubmit)="onSubmit()" class="bg-white shadow-md rounded-lg p-6">
-    
-    <!-- Fiş Başlık Bilgileri -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 border-b pb-6">
-      <!-- Talep Seçimi (Info'dan gelen) -->
-      <div class="col-span-1 md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Talep / Hasta *</label>
-        <select formControlName="requestId" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-          <option value="" disabled selected>Talep seçiniz...</option>
-          <option *ngFor="let req of requests" [value]="req.requestId">
-            #{{req.requestId}} - {{req.customerName}} ({{req.treatmentName}})
-          </option>
-        </select>
-        <div *ngIf="inventoryForm.get('requestId')?.invalid && inventoryForm.get('requestId')?.touched" class="text-red-500 text-xs mt-1">
-          Bu alan zorunludur.
+    <div *ngIf="isLoading" class="grid gap-5 lg:grid-cols-3">
+      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="h-5 w-44 animate-pulse rounded bg-slate-200"></div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
         </div>
       </div>
-
-      <!-- Fiş No -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Fiş No *</label>
-        <input type="text" formControlName="ficheNo" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-      </div>
-
-      <!-- Tip -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Tip *</label>
-        <select formControlName="type" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-          <option [value]="1">Tip 1 (Standart)</option>
-          <option [value]="2">Tip 2 (Özel)</option>
-        </select>
-      </div>
-
-      <!-- Durum -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Durum *</label>
-        <select formControlName="status" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-          <option [value]="0">Bekliyor</option>
-          <option [value]="1">Onaylandı</option>
-          <option [value]="2">İptal Edildi</option>
-        </select>
+      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="h-5 w-32 animate-pulse rounded bg-slate-200"></div>
+        <div class="mt-6 space-y-3">
+          <div class="h-4 animate-pulse rounded bg-slate-100"></div>
+          <div class="h-4 animate-pulse rounded bg-slate-100"></div>
+          <div class="h-4 w-2/3 animate-pulse rounded bg-slate-100"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Satırlar (Lines) -->
-    <div class="mb-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-medium text-gray-900">Fiş Satırları (Ürün/Hizmetler)</h3>
-        <button type="button" (click)="addLine()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-          <i class="fas fa-plus mr-1"></i> Satır Ekle
-        </button>
-      </div>
+    <form *ngIf="!isLoading" [formGroup]="inventoryForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="grid gap-5 lg:grid-cols-3">
+        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <div class="mb-5 flex items-center gap-3">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-md bg-teal-50 text-teal-700 ring-1 ring-teal-100">
+              <mat-icon>assignment_ind</mat-icon>
+            </span>
+            <div>
+              <h2 class="text-lg font-semibold text-slate-950">Request / Patient Information</h2>
+              <p class="mt-1 text-sm text-slate-500">Hasta, tedavi ve atanan temsilci bilgisi</p>
+            </div>
+          </div>
 
-      <div formArrayName="lines">
-        <div *ngFor="let line of lines.controls; let i=index" [formGroupName]="i" class="bg-gray-50 p-4 rounded-md mb-4 border border-gray-200">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-            
-            <!-- Ürün/Hizmet Seçimi -->
-            <div class="col-span-1 md:col-span-4">
-              <label class="block text-xs font-medium text-gray-700 mb-1">Ürün / Hizmet</label>
-              <select formControlName="inventoryItemId" (change)="onItemChange(i)" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <option value="" disabled selected>Seçiniz...</option>
-                <option *ngFor="let item of availableItems" [value]="item.id">
-                  {{item.name}} ({{item.sellingPrice}} ₺)
+          <div class="grid gap-4 md:grid-cols-2">
+            <label class="md:col-span-2">
+              <span class="mb-1 block text-sm font-medium text-slate-700">Talep / Hasta *</span>
+              <select
+                formControlName="requestId"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              >
+                <option [ngValue]="null" disabled>Talep seçiniz...</option>
+                <option *ngFor="let request of requests" [ngValue]="request.requestId">
+                  #{{ request.requestId }} - {{ request.customerName }} ({{ request.treatmentName }})
                 </option>
               </select>
+              <span
+                *ngIf="inventoryForm.controls.requestId.invalid && inventoryForm.controls.requestId.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Bu alan zorunludur.
+              </span>
+            </label>
+
+            <label>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Customer ID</span>
+              <input
+                type="number"
+                formControlName="customerId"
+                readonly
+                class="h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none"
+              />
+            </label>
+
+            <label>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Staff ID</span>
+              <input
+                type="number"
+                formControlName="staffId"
+                readonly
+                class="h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none"
+              />
+            </label>
+          </div>
+
+          <div *ngIf="selectedRequest" class="mt-5 grid gap-3 rounded-lg border border-teal-100 bg-teal-50 p-4 text-sm md:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Patient</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.customerName }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Treatment</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.treatmentName }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Group</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.treatmentGroupName || 'Not mapped' }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Assigned Agent</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.assignedAgentName || 'Unassigned' }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="mb-5 flex items-center gap-3">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-md bg-sky-50 text-sky-700 ring-1 ring-sky-100">
+              <mat-icon>receipt_long</mat-icon>
+            </span>
+            <div>
+              <h2 class="text-lg font-semibold text-slate-950">Inventory Slip Information</h2>
+              <p class="mt-1 text-sm text-slate-500">Fiş numarası, tipi ve durum bilgisi</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <label>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Fiche No *</span>
+              <input
+                type="text"
+                formControlName="ficheNo"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              />
+              <span
+                *ngIf="inventoryForm.controls.ficheNo.invalid && inventoryForm.controls.ficheNo.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Fiş numarası zorunludur.
+              </span>
+            </label>
+
+            <label>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Type *</span>
+              <select
+                formControlName="type"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              >
+                <option *ngFor="let option of typeOptions" [ngValue]="option.value">{{ option.label }}</option>
+              </select>
+            </label>
+
+            <label *ngIf="isEditMode">
+              <span class="mb-1 block text-sm font-medium text-slate-700">Status *</span>
+              <select
+                formControlName="status"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              >
+                <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
+              </select>
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-col gap-4 border-b border-slate-200 p-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-950">Inventory Lines</h2>
+            <p class="mt-1 text-sm text-slate-500">Miktar, birim tutar ve iptal nedeni satır bazında tutulur.</p>
+          </div>
+          <button
+            type="button"
+            (click)="addLine()"
+            class="inline-flex items-center justify-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-700 transition hover:bg-teal-100"
+          >
+            <mat-icon class="text-[20px]">add</mat-icon>
+            Satır ekle
+          </button>
+        </div>
+
+        <div formArrayName="lines" class="divide-y divide-slate-100">
+          <div
+            *ngFor="let line of lines.controls; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i"
+            class="grid gap-4 p-5 xl:grid-cols-12 xl:items-start"
+          >
+            <div class="xl:col-span-4">
+              <label [for]="'inventoryItemId_' + i" class="mb-1 block text-sm font-medium text-slate-700">Inventory Item *</label>
+              <select
+                [id]="'inventoryItemId_' + i"
+                formControlName="inventoryItemId"
+                (change)="onItemChange(i)"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              >
+                <option [ngValue]="null" disabled>Ürün seçiniz...</option>
+                <option *ngFor="let item of availableItems" [ngValue]="item.id">
+                  {{ item.name }} - {{ item.sellingPrice | currency:'TRY':'symbol':'1.0-0' }}
+                </option>
+              </select>
+              <span
+                *ngIf="line.controls.inventoryItemId.invalid && line.controls.inventoryItemId.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Ürün seçimi zorunludur.
+              </span>
             </div>
 
-            <!-- Adet -->
-            <div class="col-span-1 md:col-span-2">
-              <label class="block text-xs font-medium text-gray-700 mb-1">Adet</label>
-              <input type="number" formControlName="quantity" min="1" (change)="onQuantityChange(i)" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <div class="xl:col-span-2">
+              <label [for]="'quantity_' + i" class="mb-1 block text-sm font-medium text-slate-700">Quantity *</label>
+              <input
+                [id]="'quantity_' + i"
+                type="number"
+                min="1"
+                formControlName="quantity"
+                (input)="onQuantityChange(i)"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              />
             </div>
 
-            <!-- Tutar -->
-            <div class="col-span-1 md:col-span-2">
-              <label class="block text-xs font-medium text-gray-700 mb-1">Tutar</label>
-              <input type="number" formControlName="amount" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm bg-gray-100" readonly>
+            <div class="xl:col-span-2">
+              <label [for]="'amount_' + i" class="mb-1 block text-sm font-medium text-slate-700">Amount</label>
+              <input
+                [id]="'amount_' + i"
+                type="number"
+                min="0"
+                step="0.01"
+                formControlName="amount"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              />
             </div>
 
-            <!-- İptal Durumu (Sadece Düzenlemede) -->
-            <div class="col-span-1 md:col-span-3" *ngIf="isEditMode">
-              <div class="flex items-center mt-6">
-                <input type="checkbox" formControlName="cancel" [id]="'cancel_'+i" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label [for]="'cancel_'+i" class="ml-2 block text-sm text-red-600">Satırı İptal Et</label>
+            <div class="xl:col-span-2">
+              <span class="mb-1 block text-sm font-medium text-slate-700">Line Total</span>
+              <div class="flex h-11 items-center rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-900">
+                {{ getLineTotal(i) | currency:'TRY':'symbol':'1.2-2' }}
               </div>
-              <div class="mt-2" *ngIf="line.get('cancel')?.value">
-                <input type="text" formControlName="cancelReason" placeholder="İptal Nedeni" class="w-full border border-gray-300 rounded-md shadow-sm py-1 px-2 text-xs focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
             </div>
 
-            <!-- Sil Butonu -->
-            <div class="col-span-1 md:col-span-1 flex justify-end mt-6">
-              <button type="button" (click)="removeLine(i)" class="text-red-500 hover:text-red-700 p-1" title="Satırı Kaldır">
-                <i class="fas fa-trash"></i>
+            <div class="xl:col-span-1" *ngIf="isEditMode">
+              <span class="mb-1 block text-sm font-medium text-slate-700">Cancel</span>
+              <label class="inline-flex h-11 items-center gap-2 rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700">
+                <input type="checkbox" formControlName="cancel" class="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500" />
+                Yes
+              </label>
+            </div>
+
+            <div class="flex items-end justify-end xl:col-span-1">
+              <button
+                type="button"
+                (click)="removeLine(i)"
+                class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-rose-200 text-rose-600 transition hover:bg-rose-50"
+                title="Satırı sil"
+              >
+                <mat-icon class="text-[20px]">delete</mat-icon>
               </button>
+            </div>
+
+            <div class="xl:col-span-12" *ngIf="isEditMode && line.controls.cancel.value">
+              <label [for]="'cancelReason_' + i" class="mb-1 block text-sm font-medium text-slate-700">Cancel Reason</label>
+              <input
+                [id]="'cancelReason_' + i"
+                type="text"
+                formControlName="cancelReason"
+                placeholder="İptal nedeni"
+                class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+              />
+            </div>
+          </div>
+
+          <div *ngIf="lines.length === 0" class="p-8 text-center">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-slate-100 text-slate-500">
+              <mat-icon>playlist_add</mat-icon>
+            </span>
+            <h3 class="mt-4 text-base font-semibold text-slate-900">Satır bulunmuyor</h3>
+            <p class="mt-2 text-sm text-slate-500">Bu fiş için en az bir envanter satırı ekleyin.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-5 lg:grid-cols-3">
+        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <h2 class="text-lg font-semibold text-slate-950">Totals</h2>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Line Count</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ lines.length }}</p>
+            </div>
+            <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total Quantity</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ totalQuantity }}</p>
+            </div>
+            <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Cancelled Lines</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ cancelledLineCount }}</p>
+            </div>
+            <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total Amount</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ totalAmount | currency:'TRY':'symbol':'1.2-2' }}</p>
             </div>
           </div>
         </div>
-        
-        <div *ngIf="lines.length === 0" class="text-center py-4 text-gray-500 text-sm border border-dashed rounded border-gray-300">
-          Hiç satır eklenmedi. Lütfen "Satır Ekle" butonuna tıklayarak ürün/hizmet seçin.
+
+        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-950">Actions</h2>
+          <div class="mt-5 flex flex-col gap-3">
+            <button
+              type="submit"
+              [disabled]="inventoryForm.invalid || isSaving || lines.length === 0"
+              class="inline-flex items-center justify-center gap-2 rounded-md bg-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            >
+              <mat-icon *ngIf="!isSaving" class="text-[20px]">{{ isEditMode ? 'save' : 'add_task' }}</mat-icon>
+              <mat-icon *ngIf="isSaving" class="saving-icon text-[20px]">progress_activity</mat-icon>
+              {{ isEditMode ? 'Güncelle' : 'Kaydet' }}
+            </button>
+            <a
+              routerLink="/staff/inventory"
+              class="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              <mat-icon class="text-[20px]">close</mat-icon>
+              İptal
+            </a>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Form Butonları -->
-    <div class="flex justify-end gap-3 border-t pt-5">
-      <a routerLink="/staff/inventory" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-        İptal
-      </a>
-      <button type="submit" [disabled]="inventoryForm.invalid || isSaving || lines.length === 0" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed">
-        <i class="fas fa-spinner fa-spin mr-2" *ngIf="isSaving"></i>
-        {{ isEditMode ? 'Güncelle' : 'Kaydet' }}
-      </button>
-    </div>
-
-  </form>
-</div>
+      </section>
+    </form>
+  </div>
+</section>

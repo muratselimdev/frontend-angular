@@ -1,1 +1,25 @@
-/* inventory-form styles */
+:host {
+  display: block;
+  background: #f8fafc;
+}
+
+mat-icon {
+  height: 1em;
+  width: 1em;
+  font-size: inherit;
+  line-height: 1;
+}
+
+.saving-icon {
+  animation: inventory-spin 1s linear infinite;
+}
+
+@keyframes inventory-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
