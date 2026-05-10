@@ -13,6 +13,7 @@ interface MenuItem {
   path: string;
   icon?: string;
   children?: MenuItem[];
+  exact?: boolean;
 }
 
 @Component({
@@ -24,11 +25,12 @@ interface MenuItem {
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   isTabletSidebarOpen = false;
   isSidebarCollapsed = false;
-  sidebarWidth = 280;
+  sidebarWidth = 251;
 
   isResizing = false;
   private resizeStartX = 0;
-  private resizeStartWidth = 280;
+  private resizeStartWidth = 251;
+  private readonly openMenuPaths = new Set<string>(['/staff/inventory']);
 
   startResize(event: MouseEvent): void {
     this.isResizing = true;
@@ -41,7 +43,7 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
   onMouseMove(event: MouseEvent): void {
     if (!this.isResizing) return;
     const delta = event.clientX - this.resizeStartX;
-    const newWidth = Math.min(480, Math.max(160, this.resizeStartWidth + delta));
+    const newWidth = Math.min(420, Math.max(190, this.resizeStartWidth + delta));
     this.sidebarWidth = newWidth;
   }
 
@@ -54,12 +56,21 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     {
       label: 'Leads',
       path: '/agent/leads',
-      icon: '🎯'},
-    { label: 'Contacts', path: '/agent/contacts', icon: '📒' },
-    { label: 'Deals', path: '/agent/deals', icon: '🤝' },
-    { label: 'Planning', path: '/agent/planning', icon: '📅' },
-    { label: 'Requests', path: '/agent/calls', icon: '📋' },
-    { label: 'Inventory', path: '/staff/inventory', icon: '📦' }
+      icon: 'track_changes'
+    },
+    { label: 'Contacts', path: '/agent/contacts', icon: 'contacts' },
+    { label: 'Deals', path: '/agent/deals', icon: 'favorite_border' },
+    { label: 'Planning', path: '/agent/planning', icon: 'calendar_month' },
+    { label: 'Requests', path: '/agent/calls', icon: 'assignment' },
+    {
+      label: 'Envanter',
+      path: '/staff/inventory',
+      icon: 'deployed_code',
+      children: [
+        { label: 'Sipariş Listesi', path: '/staff/inventory', icon: 'fiber_manual_record', exact: true },
+        { label: 'Sipariş Kalemleri', path: '/staff/inventory/items', icon: 'fiber_manual_record', exact: true }
+      ]
+    }
   ];
 
   incomingVisible = false;
@@ -192,6 +203,52 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
 
     this.router.navigateByUrl(path);
     this.closeTabletSidebar();
+  }
+
+  toggleMenu(item: MenuItem, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (!item.children?.length) {
+      this.navigateTo(item.path);
+      return;
+    }
+
+    if (this.openMenuPaths.has(item.path)) {
+      this.openMenuPaths.delete(item.path);
+      return;
+    }
+
+    this.openMenuPaths.add(item.path);
+  }
+
+  isMenuOpen(item: MenuItem): boolean {
+    return item.children?.length ? this.openMenuPaths.has(item.path) : false;
+  }
+
+  isItemActive(item: MenuItem): boolean {
+    if (item.path.includes('?') || item.path.includes('#')) {
+      return this.router.url === item.path || this.router.url.startsWith(`${item.path}&`);
+    }
+
+    const currentPath = this.getPathOnly(this.router.url);
+    const itemPath = this.getPathOnly(item.path);
+
+    if (item.exact) {
+      return currentPath === itemPath && !this.router.url.includes('?') && !this.router.url.includes('#');
+    }
+
+    return currentPath.startsWith(itemPath);
+  }
+
+  isItemVisible(item: MenuItem): boolean {
+    return true;
+  }
+
+  private getPathOnly(url: string): string {
+    return url.split('?')[0].split('#')[0];
   }
 
   toggleTabletSidebar(): void {

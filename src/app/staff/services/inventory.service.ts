@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CreateInventoryRequest,
@@ -11,45 +11,26 @@ import {
   UpdateInventoryRequest
 } from '../models/inventory.model';
 
-type ApiArrayResponse<T> = T[] | { $values?: T[] };
+type ApiArrayResponse<T> =
+  | T[]
+  | {
+      $values?: T[];
+      values?: T[];
+      Values?: T[];
+      data?: ApiArrayResponse<T>;
+      Data?: ApiArrayResponse<T>;
+      items?: ApiArrayResponse<T>;
+      Items?: ApiArrayResponse<T>;
+      result?: ApiArrayResponse<T>;
+      Result?: ApiArrayResponse<T>;
+      value?: ApiArrayResponse<T>;
+      Value?: ApiArrayResponse<T>;
+    };
 type ApiInventoryResponse = Omit<Inventory, 'lines'> & {
   lines?: ApiArrayResponse<InventoryLine> | null;
 };
-
-const FALLBACK_INVENTORY_ITEMS: InventoryItem[] = [
-  {
-    id: 1,
-    name: 'Dental Whitening Kit',
-    costPrice: 50,
-    sellingPrice: 150,
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  },
-  {
-    id: 2,
-    name: 'Implant Screw',
-    costPrice: 200,
-    sellingPrice: 500,
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  },
-  {
-    id: 3,
-    name: 'Porcelain Crown',
-    costPrice: 100,
-    sellingPrice: 300,
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  },
-  {
-    id: 4,
-    name: 'Post-op Care Pack',
-    costPrice: 35,
-    sellingPrice: 90,
-    isActive: true,
-    createdAt: '2026-01-01T00:00:00.000Z'
-  }
-];
+type ApiInventoryItemResponse = Record<string, unknown>;
+type ApiFicheNoResponse = { ficheNo?: string; FicheNo?: string };
 
 @Injectable({
   providedIn: 'root'
@@ -73,8 +54,27 @@ export class InventoryService {
 
   getInfo(): Observable<RequestInfo[]> {
     return this.http
-      .get<ApiArrayResponse<RequestInfo>>(`${this.baseUrl}/info`)
-      .pipe(map((response) => this.normalizeArray(response)));
+      .get<ApiArrayResponse<Record<string, unknown>>>(`${this.baseUrl}/info`)
+      .pipe(map((response) => this.normalizeArray(response).map((item) => this.normalizeRequestInfo(item))));
+  }
+
+  getItems(): Observable<InventoryItem[]> {
+    return this.http
+      .get<ApiArrayResponse<ApiInventoryItemResponse>>(`${this.baseUrl}/item`)
+      .pipe(
+        catchError(() => this.http.get<ApiArrayResponse<ApiInventoryItemResponse>>(`${this.baseUrl}/items`)),
+        map((response) =>
+          this.normalizeArray(response)
+            .map((item) => this.normalizeInventoryItem(item))
+            .filter((item) => item.id > 0)
+        )
+      );
+  }
+
+  getNewFicheNo(): Observable<string> {
+    return this.http
+      .get<ApiFicheNoResponse>(`${this.baseUrl}/ficheno`)
+      .pipe(map((response) => response.ficheNo ?? response.FicheNo ?? ''));
   }
 
   create(payload: CreateInventoryRequest): Observable<Inventory> {
@@ -89,15 +89,81 @@ export class InventoryService {
       .pipe(map((response) => this.normalizeInventory(response)));
   }
 
-  getFallbackInventoryItems(): InventoryItem[] {
-    // TODO: Replace mock items with real inventory items endpoint when backend exposes it.
-    return FALLBACK_INVENTORY_ITEMS.map((item) => ({ ...item }));
-  }
-
   private normalizeInventory(response: ApiInventoryResponse): Inventory {
     return {
       ...response,
       lines: this.normalizeArray(response.lines)
+    };
+  }
+
+  private normalizeInventoryItem(response: ApiInventoryItemResponse): InventoryItem {
+    const id =
+      this.pickNumber(response, ['id', 'Id', 'inventoryItemId', 'InventoryItemId', 'itemId', 'ItemId']) ?? 0;
+    const name =
+      this.pickString(response, [
+        'name',
+        'Name',
+        'itemName',
+        'ItemName',
+        'inventoryItemName',
+        'InventoryItemName',
+        'productName',
+        'ProductName',
+        'title',
+        'Title'
+      ]) ?? `Ürün #${id}`;
+    const costPrice = this.pickNumber(response, [
+      'costPrice',
+      'CostPrice',
+      'cost',
+      'Cost',
+      'purchasePrice',
+      'PurchasePrice',
+      'buyingPrice',
+      'BuyingPrice'
+    ]);
+    const sellingPrice = this.pickNumber(response, [
+      'sellingPrice',
+      'SellingPrice',
+      'salePrice',
+      'SalePrice',
+      'salesPrice',
+      'SalesPrice',
+      'unitPrice',
+      'UnitPrice',
+      'price',
+      'Price'
+    ]);
+
+    return {
+      id,
+      name,
+      costPrice,
+      sellingPrice,
+      isActive: this.pickBoolean(response, ['isActive', 'IsActive', 'active', 'Active']) ?? true,
+      createdAt: this.pickString(response, ['createdAt', 'CreatedAt']),
+      updatedAt: this.pickString(response, ['updatedAt', 'UpdatedAt'])
+    };
+  }
+
+  private normalizeRequestInfo(response: Record<string, unknown>): RequestInfo {
+    return {
+      requestId: this.pickNumber(response, ['requestId', 'RequestId', 'id', 'Id']) ?? 0,
+      customerId: this.pickNumber(response, ['customerId', 'CustomerId']) ?? 0,
+      customerName: this.pickString(response, ['customerName', 'CustomerName']) ?? '',
+      treatmentId: this.pickNumber(response, ['treatmentId', 'TreatmentId']) ?? 0,
+      treatmentName: this.pickString(response, ['treatmentName', 'TreatmentName']) ?? '',
+      treatmentGroupName: this.pickString(response, ['treatmentGroupName', 'TreatmentGroupName']) ?? null,
+      assignedAgentId: this.pickNumber(response, ['assignedAgentId', 'AssignedAgentId']),
+      assignedAgentName: this.pickString(response, ['assignedAgentName', 'AssignedAgentName']) ?? null,
+      status: response['status'] as number | string | null | undefined,
+      statusId: this.pickNumber(response, ['statusId', 'StatusId']),
+      statusName: this.pickString(response, ['statusName', 'StatusName']) ?? null,
+      isCancelled: this.pickBoolean(response, ['isCancelled', 'IsCancelled']),
+      Status: response['Status'] as number | string | null | undefined,
+      StatusId: this.pickNumber(response, ['StatusId']),
+      StatusName: this.pickString(response, ['StatusName']) ?? null,
+      IsCancelled: this.pickBoolean(response, ['IsCancelled'])
     };
   }
 
@@ -106,10 +172,87 @@ export class InventoryService {
       return response;
     }
 
-    if (response?.$values && Array.isArray(response.$values)) {
-      return response.$values;
+    if (!response) {
+      return [];
+    }
+
+    const arrayCandidates = [response.$values, response.values, response.Values];
+    for (const candidate of arrayCandidates) {
+      if (Array.isArray(candidate)) {
+        return candidate;
+      }
+    }
+
+    const nestedCandidates = [
+      response.data,
+      response.Data,
+      response.items,
+      response.Items,
+      response.result,
+      response.Result,
+      response.value,
+      response.Value
+    ];
+    for (const candidate of nestedCandidates) {
+      if (candidate) {
+        return this.normalizeArray(candidate);
+      }
     }
 
     return [];
+  }
+
+  private pickString(record: Record<string, unknown>, keys: string[]): string | undefined {
+    for (const key of keys) {
+      const value = record[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+
+    return undefined;
+  }
+
+  private pickNumber(record: Record<string, unknown>, keys: string[]): number | null {
+    for (const key of keys) {
+      const value = record[key];
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        return value;
+      }
+
+      if (typeof value === 'string') {
+        const parsedValue = Number(value.replace(',', '.'));
+        if (Number.isFinite(parsedValue)) {
+          return parsedValue;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private pickBoolean(record: Record<string, unknown>, keys: string[]): boolean | null {
+    for (const key of keys) {
+      const value = record[key];
+      if (typeof value === 'boolean') {
+        return value;
+      }
+
+      if (typeof value === 'number') {
+        return value === 1;
+      }
+
+      if (typeof value === 'string') {
+        const normalizedValue = value.trim().toLowerCase();
+        if (normalizedValue === 'true') {
+          return true;
+        }
+        if (normalizedValue === 'false') {
+          return false;
+        }
+      }
+    }
+
+    return null;
   }
 }

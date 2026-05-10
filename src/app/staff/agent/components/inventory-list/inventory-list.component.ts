@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { catchError, forkJoin, of } from 'rxjs';
-import { Inventory, InventoryLine, RequestInfo } from '../../../models/inventory.model';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { catchError, forkJoin, of, Subscription } from 'rxjs';
+import { Inventory, InventoryItem, InventoryLine, RequestInfo } from '../../../models/inventory.model';
 import { InventoryService } from '../../../services/inventory.service';
+import { InventoryItemService } from '../../../services/inventory-item.service';
+import { exportRowsToXlsx } from '../../../utils/inventory-excel.util';
 
 type FilterValue = 'all' | string;
 type InventoryMetricTone = 'blue' | 'green' | 'amber' | 'red' | 'slate' | 'violet' | 'teal';
+type InventoryStatusValue = number | string | null | undefined;
+type InventoryTypeValue = number | string | null | undefined;
 
 interface FilterOption {
   label: string;
@@ -40,21 +45,40 @@ interface PendingAction {
   tone: InventoryMetricTone;
 }
 
+interface InventoryHeaderParticle {
+  x: number;
+  y: number;
+  r: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+  phase: number;
+  pulse: number;
+  link: boolean;
+}
+
 @Component({
   selector: 'app-inventory-list',
   templateUrl: './inventory-list.component.html',
   styleUrls: ['./inventory-list.component.scss'],
   standalone: false
 })
-export class InventoryListComponent implements OnInit {
+export class InventoryListComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('inventoryScale') private readonly inventoryScaleRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('inventoryBoard') private readonly inventoryBoardRef?: ElementRef<HTMLElement>;
+  @ViewChild('holoCanvas') private readonly holoCanvasRef?: ElementRef<HTMLCanvasElement>;
+
   inventories: Inventory[] = [];
   filteredInventories: Inventory[] = [];
   requestInfo: RequestInfo[] = [];
+  inventoryItems: InventoryItem[] = [];
   dashboardMetrics: DashboardMetric[] = [];
   topInventoryItems: TopInventoryItem[] = [];
   treatmentDistribution: TreatmentDistributionItem[] = [];
   recentInventories: Inventory[] = [];
   pendingActions: PendingAction[] = [];
+  updateInventories: Inventory[] = [];
+  isUpdateQueueMode = false;
 
   isLoading = false;
   error = '';
@@ -63,31 +87,238 @@ export class InventoryListComponent implements OnInit {
   selectedType: FilterValue = 'all';
   selectedDate = '';
 
-  readonly skeletonCards = [1, 2, 3, 4, 5, 6, 7];
+  readonly skeletonCards = [1, 2, 3, 4, 5, 6];
   readonly statusOptions: FilterOption[] = [
-    { label: 'All statuses', value: 'all' },
-    { label: 'Pending', value: '0' },
-    { label: 'Approved', value: '1' },
-    { label: 'Cancelled', value: '2' }
+    { label: 'Tüm durumlar', value: 'all' },
+    { label: 'Devam Ediyor', value: '0' },
+    { label: 'Tamamlandı', value: '1' },
+    { label: 'İptal Edildi', value: '2' }
   ];
   readonly typeOptions: FilterOption[] = [
-    { label: 'All types', value: 'all' },
-    { label: 'Standard Slip', value: '1' },
-    { label: 'Clinical Usage', value: '2' },
-    { label: 'Transfer / Other', value: '3' }
+    { label: 'Tüm türler', value: 'all' },
+    { label: 'Satınalma', value: '0' },
+    { label: 'Satış', value: '1' }
   ];
 
   private readonly requestInfoByRequestId = new Map<number, RequestInfo>();
   private readonly itemNameById = new Map<number, string>();
+  private readonly itemById = new Map<number, InventoryItem>();
+  private readonly routeSubscription = new Subscription();
+  private inventoryHeroViewReady = false;
+  private inventoryHeroAnimationFrame = 0;
+  private inventoryHeroRunId = 0;
+  private inventoryHeroParticles: InventoryHeaderParticle[] = [];
+  private readonly inventoryHeroResizeObservers: ResizeObserver[] = [];
+  private readonly moneyFormatter = new Intl.NumberFormat('tr-TR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  private readonly quantityFormatter = new Intl.NumberFormat('tr-TR', {
+    maximumFractionDigits: 2
+  });
 
-  constructor(private readonly inventoryService: InventoryService) {
-    this.inventoryService
-      .getFallbackInventoryItems()
-      .forEach((item) => this.itemNameById.set(item.id, item.name));
-  }
+  constructor(
+    private readonly inventoryService: InventoryService,
+    private readonly inventoryItemService: InventoryItemService,
+    private readonly route: ActivatedRoute,
+    private readonly ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
+    this.routeSubscription.add(
+      this.route.data.subscribe((data) => {
+        this.isUpdateQueueMode = data['mode'] === 'updates';
+        this.destroyInventoryHero();
+        this.queueInventoryHeroSetup();
+      })
+    );
+
     this.loadInventories();
+  }
+
+  ngAfterViewInit(): void {
+    this.inventoryHeroViewReady = true;
+    this.queueInventoryHeroSetup();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyInventoryHero();
+    this.routeSubscription.unsubscribe();
+  }
+
+  private queueInventoryHeroSetup(): void {
+    if (!this.inventoryHeroViewReady) {
+      return;
+    }
+
+    window.setTimeout(() => this.setupInventoryHero());
+  }
+
+  private setupInventoryHero(): void {
+    if (this.isUpdateQueueMode) {
+      return;
+    }
+
+    const scaleWrap = this.inventoryScaleRef?.nativeElement;
+    const board = this.inventoryBoardRef?.nativeElement;
+    const canvas = this.holoCanvasRef?.nativeElement;
+    const scene = canvas?.parentElement;
+    const ctx = canvas?.getContext('2d');
+
+    if (!scaleWrap || !board || !canvas || !scene || !ctx) {
+      return;
+    }
+
+    this.destroyInventoryHero();
+    const runId = ++this.inventoryHeroRunId;
+
+    const fitInventoryHeader = () => {
+      const scale = scaleWrap.clientWidth / 2048;
+      scaleWrap.style.height = `${278 * scale}px`;
+      board.style.transform = `scale(${scale})`;
+    };
+
+    const scaleObserver = new ResizeObserver(fitInventoryHeader);
+    scaleObserver.observe(scaleWrap);
+    this.inventoryHeroResizeObservers.push(scaleObserver);
+    fitInventoryHeader();
+
+    let width = 804;
+    let height = 205;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    const createParticles = () => {
+      const count = 86;
+
+      this.inventoryHeroParticles = Array.from({ length: count }, (_, i) => ({
+        x: rand(90, width - 90),
+        y: rand(26, height - 36),
+        r: rand(0.8, 2.35),
+        vx: rand(-0.14, 0.14),
+        vy: rand(-0.10, 0.10),
+        alpha: rand(0.18, 0.70),
+        phase: rand(0, Math.PI * 2),
+        pulse: rand(0.010, 0.028),
+        link: i % 5 === 0
+      }));
+    };
+
+    const resizeCanvas = () => {
+      width = scene.clientWidth;
+      height = scene.clientHeight;
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      createParticles();
+    };
+
+    const drawSoftBackground = () => {
+      const gradient = ctx.createRadialGradient(
+        width / 2,
+        height * 0.76,
+        0,
+        width / 2,
+        height * 0.76,
+        width * 0.43
+      );
+
+      gradient.addColorStop(0, 'rgba(35, 218, 230, .18)');
+      gradient.addColorStop(0.34, 'rgba(35, 218, 230, .055)');
+      gradient.addColorStop(1, 'rgba(35, 218, 230, 0)');
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    };
+
+    const drawLinks = () => {
+      const cx = width / 2;
+      const cy = height * 0.72;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      for (const particle of this.inventoryHeroParticles) {
+        if (!particle.link) continue;
+
+        const dx = particle.x - cx;
+        const dy = particle.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 270) {
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(particle.x, particle.y);
+          ctx.strokeStyle = `rgba(43, 219, 230, ${Math.max(0, 0.115 - dist / 2500)})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+    };
+
+    const draw = (time: number) => {
+      if (runId !== this.inventoryHeroRunId) {
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      drawSoftBackground();
+      drawLinks();
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      for (const particle of this.inventoryHeroParticles) {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < 62 || particle.x > width - 62) particle.vx *= -1;
+        if (particle.y < 18 || particle.y > height - 22) particle.vy *= -1;
+
+        const alpha = Math.max(0.05, particle.alpha + Math.sin(time * particle.pulse + particle.phase) * 0.20);
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(42, 226, 236, ${alpha})`;
+        ctx.shadowColor = 'rgba(42, 226, 236, .72)';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      this.inventoryHeroAnimationFrame = window.requestAnimationFrame(draw);
+    };
+
+    const canvasObserver = new ResizeObserver(resizeCanvas);
+    canvasObserver.observe(scene);
+    this.inventoryHeroResizeObservers.push(canvasObserver);
+
+    this.ngZone.runOutsideAngular(() => {
+      resizeCanvas();
+      this.inventoryHeroAnimationFrame = window.requestAnimationFrame(draw);
+    });
+  }
+
+  private destroyInventoryHero(): void {
+    this.inventoryHeroRunId++;
+
+    if (this.inventoryHeroAnimationFrame) {
+      window.cancelAnimationFrame(this.inventoryHeroAnimationFrame);
+      this.inventoryHeroAnimationFrame = 0;
+    }
+
+    while (this.inventoryHeroResizeObservers.length) {
+      this.inventoryHeroResizeObservers.pop()?.disconnect();
+    }
   }
 
   loadInventories(): void {
@@ -96,19 +327,21 @@ export class InventoryListComponent implements OnInit {
 
     forkJoin({
       inventories: this.inventoryService.getAll(),
-      requestInfo: this.inventoryService.getInfo().pipe(catchError(() => of([] as RequestInfo[])))
+      requestInfo: this.inventoryService.getInfo().pipe(catchError(() => of([] as RequestInfo[]))),
+      inventoryItems: this.inventoryItemService.getAll().pipe(catchError(() => of([] as InventoryItem[])))
     }).subscribe({
-      next: ({ inventories, requestInfo }) => {
+      next: ({ inventories, requestInfo, inventoryItems }) => {
         this.inventories = inventories;
         this.requestInfo = requestInfo;
+        this.inventoryItems = inventoryItems;
         this.rebuildRequestMap();
+        this.rebuildItemMap();
         this.rebuildDashboard();
         this.applyFilters();
         this.isLoading = false;
       },
-      error: (err: unknown) => {
-        console.error('Error fetching inventories', err);
-        this.error = 'Envanter fişleri yüklenirken bir hata oluştu.';
+      error: () => {
+        this.error = 'Sipariş kayıtları alınırken bir hata oluştu.';
         this.isLoading = false;
       }
     });
@@ -120,23 +353,25 @@ export class InventoryListComponent implements OnInit {
     this.filteredInventories = this.inventories.filter((inventory) => {
       const request = this.getRequestInfo(inventory);
       const searchableText = [
-        inventory.id,
         inventory.ficheNo,
         inventory.requestId,
         inventory.customerId,
         request?.customerName,
         request?.treatmentName,
         request?.treatmentGroupName,
-        request?.assignedAgentName
+        request?.assignedAgentName,
+        this.getStatusLabel(inventory.status),
+        this.getTypeLabel(inventory.type)
       ]
         .filter((value): value is string | number => value !== undefined && value !== null)
         .join(' ')
         .toLowerCase();
 
+      const normalizedStatus = this.normalizeStatus(inventory.status);
+      const normalizedType = this.normalizeType(inventory.type);
       const matchesSearch = !normalizedSearch || searchableText.includes(normalizedSearch);
-      const matchesStatus =
-        this.selectedStatus === 'all' || inventory.status.toString() === this.selectedStatus;
-      const matchesType = this.selectedType === 'all' || inventory.type.toString() === this.selectedType;
+      const matchesStatus = this.selectedStatus === 'all' || normalizedStatus?.toString() === this.selectedStatus;
+      const matchesType = this.selectedType === 'all' || normalizedType?.toString() === this.selectedType;
       const matchesDate = !this.selectedDate || this.getDateInputValue(inventory.createdAt) === this.selectedDate;
 
       return matchesSearch && matchesStatus && matchesType && matchesDate;
@@ -156,17 +391,15 @@ export class InventoryListComponent implements OnInit {
   }
 
   getPatientLabel(inventory: Inventory): string {
-    return this.getRequestInfo(inventory)?.customerName ?? `Patient #${inventory.customerId}`;
+    return this.getRequestInfo(inventory)?.customerName ?? `Hasta #${inventory.customerId}`;
   }
 
-  getPatientMeta(inventory: Inventory): string {
-    const request = this.getRequestInfo(inventory);
-    if (!request) {
-      return `Request #${inventory.requestId} • Customer #${inventory.customerId}`;
-    }
+  getTreatmentLabel(inventory: Inventory): string {
+    return this.getRequestInfo(inventory)?.treatmentName ?? 'Tedavi eşleşmedi';
+  }
 
-    const treatmentGroup = request.treatmentGroupName ? ` • ${request.treatmentGroupName}` : '';
-    return `Request #${request.requestId} • ${request.treatmentName}${treatmentGroup}`;
+  getRequestLabel(inventory: Inventory): string {
+    return `Talep #${inventory.requestId}`;
   }
 
   getLineCount(inventory: Inventory): number {
@@ -181,55 +414,59 @@ export class InventoryListComponent implements OnInit {
     return inventory.lines.reduce((total, line) => total + this.getLineTotal(line), 0);
   }
 
-  getStatusLabel(status: number): string {
-    switch (status) {
+  formatMoney(value: number | null | undefined): string {
+    return value === null || value === undefined ? '-' : `${this.moneyFormatter.format(value)} TL`;
+  }
+
+  formatQuantity(value: number | null | undefined): string {
+    return value === null || value === undefined ? '-' : this.quantityFormatter.format(value);
+  }
+
+  getStatusLabel(status: InventoryStatusValue): string {
+    switch (this.normalizeStatus(status)) {
       case 0:
-        return 'Pending';
+        return 'Devam Ediyor';
       case 1:
-        return 'Approved';
+        return 'Tamamlandı';
       case 2:
-        return 'Cancelled';
+        return 'İptal Edildi';
       default:
-        return `Status ${status}`;
+        return 'Bilinmeyen Durum';
     }
   }
 
-  getTypeLabel(type: number): string {
-    switch (type) {
-      case 1:
-        return 'Standard Slip';
-      case 2:
-        return 'Clinical Usage';
-      case 3:
-        return 'Transfer / Other';
-      default:
-        return `Type ${type}`;
-    }
-  }
-
-  getStatusBadgeClass(status: number): string {
-    switch (status) {
+  getTypeLabel(type: InventoryTypeValue): string {
+    switch (this.normalizeType(type)) {
       case 0:
-        return 'bg-amber-50 text-amber-700 ring-amber-200';
+        return 'Satınalma';
       case 1:
-        return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
-      case 2:
-        return 'bg-rose-50 text-rose-700 ring-rose-200';
+        return 'Satış';
       default:
-        return 'bg-slate-50 text-slate-700 ring-slate-200';
+        return 'Diğer';
     }
   }
 
-  getTypeBadgeClass(type: number): string {
-    switch (type) {
+  getStatusBadgeClass(status: InventoryStatusValue): string {
+    switch (this.normalizeStatus(status)) {
+      case 0:
+        return 'inventory-badge--status-progress';
       case 1:
-        return 'bg-sky-50 text-sky-700 ring-sky-200';
+        return 'inventory-badge--status-completed';
       case 2:
-        return 'bg-teal-50 text-teal-700 ring-teal-200';
-      case 3:
-        return 'bg-violet-50 text-violet-700 ring-violet-200';
+        return 'inventory-badge--status-cancelled';
       default:
-        return 'bg-slate-50 text-slate-700 ring-slate-200';
+        return 'inventory-badge--neutral';
+    }
+  }
+
+  getTypeBadgeClass(type: InventoryTypeValue): string {
+    switch (this.normalizeType(type)) {
+      case 0:
+        return 'inventory-badge--type-purchase';
+      case 1:
+        return 'inventory-badge--type-sale';
+      default:
+        return 'inventory-badge--neutral';
     }
   }
 
@@ -249,23 +486,6 @@ export class InventoryListComponent implements OnInit {
         return 'bg-teal-50 text-teal-700 ring-teal-100';
       default:
         return 'bg-slate-50 text-slate-700 ring-slate-100';
-    }
-  }
-
-  getBarClass(tone: InventoryMetricTone): string {
-    switch (tone) {
-      case 'green':
-        return 'bg-emerald-500';
-      case 'amber':
-        return 'bg-amber-500';
-      case 'red':
-        return 'bg-rose-500';
-      case 'violet':
-        return 'bg-violet-500';
-      case 'teal':
-        return 'bg-teal-500';
-      default:
-        return 'bg-sky-500';
     }
   }
 
@@ -289,6 +509,44 @@ export class InventoryListComponent implements OnInit {
     return item.label;
   }
 
+  exportInventories(): void {
+    const rows = this.inventories.flatMap((inventory) => {
+      const request = this.getRequestInfo(inventory);
+      const lines = inventory.lines.length > 0 ? inventory.lines : [null];
+
+      return lines.map((line) => {
+        const inventoryItem = line ? this.itemById.get(line.inventoryItemId) : undefined;
+
+        return {
+          date: this.formatDateForExport(inventory.createdAt),
+          ficheNo: inventory.ficheNo,
+          customerName: request?.customerName ?? 'Hasta eşleşmedi',
+          treatmentName: request?.treatmentName ?? 'Tedavi eşleşmedi',
+          assignedAgentName: request?.assignedAgentName ?? '-',
+          code: inventoryItem?.code ?? '-',
+          materialName: inventoryItem?.name ?? (line ? 'Kalem bulunamadı' : '-'),
+          quantity: line?.quantity ?? ''
+        };
+      });
+    });
+
+    exportRowsToXlsx(
+      `Siparis_Fisleri_${this.getDateSuffix()}.xlsx`,
+      'Sipariş Fişleri',
+      [
+        { key: 'date', label: 'Tarih' },
+        { key: 'ficheNo', label: 'Fiş No' },
+        { key: 'customerName', label: 'Hasta Adı' },
+        { key: 'treatmentName', label: 'Tedavi Adı' },
+        { key: 'assignedAgentName', label: 'Temsilci Adı' },
+        { key: 'code', label: 'Kod' },
+        { key: 'materialName', label: 'Malzeme Adı' },
+        { key: 'quantity', label: 'Adet' }
+      ],
+      rows
+    );
+  }
+
   private rebuildRequestMap(): void {
     this.requestInfoByRequestId.clear();
     this.requestInfo.forEach((request) => {
@@ -296,63 +554,64 @@ export class InventoryListComponent implements OnInit {
     });
   }
 
+  private rebuildItemMap(): void {
+    this.itemNameById.clear();
+    this.itemById.clear();
+    this.inventoryItems.forEach((item) => {
+      this.itemNameById.set(item.id, item.name);
+      this.itemById.set(item.id, item);
+    });
+  }
+
   private rebuildDashboard(): void {
     const allLines = this.inventories.flatMap((inventory) => inventory.lines);
     const totalSlips = this.inventories.length;
-    const pendingSlips = this.inventories.filter((inventory) => inventory.status === 0).length;
-    const approvedSlips = this.inventories.filter((inventory) => inventory.status === 1).length;
-    const cancelledLines = allLines.filter((line) => line.cancel === true).length;
+    const activeSlips = this.inventories.filter((inventory) => this.normalizeStatus(inventory.status) === 0).length;
+    const completedSlips = this.inventories.filter((inventory) => this.normalizeStatus(inventory.status) === 1).length;
+    const cancelledSlips = this.inventories.filter((inventory) => this.normalizeStatus(inventory.status) === 2).length;
     const totalLineCount = allLines.length;
-    const totalQuantity = allLines.reduce((total, line) => total + this.toNumber(line.quantity), 0);
     const totalAmount = allLines.reduce((total, line) => total + this.getLineTotal(line), 0);
 
     this.dashboardMetrics = [
       {
-        label: 'Total Inventory Slips',
+        label: 'Toplam Fiş',
         value: totalSlips.toString(),
-        hint: 'All patient request slips',
+        hint: 'Tüm sipariş fişleri',
         icon: 'inventory_2',
         tone: 'blue'
       },
       {
-        label: 'Pending Slips',
-        value: pendingSlips.toString(),
-        hint: 'Waiting for operation follow-up',
+        label: 'Devam Eden',
+        value: activeSlips.toString(),
+        hint: 'İşlemdeki fişler',
         icon: 'pending_actions',
         tone: 'amber'
       },
       {
-        label: 'Approved Slips',
-        value: approvedSlips.toString(),
-        hint: 'Confirmed inventory slips',
+        label: 'Tamamlanan',
+        value: completedSlips.toString(),
+        hint: 'Tamamlanan fişler',
         icon: 'task_alt',
         tone: 'green'
       },
       {
-        label: 'Total Line Count',
-        value: totalLineCount.toString(),
-        hint: 'Inventory item rows',
-        icon: 'format_list_bulleted',
-        tone: 'slate'
-      },
-      {
-        label: 'Cancelled Lines',
-        value: cancelledLines.toString(),
-        hint: 'Line-level cancellations',
+        label: 'İptal Edilen',
+        value: cancelledSlips.toString(),
+        hint: 'İptal edilen fişler',
         icon: 'block',
         tone: 'red'
       },
       {
-        label: 'Total Quantity',
-        value: totalQuantity.toString(),
-        hint: 'Quantity across all lines',
-        icon: 'add_shopping_cart',
-        tone: 'teal'
+        label: 'Toplam Kalem',
+        value: totalLineCount.toString(),
+        hint: 'Fişlerdeki ürün kalemi',
+        icon: 'format_list_bulleted',
+        tone: 'slate'
       },
       {
-        label: 'Total Amount',
-        value: this.formatCompactCurrency(totalAmount),
-        hint: 'Calculated from quantity and amount',
+        label: 'Toplam Tutar',
+        value: this.formatMoney(totalAmount),
+        hint: 'Miktar ve tutardan hesaplanır',
         icon: 'payments',
         tone: 'violet'
       }
@@ -362,24 +621,26 @@ export class InventoryListComponent implements OnInit {
     this.recentInventories = [...this.inventories]
       .sort((left, right) => this.toTime(right.createdAt) - this.toTime(left.createdAt))
       .slice(0, 5);
+    this.updateInventories = [...this.inventories]
+      .sort((left, right) => this.toTime(right.updatedAt ?? right.createdAt) - this.toTime(left.updatedAt ?? left.createdAt));
     this.treatmentDistribution = this.buildTreatmentDistribution();
     this.pendingActions = [
       {
-        label: 'Pending slips',
-        count: pendingSlips,
-        hint: 'Need approval or operational review',
+        label: 'Devam eden fişler',
+        count: activeSlips,
+        hint: 'Operasyon takibi bekleyen fişler',
         tone: 'amber'
       },
       {
-        label: 'Cancelled lines',
-        count: cancelledLines,
-        hint: 'Review cancellation reasons',
+        label: 'İptal edilen kalemler',
+        count: allLines.filter((line) => line.cancel === true).length,
+        hint: 'İptal nedeni kontrol edilecek kalemler',
         tone: 'red'
       },
       {
-        label: 'Empty line slips',
+        label: 'Kalemsiz fişler',
         count: this.inventories.filter((inventory) => inventory.lines.length === 0).length,
-        hint: 'Slips without inventory rows',
+        hint: 'Ürün kalemi girilmemiş fişler',
         tone: 'slate'
       }
     ];
@@ -400,7 +661,7 @@ export class InventoryListComponent implements OnInit {
     return Array.from(itemTotals.entries())
       .map(([itemId, totals]) => ({
         itemId,
-        name: this.itemNameById.get(itemId) ?? `Inventory Item #${itemId}`,
+        name: this.itemNameById.get(itemId) ?? `Sipariş Kalemi #${itemId}`,
         quantity: totals.quantity,
         amount: totals.amount,
         percentage: maxQuantity > 0 ? Math.round((totals.quantity / maxQuantity) * 100) : 0
@@ -413,7 +674,7 @@ export class InventoryListComponent implements OnInit {
     const treatmentCounts = new Map<string, number>();
 
     this.inventories.forEach((inventory) => {
-      const treatmentName = this.getRequestInfo(inventory)?.treatmentName ?? 'Unmapped Treatment';
+      const treatmentName = this.getRequestInfo(inventory)?.treatmentName ?? 'Tedavi eşleşmedi';
       treatmentCounts.set(treatmentName, (treatmentCounts.get(treatmentName) ?? 0) + 1);
     });
 
@@ -448,16 +709,54 @@ export class InventoryListComponent implements OnInit {
     return Number.isFinite(parsedValue) ? parsedValue : 0;
   }
 
+  private normalizeStatus(status: InventoryStatusValue): number | null {
+    if (status === 0 || status === '0' || status === 'DevamEdiyor') {
+      return 0;
+    }
+
+    if (status === 1 || status === '1' || status === 'Tamamlandi' || status === 'Tamamlandı') {
+      return 1;
+    }
+
+    if (status === 2 || status === '2' || status === 'IptalEdildi' || status === 'İptalEdildi') {
+      return 2;
+    }
+
+    return null;
+  }
+
+  private normalizeType(type: InventoryTypeValue): number | null {
+    if (type === 0 || type === '0' || type === 'Satinalma' || type === 'Satınalma') {
+      return 0;
+    }
+
+    if (type === 1 || type === '1' || type === 'Satis' || type === 'Satış') {
+      return 1;
+    }
+
+    return null;
+  }
+
   private toTime(value: string): number {
     const time = new Date(value).getTime();
     return Number.isNaN(time) ? 0 : time;
   }
 
-  private formatCompactCurrency(value: number): string {
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
-      maximumFractionDigits: 0
-    }).format(value);
+  private formatDateForExport(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+    return new Intl.DateTimeFormat('tr-TR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+
+  private getDateSuffix(): string {
+    return new Date().toISOString().slice(0, 10).replace(/-/g, '');
   }
 }

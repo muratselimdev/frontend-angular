@@ -1,0 +1,308 @@
+<section class="item-form-page min-h-screen w-full bg-slate-50 px-0 py-4 text-slate-950 dark:bg-slate-950 dark:text-slate-50">
+  <div class="item-form-shell">
+    <div class="inventory-scale" id="inventoryScale" #inventoryScale>
+      <div class="inventory-board inventory-board--form" id="inventoryBoard" #inventoryBoard>
+        <svg class="frame-svg" viewBox="0 0 2048 278" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="borderStroke" x1="0" y1="0" x2="2048" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 88, 112, .48)" />
+              <stop offset="21%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="34%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="50%" stop-color="rgba(42, 224, 235, .60)" />
+              <stop offset="66%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="79%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="100%" stop-color="rgba(45, 88, 112, .48)" />
+            </linearGradient>
+
+            <linearGradient id="portalStroke" x1="620" y1="35" x2="1424" y2="235" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 150, 170, .58)" />
+              <stop offset="50%" stop-color="rgba(46, 228, 238, .84)" />
+              <stop offset="100%" stop-color="rgba(45, 150, 170, .58)" />
+            </linearGradient>
+
+            <filter id="cyanGlow" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="cyanGlowStrong" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <path
+            class="frame-glow"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="frame-line"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="portal-glow"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+
+          <path
+            class="portal-line"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+        </svg>
+
+        <div class="left-content">
+          <p class="eyebrow">SİPARİŞ OPERASYONU</p>
+          <h1 class="title">{{ isEditMode ? 'Sipariş Kalemini Güncelle' : 'Yeni Sipariş Kalemi' }}</h1>
+          <p class="description">
+            Ürün ve hizmet kaleminin kod, maliyet ve satış bilgilerini girin.
+          </p>
+        </div>
+
+        <div class="portal-art">
+          <canvas id="holoCanvas" #holoCanvas></canvas>
+          <div class="scan-line"></div>
+
+          <span class="tiny-dot d1"></span>
+          <span class="tiny-dot d2"></span>
+          <span class="tiny-dot d3"></span>
+
+          <div class="holo-card card-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 11.2 12 4l8.5 7.2" />
+              <path d="M6.6 10.4V20h14.8v-9.6" />
+              <path d="M10 20v-6h4v6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-cube">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.8 20 7v9l-8 4.2L4 16V7l8-4.2Z" />
+              <path d="M4 7l8 4.2L20 7" />
+              <path d="M12 11.2v9" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-doc">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 3.5h8l4 4V20.5H7z" />
+              <path d="M15 3.5V8h4" />
+              <path d="M10 12h6" />
+              <path d="M10 15.5h6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-barcode">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round">
+              <path d="M3 5h18v14H3z" />
+              <path d="M5.6 7v10" />
+              <path d="M8.4 7v10" />
+              <path d="M12 7v10" />
+              <path d="M15.4 7v10" />
+              <path d="M18.5 7v10" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-pulse">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 13h4l2-7 4 14 2.2-7H21" />
+              <path d="M5 4.5h14" opacity=".55" />
+              <path d="M5 19.5h14" opacity=".55" />
+            </svg>
+          </div>
+
+          <div class="platform">
+            <div class="beam"></div>
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+            <div class="core-light"></div>
+          </div>
+        </div>
+
+        <div class="actions actions--form">
+          <a routerLink="/staff/inventory/items" class="btn btn-export">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Vazgeç
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="error" class="item-alert item-alert--error">{{ error }}</div>
+
+    <div *ngIf="isLoading" class="item-loading">Kayıt yükleniyor...</div>
+
+    <form *ngIf="!isLoading" [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="item-form-layout">
+      <section class="item-main-card">
+        <div class="item-card-heading">
+          <span class="item-card-heading__icon">
+            <mat-icon>inventory_2</mat-icon>
+          </span>
+          <div>
+            <h2>Kalem Kartı</h2>
+            <p>Fişlerde kullanılacak malzeme veya hizmet bilgisini tanımlayın.</p>
+          </div>
+        </div>
+
+        <div class="item-fields">
+          <label class="item-field">
+            <span>Kod *</span>
+            <input type="text" formControlName="code" placeholder="Örn. ABC001" autocomplete="off" />
+            <small *ngIf="itemForm.controls.code.hasError('required') && itemForm.controls.code.touched">
+              Kod zorunludur.
+            </small>
+          </label>
+
+          <label class="item-field item-field--wide">
+            <span>Kalem Adı *</span>
+            <input type="text" formControlName="name" placeholder="Kalem adı" autocomplete="off" />
+            <small *ngIf="itemForm.controls.name.hasError('required') && itemForm.controls.name.touched">
+              Kalem adı zorunludur.
+            </small>
+          </label>
+
+          <label class="item-field">
+            <span>Maliyet Fiyatı *</span>
+            <div class="money-input">
+              <b>TL</b>
+              <input type="number" min="0" step="0.01" formControlName="costPrice" placeholder="0,00" />
+            </div>
+            <small *ngIf="itemForm.controls.costPrice.hasError('required') && itemForm.controls.costPrice.touched">
+              Maliyet fiyatı zorunludur.
+            </small>
+            <small *ngIf="itemForm.controls.costPrice.hasError('min') && itemForm.controls.costPrice.touched">
+              Maliyet fiyatı 0’dan küçük olamaz.
+            </small>
+          </label>
+
+          <label class="item-field">
+            <span>Satış Fiyatı *</span>
+            <div class="money-input">
+              <b>TL</b>
+              <input type="number" min="0" step="0.01" formControlName="sellingPrice" placeholder="0,00" />
+            </div>
+            <small *ngIf="itemForm.controls.sellingPrice.hasError('required') && itemForm.controls.sellingPrice.touched">
+              Satış fiyatı zorunludur.
+            </small>
+            <small *ngIf="itemForm.controls.sellingPrice.hasError('min') && itemForm.controls.sellingPrice.touched">
+              Satış fiyatı 0’dan küçük olamaz.
+            </small>
+          </label>
+
+          <div class="item-status-field">
+            <span>Durum</span>
+            <label class="status-switch" [class.status-switch--active]="itemForm.controls.isActive.value">
+              <input type="checkbox" formControlName="isActive" />
+              <i></i>
+              <strong>{{ itemForm.controls.isActive.value ? 'Aktif' : 'Pasif' }}</strong>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="item-profit-card">
+        <div class="profit-header">
+          <span>
+            <mat-icon>monitoring</mat-icon>
+          </span>
+          <div>
+            <h2>Kâr Önizlemesi</h2>
+            <p>Satış fiyatı - maliyet fiyatı</p>
+          </div>
+        </div>
+
+        <div class="profit-total" [class.profit-total--loss]="(profitPreview ?? 0) < 0">
+          <small>Beklenen fark</small>
+          <strong>{{ formatCurrency(profitPreview) }}</strong>
+        </div>
+
+        <div class="profit-prices">
+          <div>
+            <span>Maliyet</span>
+            <strong>{{ formatCurrency(itemForm.controls.costPrice.value) }}</strong>
+          </div>
+          <div>
+            <span>Satış</span>
+            <strong>{{ formatCurrency(itemForm.controls.sellingPrice.value) }}</strong>
+          </div>
+          <div>
+            <span>Durum</span>
+            <strong>{{ itemForm.controls.isActive.value ? 'Aktif' : 'Pasif' }}</strong>
+          </div>
+        </div>
+
+        <div class="profit-note">
+          <mat-icon>info</mat-icon>
+          <span>Excel ile toplu maliyet güncellerken sistem doğru kalemi bu kodla bulur. Her kaleme benzersiz bir kod verin.</span>
+        </div>
+
+        <div class="item-actions">
+          <button type="submit" class="item-button item-button--primary" [disabled]="isSaving">
+            <mat-icon *ngIf="isSaving">progress_activity</mat-icon>
+            {{ isEditMode ? 'Değişiklikleri Kaydet' : 'Kalemi Oluştur' }}
+          </button>
+          <a routerLink="/staff/inventory/items" class="item-button item-button--secondary">
+            Vazgeç
+          </a>
+        </div>
+      </aside>
+    </form>
+  </div>
+</section>

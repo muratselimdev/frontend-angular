@@ -1,313 +1,593 @@
-<section class="min-h-screen bg-slate-50 px-4 py-5 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-7xl space-y-6">
-    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div>
-        <p class="text-sm font-medium uppercase tracking-wide text-teal-700">OneClinic ERP</p>
-        <h1 class="mt-1 text-3xl font-semibold tracking-normal text-slate-950">Inventory</h1>
-        <p class="mt-2 max-w-3xl text-sm text-slate-600">
-          Hasta/talep bazlı envanter fişlerini yönetin, bekleyen aksiyonları takip edin ve işlem hacmini tek ekrandan görün.
-        </p>
-      </div>
+<section class="inventory-page min-h-screen w-full bg-slate-50 px-0 py-4 text-slate-950 dark:bg-slate-950 dark:text-slate-50">
+  <div class="w-full max-w-none space-y-5">
+    <ng-container *ngIf="!isUpdateQueueMode; else updateQueuePage">
+    <div class="inventory-scale" id="inventoryScale" #inventoryScale>
+      <section class="inventory-board" id="inventoryBoard" #inventoryBoard>
+        <svg class="frame-svg" viewBox="0 0 2048 278" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="borderStroke" x1="0" y1="0" x2="2048" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 88, 112, .48)" />
+              <stop offset="21%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="34%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="50%" stop-color="rgba(42, 224, 235, .60)" />
+              <stop offset="66%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="79%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="100%" stop-color="rgba(45, 88, 112, .48)" />
+            </linearGradient>
 
-      <a
-        routerLink="/staff/inventory/new"
-        class="inline-flex items-center justify-center gap-2 rounded-md bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-      >
-        <mat-icon class="text-[20px] leading-none">add</mat-icon>
-        New Inventory Slip
-      </a>
-    </header>
+            <linearGradient id="portalStroke" x1="620" y1="35" x2="1424" y2="235" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 150, 170, .58)" />
+              <stop offset="50%" stop-color="rgba(46, 228, 238, .84)" />
+              <stop offset="100%" stop-color="rgba(45, 150, 170, .58)" />
+            </linearGradient>
 
-    <div *ngIf="error" class="rounded-md border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <span>{{ error }}</span>
-        <button
-          type="button"
-          (click)="loadInventories()"
-          class="inline-flex items-center justify-center gap-2 rounded-md border border-rose-200 bg-white px-3 py-2 font-medium text-rose-700 hover:bg-rose-100"
-        >
-          <mat-icon class="text-[18px]">refresh</mat-icon>
-          Tekrar dene
-        </button>
-      </div>
+            <filter id="cyanGlow" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="cyanGlowStrong" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <path
+            class="frame-glow"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="frame-line"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="portal-glow"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+
+          <path
+            class="portal-line"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+        </svg>
+
+        <div class="left-content">
+          <p class="eyebrow">SİPARİŞ OPERASYONU</p>
+          <h1 class="title">Sipariş Listesi</h1>
+          <p class="description">
+            Hasta taleplerine bağlı sipariş fişlerini buradan takip edin ve yönetin.
+          </p>
+        </div>
+
+        <div class="portal-art">
+          <canvas id="holoCanvas" #holoCanvas></canvas>
+          <div class="scan-line"></div>
+
+          <span class="tiny-dot d1"></span>
+          <span class="tiny-dot d2"></span>
+          <span class="tiny-dot d3"></span>
+
+          <div class="holo-card card-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 11.2 12 4l8.5 7.2" />
+              <path d="M6.6 10.4V20h14.8v-9.6" />
+              <path d="M10 20v-6h4v6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-cube">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.8 20 7v9l-8 4.2L4 16V7l8-4.2Z" />
+              <path d="M4 7l8 4.2L20 7" />
+              <path d="M12 11.2v9" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-doc">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 3.5h8l4 4V20.5H7z" />
+              <path d="M15 3.5V8h4" />
+              <path d="M10 12h6" />
+              <path d="M10 15.5h6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-barcode">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round">
+              <path d="M3 5h18v14H3z" />
+              <path d="M5.6 7v10" />
+              <path d="M8.4 7v10" />
+              <path d="M12 7v10" />
+              <path d="M15.4 7v10" />
+              <path d="M18.5 7v10" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-pulse">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 13h4l2-7 4 14 2.2-7H21" />
+              <path d="M5 4.5h14" opacity=".55" />
+              <path d="M5 19.5h14" opacity=".55" />
+            </svg>
+          </div>
+
+          <div class="platform">
+            <div class="beam"></div>
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+            <div class="core-light"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-export" type="button" (click)="exportInventories()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v11" />
+              <path d="m7 10 5 5 5-5" />
+              <path d="M5 19h14" />
+            </svg>
+            Fişleri Excel'e Aktar
+          </button>
+
+          <button class="btn btn-primary" type="button" routerLink="/staff/inventory/new">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            Yeni Sipariş Fişi
+          </button>
+        </div>
+      </section>
     </div>
 
-    <div *ngIf="isLoading" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <div *ngFor="let card of skeletonCards" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="h-4 w-28 animate-pulse rounded bg-slate-200"></div>
-        <div class="mt-5 h-8 w-20 animate-pulse rounded bg-slate-200"></div>
-        <div class="mt-4 h-3 w-36 animate-pulse rounded bg-slate-100"></div>
+    <header class="inventory-header inventory-header--legacy" aria-hidden="true">
+      <div class="inventory-header__copy">
+        <p class="inventory-eyebrow">SİPARİŞ OPERASYONU</p>
+        <h1>Sipariş Listesi</h1>
+        <span>Hasta taleplerine bağlı sipariş fişlerini buradan takip edin ve yönetin.</span>
       </div>
-    </div>
 
-    <ng-container *ngIf="!isLoading">
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article
-          *ngFor="let metric of dashboardMetrics; trackBy: trackByMetricLabel"
-          class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
-        >
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="text-sm font-medium text-slate-500">{{ metric.label }}</p>
-              <p class="mt-3 text-3xl font-semibold text-slate-950">{{ metric.value }}</p>
-            </div>
-            <span class="inline-flex h-11 w-11 items-center justify-center rounded-md ring-1" [ngClass]="getMetricClass(metric.tone)">
-              <mat-icon class="text-[22px]">{{ metric.icon }}</mat-icon>
+      <app-inventory-header-visual></app-inventory-header-visual>
+
+      <div class="inventory-header__visual" aria-hidden="true">
+        <div class="inventory-hero3d">
+          <div class="inventory-hero3d__aura"></div>
+          <div class="inventory-hero3d__scanner"></div>
+
+          <div class="inventory-hero3d__base">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="inventory-hero3d__clinic">
+            <i class="inventory-hero3d__clinic-roof"></i>
+            <i class="inventory-hero3d__clinic-body"></i>
+            <i class="inventory-hero3d__clinic-cross"></i>
+            <i class="inventory-hero3d__clinic-wing inventory-hero3d__clinic-wing--left"></i>
+            <i class="inventory-hero3d__clinic-wing inventory-hero3d__clinic-wing--right"></i>
+          </div>
+
+          <div class="inventory-hero3d__cube">
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+
+          <div class="inventory-hero3d__orbit">
+            <span class="inventory-orbit-icon inventory-orbit-icon--clinic">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M6 26h20V13.5L16 6 6 13.5v12.5Z" />
+                <path d="M16 12v9M11.5 16.5h9" />
+              </svg>
+            </span>
+            <span class="inventory-orbit-icon inventory-orbit-icon--stock">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M8 11.5 16 7l8 4.5v9L16 25l-8-4.5v-9Z" />
+                <path d="m8 11.5 8 4.5 8-4.5M16 16v9" />
+              </svg>
+            </span>
+            <span class="inventory-orbit-icon inventory-orbit-icon--pulse">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M5 17h5l2.2-5.5 4.4 11 2.5-6H27" />
+                <path d="M8 8h16v16H8V8Z" />
+              </svg>
+            </span>
+            <span class="inventory-orbit-icon inventory-orbit-icon--shield">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M16 5 25 8v7.2c0 5-3.4 9.4-9 11.8-5.6-2.4-9-6.8-9-11.8V8l9-3Z" />
+                <path d="m11.7 16 3 3 6-7" />
+              </svg>
+            </span>
+            <span class="inventory-orbit-icon inventory-orbit-icon--vial">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M13 6h6M14 6v7.5l-5.5 8.8A3 3 0 0 0 11.1 27h9.8a3 3 0 0 0 2.6-4.7L18 13.5V6" />
+                <path d="M11 21h10" />
+              </svg>
+            </span>
+            <span class="inventory-orbit-icon inventory-orbit-icon--scan">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M8 10V7h5M19 7h5v3M24 22v3h-5M13 25H8v-3" />
+                <path d="M9 16h14M11 12h10M12 20h8" />
+              </svg>
             </span>
           </div>
-          <p class="mt-4 text-xs font-medium text-slate-500">{{ metric.hint }}</p>
+        </div>
+      </div>
+
+      <div class="inventory-header__actions">
+        <button type="button" class="inventory-button inventory-button--secondary" (click)="exportInventories()">
+          <mat-icon>download</mat-icon>
+          Fişleri Excel’e Aktar
+        </button>
+        <a routerLink="/staff/inventory/new" class="inventory-button inventory-button--primary">
+          <mat-icon>add</mat-icon>
+          Yeni Sipariş Fişi
+        </a>
+      </div>
+    </header>
+
+    <div *ngIf="error" class="inventory-alert inventory-alert--error">
+      <span>{{ error }}</span>
+      <button type="button" (click)="loadInventories()">Tekrar Dene</button>
+    </div>
+
+    <div *ngIf="isLoading" class="inventory-loading">Sipariş kayıtları yükleniyor...</div>
+
+    <ng-container *ngIf="!isLoading">
+      <div class="inventory-summary">
+        <article *ngFor="let metric of dashboardMetrics; trackBy: trackByMetricLabel">
+          <span>{{ metric.label }}</span>
+          <strong>{{ metric.value }}</strong>
+          <small>{{ metric.hint }}</small>
         </article>
       </div>
 
-      <div class="grid gap-5 xl:grid-cols-12">
-        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
-          <div class="mb-5 flex items-center justify-between">
+      <section class="inventory-panel">
+        <div class="inventory-toolbar">
+          <label class="inventory-search">
+            <span>Arama</span>
             <div>
-              <h2 class="text-base font-semibold text-slate-950">Top Inventory Items</h2>
-              <p class="mt-1 text-xs text-slate-500">Miktara göre ilk kalemler</p>
-            </div>
-            <mat-icon class="text-slate-400">leaderboard</mat-icon>
-          </div>
-
-          <div *ngIf="topInventoryItems.length; else noTopItems" class="space-y-4">
-            <div *ngFor="let item of topInventoryItems; trackBy: trackByTopItem">
-              <div class="mb-2 flex items-center justify-between gap-3 text-sm">
-                <div class="min-w-0">
-                  <p class="truncate font-medium text-slate-800">{{ item.name }}</p>
-                  <p class="text-xs text-slate-500">Item #{{ item.itemId }} • {{ item.amount | currency:'TRY':'symbol':'1.0-0' }}</p>
-                </div>
-                <span class="font-semibold text-slate-950">{{ item.quantity }}</span>
-              </div>
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100">
-                <div class="h-full rounded-full bg-teal-500" [style.width.%]="item.percentage"></div>
-              </div>
-            </div>
-          </div>
-
-          <ng-template #noTopItems>
-            <div class="rounded-md border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-              Henüz envanter satırı yok.
-            </div>
-          </ng-template>
-        </section>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
-          <div class="mb-5 flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-semibold text-slate-950">Request/Treatment Distribution</h2>
-              <p class="mt-1 text-xs text-slate-500">Talep bilgisi üzerinden tedavi dağılımı</p>
-            </div>
-            <mat-icon class="text-slate-400">donut_small</mat-icon>
-          </div>
-
-          <div *ngIf="treatmentDistribution.length; else noDistribution" class="space-y-4">
-            <div *ngFor="let item of treatmentDistribution; trackBy: trackByTreatment">
-              <div class="mb-2 flex items-center justify-between gap-3 text-sm">
-                <p class="truncate font-medium text-slate-800">{{ item.treatmentName }}</p>
-                <span class="font-semibold text-slate-950">{{ item.count }}</span>
-              </div>
-              <div class="h-2 overflow-hidden rounded-full bg-slate-100">
-                <div class="h-full rounded-full bg-sky-500" [style.width.%]="item.percentage"></div>
-              </div>
-            </div>
-          </div>
-
-          <ng-template #noDistribution>
-            <div class="rounded-md border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-              Dağılım için kayıt bulunamadı.
-            </div>
-          </ng-template>
-        </section>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm xl:col-span-4">
-          <div class="mb-5 flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-semibold text-slate-950">Pending Actions</h2>
-              <p class="mt-1 text-xs text-slate-500">Operasyon ekibinin takip etmesi gerekenler</p>
-            </div>
-            <mat-icon class="text-slate-400">assignment_late</mat-icon>
-          </div>
-
-          <div class="space-y-3">
-            <div
-              *ngFor="let action of pendingActions; trackBy: trackByAction"
-              class="flex items-center justify-between gap-4 rounded-md border border-slate-100 bg-slate-50 px-4 py-3"
-            >
-              <div class="min-w-0">
-                <p class="font-medium text-slate-800">{{ action.label }}</p>
-                <p class="mt-1 truncate text-xs text-slate-500">{{ action.hint }}</p>
-              </div>
-              <span class="inline-flex min-w-10 items-center justify-center rounded-md px-3 py-1.5 text-sm font-semibold ring-1" [ngClass]="getMetricClass(action.tone)">
-                {{ action.count }}
-              </span>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2 class="text-lg font-semibold text-slate-950">Inventory Slips</h2>
-            <p class="mt-1 text-sm text-slate-500">Hasta, talep, durum ve tarihe göre operasyon listesi</p>
-          </div>
-          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <label class="lg:col-span-2">
-              <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Search</span>
-              <div class="relative">
-                <mat-icon class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</mat-icon>
-                <input
-                  type="search"
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="applyFilters()"
-                  placeholder="Fiche no, hasta, request..."
-                  class="h-10 w-full rounded-md border border-slate-200 bg-white pl-10 pr-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-                />
-              </div>
-            </label>
-
-            <label>
-              <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Status</span>
-              <select
-                [(ngModel)]="selectedStatus"
-                (ngModelChange)="applyFilters()"
-                class="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-              >
-                <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
-              </select>
-            </label>
-
-            <label>
-              <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Type</span>
-              <select
-                [(ngModel)]="selectedType"
-                (ngModelChange)="applyFilters()"
-                class="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
-              >
-                <option *ngFor="let option of typeOptions" [ngValue]="option.value">{{ option.label }}</option>
-              </select>
-            </label>
-
-            <label>
-              <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Date</span>
+              <mat-icon>search</mat-icon>
               <input
-                type="date"
-                [(ngModel)]="selectedDate"
+                type="search"
+                [(ngModel)]="searchTerm"
                 (ngModelChange)="applyFilters()"
-                class="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                placeholder="Fiş no, hasta, tedavi veya talep no"
               />
-            </label>
-          </div>
-        </div>
+            </div>
+          </label>
 
-        <div class="mb-4 flex flex-col gap-3 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <span>{{ filteredInventories.length }} / {{ inventories.length }} fiş gösteriliyor</span>
-          <button
-            type="button"
-            (click)="clearFilters()"
-            class="inline-flex items-center gap-2 self-start rounded-md border border-slate-200 bg-white px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-50 sm:self-auto"
-          >
-            <mat-icon class="text-[18px]">filter_alt_off</mat-icon>
-            Filtreleri temizle
+          <label class="inventory-filter">
+            <span>Durum</span>
+            <select [(ngModel)]="selectedStatus" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of statusOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+
+          <label class="inventory-filter">
+            <span>Tür</span>
+            <select [(ngModel)]="selectedType" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of typeOptions" [ngValue]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+
+          <label class="inventory-filter">
+            <span>Tarih</span>
+            <input type="date" [(ngModel)]="selectedDate" (ngModelChange)="applyFilters()" />
+          </label>
+
+          <button type="button" class="inventory-button inventory-button--ghost" (click)="clearFilters()">
+            <mat-icon>filter_alt_off</mat-icon>
+            Filtreleri Temizle
           </button>
         </div>
 
-        <div class="inventory-table-wrap overflow-auto rounded-lg border border-slate-200">
-          <table class="min-w-full divide-y divide-slate-200 bg-white text-sm">
-            <thead class="bg-slate-50">
-              <tr>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Id</th>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Fiche No</th>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Patient / Request</th>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Type</th>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                <th class="px-5 py-3 text-left font-semibold uppercase tracking-wide text-slate-500">Created Date</th>
-                <th class="px-5 py-3 text-right font-semibold uppercase tracking-wide text-slate-500">Line Count</th>
-                <th class="px-5 py-3 text-right font-semibold uppercase tracking-wide text-slate-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr *ngFor="let item of filteredInventories; trackBy: trackByInventoryId" class="transition hover:bg-slate-50">
-                <td class="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">#{{ item.id }}</td>
-                <td class="whitespace-nowrap px-5 py-4">
-                  <div class="font-medium text-slate-900">{{ item.ficheNo || 'No fiche no' }}</div>
-                  <div class="mt-1 text-xs text-slate-500">{{ getSlipQuantity(item) }} qty • {{ getSlipAmount(item) | currency:'TRY':'symbol':'1.0-0' }}</div>
-                </td>
-                <td class="min-w-72 px-5 py-4">
-                  <div class="font-medium text-slate-900">{{ getPatientLabel(item) }}</div>
-                  <div class="mt-1 text-xs text-slate-500">{{ getPatientMeta(item) }}</div>
-                </td>
-                <td class="whitespace-nowrap px-5 py-4">
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1" [ngClass]="getTypeBadgeClass(item.type)">
-                    {{ getTypeLabel(item.type) }}
-                  </span>
-                </td>
-                <td class="whitespace-nowrap px-5 py-4">
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1" [ngClass]="getStatusBadgeClass(item.status)">
-                    {{ getStatusLabel(item.status) }}
-                  </span>
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-600">{{ item.createdAt | date:'mediumDate' }}</td>
-                <td class="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">{{ getLineCount(item) }}</td>
-                <td class="whitespace-nowrap px-5 py-4 text-right">
-                  <a
-                    [routerLink]="['/staff/inventory', item.id]"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"
-                    title="Fişi aç"
-                  >
-                    <mat-icon class="text-[20px]">edit</mat-icon>
-                  </a>
-                </td>
-              </tr>
-
-              <tr *ngIf="filteredInventories.length === 0">
-                <td colspan="8" class="px-5 py-14 text-center">
-                  <div class="mx-auto flex max-w-sm flex-col items-center">
-                    <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-slate-100 text-slate-500">
-                      <mat-icon>inventory_2</mat-icon>
-                    </span>
-                    <h3 class="mt-4 text-base font-semibold text-slate-900">Envanter fişi bulunamadı</h3>
-                    <p class="mt-2 text-sm text-slate-500">Filtreleri değiştirin veya yeni bir hasta/talep envanter fişi oluşturun.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="inventory-count">
+          {{ filteredInventories.length }} / {{ inventories.length }} fiş gösteriliyor
         </div>
-      </section>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="mb-5 flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-semibold text-slate-950">Recent Inventory Slips</h2>
-            <p class="mt-1 text-xs text-slate-500">Son oluşturulan 5 fiş</p>
+        <div class="slip-grid">
+          <div class="slip-grid__header">
+            <span>Fiş / Hasta</span>
+            <span>Talep / Tedavi</span>
+            <span>Tür</span>
+            <span>Durum</span>
+            <span>Kalem / Miktar</span>
+            <span>Toplam</span>
+            <span>Tarih</span>
+            <span>İşlem</span>
           </div>
-          <mat-icon class="text-slate-400">history</mat-icon>
-        </div>
 
-        <div *ngIf="recentInventories.length; else noRecent" class="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           <a
-            *ngFor="let item of recentInventories; trackBy: trackByInventoryId"
+            *ngFor="let item of filteredInventories; trackBy: trackByInventoryId"
             [routerLink]="['/staff/inventory', item.id]"
-            class="rounded-md border border-slate-200 p-4 transition hover:border-teal-200 hover:bg-teal-50"
+            class="slip-grid__row"
           >
-            <div class="flex items-center justify-between gap-3">
-              <p class="truncate font-semibold text-slate-900">{{ item.ficheNo || ('Slip #' + item.id) }}</p>
-              <span class="rounded-full px-2 py-0.5 text-xs font-semibold ring-1" [ngClass]="getStatusBadgeClass(item.status)">
+            <div class="slip-primary">
+              <strong>{{ item.ficheNo || 'Fiş no yok' }}</strong>
+              <span>{{ getPatientLabel(item) }}</span>
+              <small>Müşteri #{{ item.customerId }}</small>
+            </div>
+
+            <div class="slip-meta">
+              <strong>{{ getRequestLabel(item) }}</strong>
+              <span>{{ getTreatmentLabel(item) }}</span>
+              <small>{{ getRequestInfo(item)?.assignedAgentName || '-' }}</small>
+            </div>
+
+            <div>
+              <span class="badge-pill" [ngClass]="getTypeBadgeClass(item.type)">
+                {{ getTypeLabel(item.type) }}
+              </span>
+            </div>
+
+            <div>
+              <span class="badge-pill" [ngClass]="getStatusBadgeClass(item.status)">
                 {{ getStatusLabel(item.status) }}
               </span>
             </div>
-            <p class="mt-2 truncate text-sm text-slate-600">{{ getPatientLabel(item) }}</p>
-            <p class="mt-2 text-xs text-slate-500">{{ item.createdAt | date:'short' }}</p>
-          </a>
-        </div>
 
-        <ng-template #noRecent>
-          <div class="rounded-md border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-            Henüz yakın dönem fişi yok.
+            <div class="slip-lines">
+              <strong>{{ getLineCount(item) }} kalem</strong>
+              <span>{{ formatQuantity(getSlipQuantity(item)) }} miktar</span>
+            </div>
+
+            <div class="slip-total">
+              {{ formatMoney(getSlipAmount(item)) }}
+            </div>
+
+            <div class="slip-date">
+              <span>{{ item.createdAt | date:'dd.MM.yyyy' }}</span>
+              <small>{{ item.createdAt | date:'HH:mm' }}</small>
+            </div>
+
+            <div class="slip-action">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </a>
+
+          <div *ngIf="filteredInventories.length === 0" class="inventory-empty">
+            <mat-icon>inventory_2</mat-icon>
+            <strong>Henüz sipariş fişi bulunmuyor.</strong>
+            <span>Yeni bir hasta/talep sipariş fişi oluşturabilirsiniz.</span>
           </div>
-        </ng-template>
+        </div>
       </section>
     </ng-container>
+    </ng-container>
+
+    <ng-template #updateQueuePage>
+      <header class="inventory-update-hero">
+        <div class="inventory-update-hero__content">
+          <div>
+            <p>Sipariş Operasyonu</p>
+            <h1>Fiş Güncelleme Merkezi</h1>
+            <span class="inventory-update-hero__subtitle">Hasta taleplerine bağlı sipariş fişlerini güncelleyin ve kalemleri kontrol edin.</span>
+          </div>
+        </div>
+
+        <app-inventory-header-visual></app-inventory-header-visual>
+
+        <div class="inventory-header__visual" aria-hidden="true">
+          <div class="inventory-hero3d">
+            <div class="inventory-hero3d__aura"></div>
+            <div class="inventory-hero3d__scanner"></div>
+
+            <div class="inventory-hero3d__base">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="inventory-hero3d__clinic">
+              <i class="inventory-hero3d__clinic-roof"></i>
+              <i class="inventory-hero3d__clinic-body"></i>
+              <i class="inventory-hero3d__clinic-cross"></i>
+              <i class="inventory-hero3d__clinic-wing inventory-hero3d__clinic-wing--left"></i>
+              <i class="inventory-hero3d__clinic-wing inventory-hero3d__clinic-wing--right"></i>
+            </div>
+
+            <div class="inventory-hero3d__cube">
+              <i></i>
+              <i></i>
+              <i></i>
+            </div>
+
+            <div class="inventory-hero3d__orbit">
+              <span class="inventory-orbit-icon inventory-orbit-icon--clinic">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M6 26h20V13.5L16 6 6 13.5v12.5Z" />
+                  <path d="M16 12v9M11.5 16.5h9" />
+                </svg>
+              </span>
+              <span class="inventory-orbit-icon inventory-orbit-icon--stock">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M8 11.5 16 7l8 4.5v9L16 25l-8-4.5v-9Z" />
+                  <path d="m8 11.5 8 4.5 8-4.5M16 16v9" />
+                </svg>
+              </span>
+              <span class="inventory-orbit-icon inventory-orbit-icon--pulse">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M5 17h5l2.2-5.5 4.4 11 2.5-6H27" />
+                  <path d="M8 8h16v16H8V8Z" />
+                </svg>
+              </span>
+              <span class="inventory-orbit-icon inventory-orbit-icon--shield">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M16 5 25 8v7.2c0 5-3.4 9.4-9 11.8-5.6-2.4-9-6.8-9-11.8V8l9-3Z" />
+                  <path d="m11.7 16 3 3 6-7" />
+                </svg>
+              </span>
+              <span class="inventory-orbit-icon inventory-orbit-icon--vial">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M13 6h6M14 6v7.5l-5.5 8.8A3 3 0 0 0 11.1 27h9.8a3 3 0 0 0 2.6-4.7L18 13.5V6" />
+                  <path d="M11 21h10" />
+                </svg>
+              </span>
+              <span class="inventory-orbit-icon inventory-orbit-icon--scan">
+                <svg viewBox="0 0 32 32" aria-hidden="true">
+                  <path d="M8 10V7h5M19 7h5v3M24 22v3h-5M13 25H8v-3" />
+                  <path d="M9 16h14M11 12h10M12 20h8" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="inventory-update-hero__actions">
+          <a routerLink="/staff/inventory" class="inventory-secondary-button">
+            <mat-icon>arrow_back</mat-icon>
+            Sipariş Fişlerine Dön
+          </a>
+          <a routerLink="/staff/inventory/new" class="inventory-create-button inventory-create-button--compact">
+            <span class="inventory-create-button__mark">
+              <mat-icon>add_box</mat-icon>
+            </span>
+            <span>Yeni Sipariş Fişi</span>
+          </a>
+        </div>
+      </header>
+
+      <div *ngIf="error" class="inventory-alert inventory-alert--error">
+        <span>{{ error }}</span>
+        <button type="button" (click)="loadInventories()">Tekrar Dene</button>
+      </div>
+
+      <div *ngIf="isLoading" class="inventory-loading">Güncellenecek fişler yükleniyor...</div>
+
+      <ng-container *ngIf="!isLoading">
+        <section class="inventory-update-command">
+          <div>
+            <strong>{{ updateInventories.length }}</strong>
+            <span>güncellenebilir sipariş fişi</span>
+          </div>
+          <div>
+            <strong>{{ recentInventories.length }}</strong>
+            <span>son hareket</span>
+          </div>
+          <p>Her sipariş fişini ayrı kart olarak inceleyin, seçtiğiniz kaydı doğrudan güncelleyin.</p>
+        </section>
+
+        <section *ngIf="updateInventories.length; else noUpdateCards" class="inventory-update-cards">
+          <a
+            *ngFor="let item of updateInventories; trackBy: trackByInventoryId"
+            [routerLink]="['/staff/inventory/edit', item.id]"
+            class="inventory-update-card"
+          >
+            <div class="inventory-update-card__top">
+              <div>
+                <span class="inventory-update-card__label">Fiş No</span>
+                <h2>{{ item.ficheNo || ('Fiş #' + item.id) }}</h2>
+              </div>
+              <span class="inventory-update-card__id">#{{ item.id }}</span>
+            </div>
+
+            <div class="inventory-update-card__patient">
+              <strong>{{ getPatientLabel(item) }}</strong>
+              <span>Müşteri #{{ item.customerId }} · {{ getRequestLabel(item) }}</span>
+            </div>
+
+            <div class="inventory-update-card__treatment">
+              <mat-icon>medical_services</mat-icon>
+              <span>{{ getTreatmentLabel(item) }}</span>
+            </div>
+
+            <div class="inventory-update-card__badges">
+              <span class="badge-pill" [ngClass]="getTypeBadgeClass(item.type)">
+                {{ getTypeLabel(item.type) }}
+              </span>
+              <span class="badge-pill" [ngClass]="getStatusBadgeClass(item.status)">
+                {{ getStatusLabel(item.status) }}
+              </span>
+            </div>
+
+            <div class="inventory-update-card__stats">
+              <div>
+                <small>Ürün Kalemi</small>
+                <strong>{{ getLineCount(item) }}</strong>
+              </div>
+              <div>
+                <small>Miktar</small>
+                <strong>{{ formatQuantity(getSlipQuantity(item)) }}</strong>
+              </div>
+              <div>
+                <small>Tutar</small>
+                <strong>{{ formatMoney(getSlipAmount(item)) }}</strong>
+              </div>
+            </div>
+
+            <div class="inventory-update-card__footer">
+              <span>{{ (item.updatedAt || item.createdAt) | date:'dd.MM.yyyy HH:mm' }}</span>
+              <strong>
+                Fişi Güncelle
+                <mat-icon>arrow_forward</mat-icon>
+              </strong>
+            </div>
+          </a>
+        </section>
+
+        <ng-template #noUpdateCards>
+          <div class="inventory-update-empty">
+            Güncellenecek sipariş fişi bulunmuyor.
+          </div>
+        </ng-template>
+      </ng-container>
+    </ng-template>
   </div>
 </section>

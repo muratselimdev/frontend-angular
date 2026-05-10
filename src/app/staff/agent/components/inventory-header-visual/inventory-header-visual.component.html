@@ -1,0 +1,83 @@
+<div class="holo-scene" aria-hidden="true">
+  <svg class="holo-frame-curve" viewBox="0 0 760 226" preserveAspectRatio="none">
+    <path d="M2 1H154C204 1 198 77 277 145C323 184 437 184 483 145C562 77 556 1 606 1H758" />
+  </svg>
+
+  <div class="holo-sweep"></div>
+
+  <div class="holo-platform">
+    <span class="holo-platform__ring holo-platform__ring--outer"></span>
+    <span class="holo-platform__ring holo-platform__ring--middle"></span>
+    <span class="holo-platform__ring holo-platform__ring--inner"></span>
+    <span class="holo-platform__grid"></span>
+    <span class="holo-platform__glow"></span>
+  </div>
+
+  <svg class="holo-cube" viewBox="0 0 92 92">
+    <defs>
+      <linearGradient id="inventoryCubeTop" x1="22" y1="11" x2="72" y2="34" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#DFFBFF" />
+        <stop offset="0.45" stop-color="#67E8F9" />
+        <stop offset="1" stop-color="#14B8A6" />
+      </linearGradient>
+      <linearGradient id="inventoryCubeLeft" x1="18" y1="35" x2="45" y2="78" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#22D3EE" stop-opacity="0.88" />
+        <stop offset="1" stop-color="#0F766E" stop-opacity="0.92" />
+      </linearGradient>
+      <linearGradient id="inventoryCubeRight" x1="45" y1="35" x2="76" y2="78" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#38BDF8" stop-opacity="0.78" />
+        <stop offset="1" stop-color="#164E63" stop-opacity="0.9" />
+      </linearGradient>
+      <filter id="inventoryCubeGlow" x="-50%" y="-50%" width="200%" height="210%">
+        <feDropShadow dx="0" dy="16" stdDeviation="8" flood-color="#031E2E" flood-opacity="0.32" />
+        <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#5EEAD4" flood-opacity="0.45" />
+      </filter>
+    </defs>
+    <g filter="url(#inventoryCubeGlow)">
+      <path d="M46 10 76 27 46 44 16 27 46 10Z" fill="url(#inventoryCubeTop)" />
+      <path d="M16 27 46 44v35L16 62V27Z" fill="url(#inventoryCubeLeft)" />
+      <path d="M76 27 46 44v35l30-17V27Z" fill="url(#inventoryCubeRight)" />
+      <path d="M28 34 58 17M25 45l12 7M25 55l12 7M55 53l12-7M55 63l12-7" stroke="#ECFEFF" stroke-width="3" stroke-linecap="round" opacity="0.66" />
+      <path d="M46 44v35" stroke="#CFFAFE" stroke-width="2.4" opacity="0.62" />
+    </g>
+  </svg>
+
+  <div class="holo-orbit">
+    <div class="holo-panel holo-panel--warehouse">
+      <svg viewBox="0 0 36 36">
+        <path d="M7 29h22V15L18 8 7 15v14Z" />
+        <path d="M12 29v-9h12v9M14 17h8M16 22h4" />
+      </svg>
+    </div>
+    <div class="holo-panel holo-panel--document">
+      <svg viewBox="0 0 36 36">
+        <path d="M12 7h9l5 5v17H12V7Z" />
+        <path d="M21 7v6h5M15 18h8M15 23h8" />
+      </svg>
+    </div>
+    <div class="holo-panel holo-panel--barcode">
+      <svg viewBox="0 0 36 36">
+        <path d="M9 10h18v16H9V10Z" />
+        <path d="M13 14v8M17 14v8M22 14v8M26 14v8" />
+      </svg>
+    </div>
+    <div class="holo-panel holo-panel--pulse">
+      <svg viewBox="0 0 36 36">
+        <path d="M7 19h6l2.5-6 5 13 2.8-7H30" />
+        <path d="M10 9h16v18H10V9Z" />
+      </svg>
+    </div>
+    <div class="holo-panel holo-panel--report">
+      <svg viewBox="0 0 36 36">
+        <path d="M11 28h14M13 24V13M18 24V9M23 24v-7" />
+        <path d="M9 8h18v21H9V8Z" />
+      </svg>
+    </div>
+  </div>
+
+  <span class="holo-node holo-node--one"></span>
+  <span class="holo-node holo-node--two"></span>
+  <span class="holo-node holo-node--three"></span>
+  <span class="holo-node holo-node--four"></span>
+  <span class="holo-node holo-node--five"></span>
+</div>

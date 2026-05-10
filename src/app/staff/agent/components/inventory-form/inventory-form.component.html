@@ -1,45 +1,223 @@
-<section class="min-h-screen bg-slate-50 px-4 py-5 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-7xl space-y-6">
-    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div>
-        <p class="text-sm font-medium uppercase tracking-wide text-teal-700">Patient Request Inventory Slip</p>
-        <h1 class="mt-1 text-3xl font-semibold text-slate-950">
-          {{ isEditMode ? 'Inventory Slip Detail' : 'New Inventory Slip' }}
-        </h1>
-        <p class="mt-2 max-w-3xl text-sm text-slate-600">
-          Hasta talebine bağlı envanter fişini, satır tutarlarını ve operasyon durumunu yönetin.
-        </p>
-      </div>
+<section class="min-h-screen w-full bg-slate-50 px-0 py-4">
+  <div class="w-full max-w-none space-y-5">
+    <div class="inventory-scale" id="inventoryScale" #inventoryScale>
+      <div class="inventory-board inventory-board--form" id="inventoryBoard" #inventoryBoard>
+        <svg class="frame-svg" viewBox="0 0 2048 278" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="borderStroke" x1="0" y1="0" x2="2048" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 88, 112, .48)" />
+              <stop offset="21%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="34%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="50%" stop-color="rgba(42, 224, 235, .60)" />
+              <stop offset="66%" stop-color="rgba(41, 207, 222, .50)" />
+              <stop offset="79%" stop-color="rgba(45, 88, 112, .38)" />
+              <stop offset="100%" stop-color="rgba(45, 88, 112, .48)" />
+            </linearGradient>
 
-      <a
-        routerLink="/staff/inventory"
-        class="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-      >
-        <mat-icon class="text-[20px]">arrow_back</mat-icon>
-        Listeye dön
-      </a>
-    </header>
+            <linearGradient id="portalStroke" x1="620" y1="35" x2="1424" y2="235" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(45, 150, 170, .58)" />
+              <stop offset="50%" stop-color="rgba(46, 228, 238, .84)" />
+              <stop offset="100%" stop-color="rgba(45, 150, 170, .58)" />
+            </linearGradient>
+
+            <filter id="cyanGlow" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="cyanGlowStrong" x="-8%" y="-25%" width="116%" height="150%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <path
+            class="frame-glow"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="frame-line"
+            d="M58 35 H505
+               C548 35 566 59 586 96
+               L623 160
+               C653 211 702 227 760 227
+               H1288
+               C1346 227 1395 211 1425 160
+               L1462 96
+               C1484 59 1502 35 1545 35
+               H1990
+               C2011 35 2034 53 2034 76
+               V190
+               C2034 219 2013 245 1990 245
+               H58
+               C35 245 14 219 14 190
+               V76
+               C14 53 35 35 58 35 Z"
+          />
+
+          <path
+            class="portal-glow"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+
+          <path
+            class="portal-line"
+            d="M681 35
+               H1367
+               C1400 35 1424 59 1424 93
+               C1424 132 1403 177 1365 203
+               C1336 223 1299 226 1248 226
+               H800
+               C749 226 712 223 683 203
+               C645 177 621 132 621 93
+               C621 59 648 35 681 35 Z"
+          />
+        </svg>
+
+        <div class="left-content">
+          <p class="eyebrow">SİPARİŞ OPERASYONU</p>
+          <h1 class="title">{{ isEditMode ? 'Sipariş Fişini Güncelle' : 'Yeni Sipariş Fişi' }}</h1>
+          <p class="description">
+            Hasta talebine bağlı sipariş bilgilerini ve ürün kalemlerini doldurun.
+          </p>
+        </div>
+
+        <div class="portal-art">
+          <canvas id="holoCanvas" #holoCanvas></canvas>
+          <div class="scan-line"></div>
+
+          <span class="tiny-dot d1"></span>
+          <span class="tiny-dot d2"></span>
+          <span class="tiny-dot d3"></span>
+
+          <div class="holo-card card-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 11.2 12 4l8.5 7.2" />
+              <path d="M6.6 10.4V20h14.8v-9.6" />
+              <path d="M10 20v-6h4v6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-cube">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.8 20 7v9l-8 4.2L4 16V7l8-4.2Z" />
+              <path d="M4 7l8 4.2L20 7" />
+              <path d="M12 11.2v9" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-doc">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 3.5h8l4 4V20.5H7z" />
+              <path d="M15 3.5V8h4" />
+              <path d="M10 12h6" />
+              <path d="M10 15.5h6" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-barcode">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round">
+              <path d="M3 5h18v14H3z" />
+              <path d="M5.6 7v10" />
+              <path d="M8.4 7v10" />
+              <path d="M12 7v10" />
+              <path d="M15.4 7v10" />
+              <path d="M18.5 7v10" />
+            </svg>
+          </div>
+
+          <div class="holo-card card-pulse">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 13h4l2-7 4 14 2.2-7H21" />
+              <path d="M5 4.5h14" opacity=".55" />
+              <path d="M5 19.5h14" opacity=".55" />
+            </svg>
+          </div>
+
+          <div class="platform">
+            <div class="beam"></div>
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+            <div class="core-light"></div>
+          </div>
+        </div>
+
+        <div class="actions actions--form">
+          <a routerLink="/staff/inventory" class="btn btn-export">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Geri Dön
+          </a>
+        </div>
+      </div>
+    </div>
 
     <div *ngIf="error" class="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
       {{ error }}
     </div>
 
-    <div *ngIf="isLoading" class="grid gap-5 lg:grid-cols-3">
-      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
-        <div class="h-5 w-44 animate-pulse rounded bg-slate-200"></div>
-        <div class="mt-6 grid gap-4 sm:grid-cols-2">
-          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
-          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
-          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
-          <div class="h-11 animate-pulse rounded bg-slate-100"></div>
-        </div>
+    <div
+      *ngIf="isSaveBlocked"
+      class="inventory-form-warning"
+    >
+      <mat-icon>lock</mat-icon>
+      <span>{{ saveBlockedMessage }}</span>
+    </div>
+
+    <div *ngIf="isLoading" class="space-y-4">
+      <div class="rounded-lg border border-slate-200 bg-white p-4 text-sm font-medium text-slate-600 shadow-sm">
+        Sipariş fişi yükleniyor...
       </div>
-      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="h-5 w-32 animate-pulse rounded bg-slate-200"></div>
-        <div class="mt-6 space-y-3">
-          <div class="h-4 animate-pulse rounded bg-slate-100"></div>
-          <div class="h-4 animate-pulse rounded bg-slate-100"></div>
-          <div class="h-4 w-2/3 animate-pulse rounded bg-slate-100"></div>
+      <div class="grid gap-5 lg:grid-cols-3">
+        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <div class="h-5 w-44 animate-pulse rounded bg-slate-200"></div>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+            <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+            <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+            <div class="h-11 animate-pulse rounded bg-slate-100"></div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="h-5 w-32 animate-pulse rounded bg-slate-200"></div>
+          <div class="mt-6 space-y-3">
+            <div class="h-4 animate-pulse rounded bg-slate-100"></div>
+            <div class="h-4 animate-pulse rounded bg-slate-100"></div>
+            <div class="h-4 w-2/3 animate-pulse rounded bg-slate-100"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -52,7 +230,7 @@
               <mat-icon>assignment_ind</mat-icon>
             </span>
             <div>
-              <h2 class="text-lg font-semibold text-slate-950">Request / Patient Information</h2>
+              <h2 class="text-lg font-semibold text-slate-950">Talep / Hasta Bilgisi</h2>
               <p class="mt-1 text-sm text-slate-500">Hasta, tedavi ve atanan temsilci bilgisi</p>
             </div>
           </div>
@@ -73,47 +251,27 @@
                 *ngIf="inventoryForm.controls.requestId.invalid && inventoryForm.controls.requestId.touched"
                 class="mt-1 block text-xs font-medium text-rose-600"
               >
-                Bu alan zorunludur.
+                Hasta/talep seçimi zorunludur.
               </span>
-            </label>
-
-            <label>
-              <span class="mb-1 block text-sm font-medium text-slate-700">Customer ID</span>
-              <input
-                type="number"
-                formControlName="customerId"
-                readonly
-                class="h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none"
-              />
-            </label>
-
-            <label>
-              <span class="mb-1 block text-sm font-medium text-slate-700">Staff ID</span>
-              <input
-                type="number"
-                formControlName="staffId"
-                readonly
-                class="h-11 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none"
-              />
             </label>
           </div>
 
           <div *ngIf="selectedRequest" class="mt-5 grid gap-3 rounded-lg border border-teal-100 bg-teal-50 p-4 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Patient</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Hasta</p>
               <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.customerName }}</p>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Treatment</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Tedavi</p>
               <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.treatmentName }}</p>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Group</p>
-              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.treatmentGroupName || 'Not mapped' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Grup</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.treatmentGroupName || 'Eşleşmedi' }}</p>
             </div>
             <div>
-              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Assigned Agent</p>
-              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.assignedAgentName || 'Unassigned' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">Atanan Temsilci</p>
+              <p class="mt-1 font-semibold text-slate-950">{{ selectedRequest.assignedAgentName || 'Atanmamış' }}</p>
             </div>
           </div>
         </section>
@@ -124,39 +282,46 @@
               <mat-icon>receipt_long</mat-icon>
             </span>
             <div>
-              <h2 class="text-lg font-semibold text-slate-950">Inventory Slip Information</h2>
-              <p class="mt-1 text-sm text-slate-500">Fiş numarası, tipi ve durum bilgisi</p>
+              <h2 class="text-lg font-semibold text-slate-950">Fiş Bilgileri</h2>
+              <p class="mt-1 text-sm text-slate-500">Fiş no, tür ve durum bilgisi</p>
             </div>
           </div>
 
           <div class="space-y-4">
             <label>
-              <span class="mb-1 block text-sm font-medium text-slate-700">Fiche No *</span>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Fiş No *</span>
               <input
                 type="text"
                 formControlName="ficheNo"
+                readonly
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               />
               <span
                 *ngIf="inventoryForm.controls.ficheNo.invalid && inventoryForm.controls.ficheNo.touched"
                 class="mt-1 block text-xs font-medium text-rose-600"
               >
-                Fiş numarası zorunludur.
+                Fiş no zorunludur.
               </span>
             </label>
 
             <label>
-              <span class="mb-1 block text-sm font-medium text-slate-700">Type *</span>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Fiş Türü *</span>
               <select
                 formControlName="type"
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               >
                 <option *ngFor="let option of typeOptions" [ngValue]="option.value">{{ option.label }}</option>
               </select>
+              <span
+                *ngIf="inventoryForm.controls.type.invalid && inventoryForm.controls.type.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Fiş türü zorunludur.
+              </span>
             </label>
 
             <label *ngIf="isEditMode">
-              <span class="mb-1 block text-sm font-medium text-slate-700">Status *</span>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Durum *</span>
               <select
                 formControlName="status"
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
@@ -171,16 +336,17 @@
       <section class="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div class="flex flex-col gap-4 border-b border-slate-200 p-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 class="text-lg font-semibold text-slate-950">Inventory Lines</h2>
-            <p class="mt-1 text-sm text-slate-500">Miktar, birim tutar ve iptal nedeni satır bazında tutulur.</p>
+            <h2 class="text-lg font-semibold text-slate-950">Sipariş Kalemleri</h2>
+            <p class="mt-1 text-sm text-slate-500">Ürün, miktar ve tutar bilgileri</p>
           </div>
           <button
             type="button"
             (click)="addLine()"
+            [disabled]="isLocked"
             class="inline-flex items-center justify-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-700 transition hover:bg-teal-100"
           >
             <mat-icon class="text-[20px]">add</mat-icon>
-            Satır ekle
+            Kalem Ekle
           </button>
         </div>
 
@@ -191,28 +357,42 @@
             class="grid gap-4 p-5 xl:grid-cols-12 xl:items-start"
           >
             <div class="xl:col-span-4">
-              <label [for]="'inventoryItemId_' + i" class="mb-1 block text-sm font-medium text-slate-700">Inventory Item *</label>
+              <label [for]="'inventoryItemId_' + i" class="mb-1 block text-sm font-medium text-slate-700">Ürün *</label>
               <select
                 [id]="'inventoryItemId_' + i"
                 formControlName="inventoryItemId"
                 (change)="onItemChange(i)"
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               >
-                <option [ngValue]="null" disabled>Ürün seçiniz...</option>
-                <option *ngFor="let item of availableItems" [ngValue]="item.id">
-                  {{ item.name }} - {{ item.sellingPrice | currency:'TRY':'symbol':'1.0-0' }}
+                <option [ngValue]="null" disabled>Sipariş kalemi seçiniz...</option>
+                <option *ngIf="availableItems.length === 0" [ngValue]="null" disabled>Tanımlı sipariş kalemi bulunmuyor</option>
+                <option
+                  *ngFor="let item of availableItems"
+                  [ngValue]="item.id"
+                  [disabled]="isItemOptionDisabled(item, line.controls.inventoryItemId.value)"
+                >
+                  {{ getItemOptionLabel(item) }}
                 </option>
               </select>
+              <span *ngIf="itemLoadError" class="mt-1 block text-xs font-medium text-rose-600">
+                {{ itemLoadError }}
+              </span>
+              <span
+                *ngIf="!itemLoadError && availableItems.length === 0"
+                class="mt-1 block text-xs font-medium text-amber-600"
+              >
+                Tanımlı sipariş kalemi bulunmuyor. Önce Sipariş Kalemleri ekranından kalem ekleyin.
+              </span>
               <span
                 *ngIf="line.controls.inventoryItemId.invalid && line.controls.inventoryItemId.touched"
                 class="mt-1 block text-xs font-medium text-rose-600"
               >
-                Ürün seçimi zorunludur.
+                Sipariş kalemi seçimi zorunludur.
               </span>
             </div>
 
             <div class="xl:col-span-2">
-              <label [for]="'quantity_' + i" class="mb-1 block text-sm font-medium text-slate-700">Quantity *</label>
+              <label [for]="'quantity_' + i" class="mb-1 block text-sm font-medium text-slate-700">Miktar *</label>
               <input
                 [id]="'quantity_' + i"
                 type="number"
@@ -221,10 +401,16 @@
                 (input)="onQuantityChange(i)"
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               />
+              <span
+                *ngIf="line.controls.quantity.invalid && line.controls.quantity.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Miktar 0’dan büyük olmalıdır.
+              </span>
             </div>
 
             <div class="xl:col-span-2">
-              <label [for]="'amount_' + i" class="mb-1 block text-sm font-medium text-slate-700">Amount</label>
+              <label [for]="'amount_' + i" class="mb-1 block text-sm font-medium text-slate-700">Tutar *</label>
               <input
                 [id]="'amount_' + i"
                 type="number"
@@ -233,20 +419,26 @@
                 formControlName="amount"
                 class="h-11 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
               />
+              <span
+                *ngIf="line.controls.amount.invalid && line.controls.amount.touched"
+                class="mt-1 block text-xs font-medium text-rose-600"
+              >
+                Tutar zorunludur ve 0’dan küçük olamaz.
+              </span>
             </div>
 
             <div class="xl:col-span-2">
-              <span class="mb-1 block text-sm font-medium text-slate-700">Line Total</span>
+              <span class="mb-1 block text-sm font-medium text-slate-700">Kalem Toplamı</span>
               <div class="flex h-11 items-center rounded-md border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-900">
-                {{ getLineTotal(i) | currency:'TRY':'symbol':'1.2-2' }}
+                {{ formatMoney(getLineTotal(i)) }}
               </div>
             </div>
 
             <div class="xl:col-span-1" *ngIf="isEditMode">
-              <span class="mb-1 block text-sm font-medium text-slate-700">Cancel</span>
+              <span class="mb-1 block text-sm font-medium text-slate-700">İptal</span>
               <label class="inline-flex h-11 items-center gap-2 rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700">
                 <input type="checkbox" formControlName="cancel" class="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500" />
-                Yes
+                Evet
               </label>
             </div>
 
@@ -254,15 +446,16 @@
               <button
                 type="button"
                 (click)="removeLine(i)"
+                [disabled]="isLocked"
                 class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-rose-200 text-rose-600 transition hover:bg-rose-50"
-                title="Satırı sil"
+                title="Kaldır"
               >
                 <mat-icon class="text-[20px]">delete</mat-icon>
               </button>
             </div>
 
             <div class="xl:col-span-12" *ngIf="isEditMode && line.controls.cancel.value">
-              <label [for]="'cancelReason_' + i" class="mb-1 block text-sm font-medium text-slate-700">Cancel Reason</label>
+              <label [for]="'cancelReason_' + i" class="mb-1 block text-sm font-medium text-slate-700">İptal Nedeni</label>
               <input
                 [id]="'cancelReason_' + i"
                 type="text"
@@ -277,53 +470,78 @@
             <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-slate-100 text-slate-500">
               <mat-icon>playlist_add</mat-icon>
             </span>
-            <h3 class="mt-4 text-base font-semibold text-slate-900">Satır bulunmuyor</h3>
-            <p class="mt-2 text-sm text-slate-500">Bu fiş için en az bir envanter satırı ekleyin.</p>
+            <h3 class="mt-4 text-base font-semibold text-slate-900">Sipariş kalemi bulunmuyor</h3>
+            <p class="mt-2 text-sm text-slate-500">En az bir sipariş kalemi ekleyin.</p>
           </div>
         </div>
       </section>
 
       <section class="grid gap-5 lg:grid-cols-3">
         <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
-          <h2 class="text-lg font-semibold text-slate-950">Totals</h2>
+          <h2 class="text-lg font-semibold text-slate-950">Toplam Bilgileri</h2>
           <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Line Count</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Kalem Sayısı</p>
               <p class="mt-2 text-2xl font-semibold text-slate-950">{{ lines.length }}</p>
             </div>
             <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total Quantity</p>
-              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ totalQuantity }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Toplam Miktar</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ formatQuantity(totalQuantity) }}</p>
             </div>
             <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Cancelled Lines</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">İptal Edilen Kalem</p>
               <p class="mt-2 text-2xl font-semibold text-slate-950">{{ cancelledLineCount }}</p>
             </div>
             <div class="rounded-md border border-slate-200 bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total Amount</p>
-              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ totalAmount | currency:'TRY':'symbol':'1.2-2' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Toplam Tutar</p>
+              <p class="mt-2 text-2xl font-semibold text-slate-950">{{ formatMoney(totalAmount) }}</p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 class="text-lg font-semibold text-slate-950">Actions</h2>
+        <div class="sticky bottom-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-950">İşlemler</h2>
           <div class="mt-5 flex flex-col gap-3">
             <button
               type="submit"
-              [disabled]="inventoryForm.invalid || isSaving || lines.length === 0"
-              class="inline-flex items-center justify-center gap-2 rounded-md bg-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              [disabled]="isSaving || isSaveBlocked"
+              class="inventory-form-submit-button inline-flex items-center justify-center gap-2 rounded-md bg-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              <mat-icon *ngIf="!isSaving" class="text-[20px]">{{ isEditMode ? 'save' : 'add_task' }}</mat-icon>
+              <span class="inventory-form-submit-button__mark" *ngIf="!isSaving">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3L21 8V17L12 22L3 17V8L12 3Z" fill="url(#formGlow)" opacity="0.3" style="filter: blur(2px);"/>
+                  <path d="M12 3L21 8L12 13L3 8L12 3Z" fill="url(#formTop)"/>
+                  <path d="M3 8L12 13V22L3 17V8Z" fill="url(#formLeft)"/>
+                  <path d="M21 8L12 13V22L21 17V8Z" fill="url(#formRight)"/>
+                  <defs>
+                    <radialGradient id="formGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(12 12.5) rotate(90) scale(9.5 9)">
+                      <stop stop-color="#5EEAD4"/>
+                      <stop offset="1" stop-color="#0F766E" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="formTop" x1="12" y1="3" x2="12" y2="13" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#5EEAD4" stop-opacity="0.9"/>
+                      <stop offset="1" stop-color="#14B8A6" stop-opacity="0.9"/>
+                    </linearGradient>
+                    <linearGradient id="formLeft" x1="7.5" y1="8" x2="7.5" y2="22" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#0F766E" stop-opacity="1"/>
+                      <stop offset="1" stop-color="#0F766E" stop-opacity="0.4"/>
+                    </linearGradient>
+                    <linearGradient id="formRight" x1="16.5" y1="8" x2="16.5" y2="22" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#115E59" stop-opacity="0.9"/>
+                      <stop offset="1" stop-color="#115E59" stop-opacity="0.3"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
               <mat-icon *ngIf="isSaving" class="saving-icon text-[20px]">progress_activity</mat-icon>
-              {{ isEditMode ? 'Güncelle' : 'Kaydet' }}
+              {{ isEditMode ? 'Değişiklikleri Kaydet' : 'Fişi Oluştur' }}
             </button>
             <a
               routerLink="/staff/inventory"
               class="inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             >
               <mat-icon class="text-[20px]">close</mat-icon>
-              İptal
+              Vazgeç
             </a>
           </div>
         </div>
