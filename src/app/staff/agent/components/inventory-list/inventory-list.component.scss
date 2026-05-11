@@ -43,6 +43,7 @@
   height: 278px;
   transform-origin: top left;
   overflow: hidden;
+  clip-path: path("M58 35 H505 C548 35 566 59 586 96 L623 160 C653 211 702 227 760 227 H1288 C1346 227 1395 211 1425 160 L1462 96 C1484 59 1502 35 1545 35 H1990 C2011 35 2034 53 2034 76 V190 C2034 219 2013 245 1990 245 H58 C35 245 14 219 14 190 V76 C14 53 35 35 58 35 Z M681 23 H1367 C1400 23 1424 47 1424 81 C1424 120 1403 165 1365 191 C1336 211 1299 214 1248 214 H800 C749 214 712 211 683 191 C645 165 621 120 621 81 C621 47 648 23 681 23 Z");
   color: var(--text-main);
   background:
     radial-gradient(ellipse at 50% 52%, rgba(20, 184, 166, 0.22) 0%, rgba(14, 165, 233, 0.12) 23%, rgba(236, 254, 255, 0) 50%),
@@ -109,6 +110,7 @@
   stroke: url(#portalStroke);
   stroke-width: 1.35;
   opacity: 0.95;
+  transform: translateY(-12px);
   vector-effect: non-scaling-stroke;
 }
 
@@ -118,6 +120,7 @@
   stroke-width: 2.6;
   opacity: 0.38;
   filter: url(#cyanGlowStrong);
+  transform: translateY(-12px);
   vector-effect: non-scaling-stroke;
 }
 
@@ -236,7 +239,7 @@
   position: absolute;
   z-index: 3;
   left: 620px;
-  top: 29px;
+  top: 17px;
   width: 804px;
   height: 205px;
   overflow: hidden;
