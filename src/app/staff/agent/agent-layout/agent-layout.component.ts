@@ -25,11 +25,11 @@ interface MenuItem {
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   isTabletSidebarOpen = false;
   isSidebarCollapsed = false;
-  sidebarWidth = 251;
+  sidebarWidth = 285;
 
   isResizing = false;
   private resizeStartX = 0;
-  private resizeStartWidth = 251;
+  private resizeStartWidth = 285;
   private readonly openMenuPaths = new Set<string>(['/staff/inventory']);
 
   startResize(event: MouseEvent): void {
@@ -43,7 +43,7 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
   onMouseMove(event: MouseEvent): void {
     if (!this.isResizing) return;
     const delta = event.clientX - this.resizeStartX;
-    const newWidth = Math.min(420, Math.max(190, this.resizeStartWidth + delta));
+    const newWidth = Math.min(360, Math.max(250, this.resizeStartWidth + delta));
     this.sidebarWidth = newWidth;
   }
 
@@ -56,16 +56,16 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     {
       label: 'Leads',
       path: '/agent/leads',
-      icon: 'track_changes'
+      icon: 'account_tree'
     },
-    { label: 'Contacts', path: '/agent/contacts', icon: 'contacts' },
-    { label: 'Deals', path: '/agent/deals', icon: 'favorite_border' },
-    { label: 'Planning', path: '/agent/planning', icon: 'calendar_month' },
-    { label: 'Requests', path: '/agent/calls', icon: 'assignment' },
+    { label: 'Contacts', path: '/agent/contacts', icon: 'support_agent' },
+    { label: 'Deals', path: '/agent/deals', icon: 'content_paste' },
+    { label: 'Planning', path: '/agent/planning', icon: 'home_work' },
+    { label: 'Requests', path: '/agent/calls', icon: 'center_focus_weak' },
     {
       label: 'Envanter',
       path: '/staff/inventory',
-      icon: 'deployed_code',
+      icon: 'view_in_ar',
       children: [
         { label: 'Sipariş Listesi', path: '/staff/inventory', icon: 'fiber_manual_record', exact: true },
         { label: 'Sipariş Kalemleri', path: '/staff/inventory/items', icon: 'fiber_manual_record', exact: true }

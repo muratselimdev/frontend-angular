@@ -6,16 +6,8 @@
     [class.resizing]="isResizing" [style.width.px]="isSidebarCollapsed ? 0 : sidebarWidth">
     <div class="sidebar-header">
       <a routerLink="/agent" class="sidebar-brand" (click)="closeTabletSidebar()" aria-label="OneClinic">
-        <span class="sidebar-brand__mark" aria-hidden="true">
-          <svg viewBox="0 0 40 40" focusable="false">
-            <path d="M20 3.6 34.2 11.8v16.4L20 36.4 5.8 28.2V11.8L20 3.6Z" />
-            <path d="M20 10.4 28.3 15.2v9.6L20 29.6l-8.3-4.8v-9.6L20 10.4Z" />
-            <path d="M20 14.6 24.7 17.3v5.4L20 25.4l-4.7-2.7v-5.4L20 14.6Z" />
-          </svg>
-        </span>
-        <span class="sidebar-brand__copy">
-          <span class="sidebar-brand__name">OneClinic</span>
-          <span class="sidebar-brand__subtitle">Healthcare ERP</span>
+        <span class="sidebar-brand__logo-shell">
+          <img src="assets/../logo.png" alt="One Clinic" class="sidebar-brand__logo">
         </span>
       </a>
 
@@ -36,10 +28,13 @@
       <ul class="sidebar-menu">
         <ng-container *ngFor="let item of menuItems; let i = index">
           <li *ngIf="i === 0" class="sidebar-section-item">
-            <span class="sidebar-section-label">Genel</span>
+            <span class="sidebar-section-label">
+              <mat-icon class="sidebar-section-icon">view_in_ar</mat-icon>
+              Genel
+            </span>
           </li>
           <li *ngIf="item.children?.length" class="sidebar-section-item">
-            <span class="sidebar-section-label">Envanter</span>
+            <span class="sidebar-section-label sidebar-section-label--inventory">Envanter</span>
           </li>
           <li class="sidebar-menu-item" [class.sidebar-menu-item--children]="item.children?.length">
           <a [routerLink]="item.children?.length ? null : item.path"
@@ -48,6 +43,7 @@
             [class.parent-active]="item.children?.length && isItemActive(item)"
             [class.menu-open]="item.children?.length && isMenuOpen(item)"
             class="sidebar-link">
+            <mat-icon *ngIf="item.icon" class="sidebar-link__icon">{{ item.icon }}</mat-icon>
             <span class="sidebar-link__label">{{ item.label }}</span>
             <div class="sidebar-link__actions">
               <span

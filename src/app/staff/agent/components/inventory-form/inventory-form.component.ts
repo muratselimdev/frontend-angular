@@ -147,6 +147,10 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
       this.applyDefaultAmountsToLines();
     });
 
+    this.inventoryForm.controls.status.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.applyFormLockState();
+    });
+
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const routeId = params.get('id');
       const parsedId = Number(routeId);
@@ -206,12 +210,16 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.isRequestLocked(this.selectedRequest);
   }
 
-  get isSaveBlocked(): boolean {
+  get isChangeRestricted(): boolean {
     return this.isLocked || this.isTerminalStatusSelected || this.isSelectedRequestLocked;
   }
 
+  get isSaveBlocked(): boolean {
+    return this.isSelectedRequestLocked;
+  }
+
   get lockedMessage(): string {
-    return 'Durumu tamamlanan veya iptal edilen sipariş fişlerinde değişiklik yapılamaz.';
+    return 'Durumu tamamlanan veya iptal edilen sipariş fişlerinde yalnızca durum değiştirilebilir.';
   }
 
   get saveBlockedMessage(): string {
@@ -263,7 +271,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   addLine(): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -271,7 +279,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   removeLine(index: number): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -279,7 +287,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onItemChange(index: number): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -315,7 +323,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onQuantityChange(index: number): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -332,7 +340,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onAmountInput(index: number, event: Event): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -395,7 +403,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onDocumentSelected(event: Event): void {
-    if (this.isSaveBlocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -418,7 +426,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   clearSelectedDocument(): void {
-    if (this.isSaveBlocked) {
+    if (this.isChangeRestricted) {
       return;
     }
 
@@ -660,8 +668,12 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private applyFormLockState(): void {
-    if (this.isLocked) {
+    if (this.isChangeRestricted) {
       this.inventoryForm.disable({ emitEvent: false });
+
+      if (this.isEditMode && !this.isSelectedRequestLocked) {
+        this.inventoryForm.controls.status.enable({ emitEvent: false });
+      }
     } else {
       this.inventoryForm.enable({ emitEvent: false });
     }
