@@ -28,6 +28,9 @@ type ApiArrayResponse<T> =
     };
 type ApiInventoryResponse = Omit<Inventory, 'lines'> & {
   lines?: ApiArrayResponse<InventoryLine> | null;
+  Lines?: ApiArrayResponse<InventoryLine> | null;
+  imageUrl?: string | null;
+  ImageUrl?: string | null;
 };
 type ApiInventoryItemResponse = Record<string, unknown>;
 type ApiFicheNoResponse = { ficheNo?: string; FicheNo?: string };
@@ -77,23 +80,71 @@ export class InventoryService {
       .pipe(map((response) => response.ficheNo ?? response.FicheNo ?? ''));
   }
 
-  create(payload: CreateInventoryRequest): Observable<Inventory> {
+  create(payload: CreateInventoryRequest, documentFile?: File | null): Observable<Inventory> {
     return this.http
-      .post<ApiInventoryResponse>(`${this.baseUrl}/create`, payload)
+      .post<ApiInventoryResponse>(`${this.baseUrl}/create`, this.toInventoryFormData(payload, documentFile))
       .pipe(map((response) => this.normalizeInventory(response)));
   }
 
-  update(id: number, payload: UpdateInventoryRequest): Observable<Inventory> {
+  update(id: number, payload: UpdateInventoryRequest, documentFile?: File | null): Observable<Inventory> {
     return this.http
-      .put<ApiInventoryResponse>(`${this.baseUrl}/update/${id}`, payload)
+      .put<ApiInventoryResponse>(`${this.baseUrl}/update/${id}`, this.toInventoryFormData(payload, documentFile))
       .pipe(map((response) => this.normalizeInventory(response)));
   }
 
   private normalizeInventory(response: ApiInventoryResponse): Inventory {
     return {
       ...response,
-      lines: this.normalizeArray(response.lines)
+      imageUrl: this.pickString(response as Record<string, unknown>, ['imageUrl', 'ImageUrl']) ?? null,
+      lines: this.normalizeArray(response.lines ?? response.Lines)
     };
+  }
+
+  private toInventoryFormData(
+    payload: CreateInventoryRequest | UpdateInventoryRequest,
+    documentFile?: File | null
+  ): FormData {
+    const formData = new FormData();
+
+    this.appendFormValue(formData, 'Id', 'id' in payload ? payload.id : undefined);
+    this.appendFormValue(formData, 'CustomerId', payload.customerId);
+    this.appendFormValue(formData, 'StaffId', payload.staffId);
+    this.appendFormValue(formData, 'RequestId', payload.requestId);
+    this.appendFormValue(formData, 'FicheNo', payload.ficheNo);
+    this.appendFormValue(formData, 'ImageUrl', payload.imageUrl);
+    this.appendFormValue(formData, 'Status', payload.status);
+    this.appendFormValue(formData, 'Type', payload.type);
+    this.appendFormValue(formData, 'CreatedAt', payload.createdAt);
+    this.appendFormValue(formData, 'UpdatedAt', payload.updatedAt);
+
+    payload.lines.forEach((line, index) => {
+      const prefix = `Lines[${index}]`;
+      this.appendFormValue(formData, `${prefix}.Id`, 'id' in line ? line.id : undefined);
+      this.appendFormValue(formData, `${prefix}.InventoryId`, line.inventoryId);
+      this.appendFormValue(formData, `${prefix}.InventoryItemId`, line.inventoryItemId);
+      this.appendFormValue(formData, `${prefix}.Quantity`, line.quantity);
+      this.appendFormValue(formData, `${prefix}.Amount`, line.amount);
+      this.appendFormValue(formData, `${prefix}.Cancel`, line.cancel);
+      this.appendFormValue(formData, `${prefix}.CancelReason`, line.cancelReason);
+      this.appendFormValue(formData, `${prefix}.CreatedAt`, line.createdAt);
+      this.appendFormValue(formData, `${prefix}.UpdatedAt`, line.updatedAt);
+    });
+
+    if (documentFile) {
+      formData.append('image', documentFile, documentFile.name);
+    }
+
+    return formData;
+  }
+
+  private appendFormValue(
+    formData: FormData,
+    key: string,
+    value: string | number | boolean | null | undefined
+  ): void {
+    if (value !== null && value !== undefined) {
+      formData.append(key, String(value));
+    }
   }
 
   private normalizeInventoryItem(response: ApiInventoryItemResponse): InventoryItem {

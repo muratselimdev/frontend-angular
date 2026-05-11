@@ -363,6 +363,10 @@
               <strong>{{ item.ficheNo || 'Fiş no yok' }}</strong>
               <span>{{ getPatientLabel(item) }}</span>
               <small>Müşteri #{{ item.customerId }}</small>
+              <small *ngIf="hasDocument(item)" class="slip-document">
+                <mat-icon>picture_as_pdf</mat-icon>
+                PDF eklendi
+              </small>
             </div>
 
             <div class="slip-meta">
@@ -554,6 +558,10 @@
               </span>
               <span class="badge-pill" [ngClass]="getStatusBadgeClass(item.status)">
                 {{ getStatusLabel(item.status) }}
+              </span>
+              <span *ngIf="hasDocument(item)" class="badge-pill inventory-badge--document">
+                <mat-icon>picture_as_pdf</mat-icon>
+                PDF
               </span>
             </div>
 

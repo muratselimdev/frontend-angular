@@ -361,7 +361,8 @@ export class InventoryListComponent implements OnInit, AfterViewInit, OnDestroy 
         request?.treatmentGroupName,
         request?.assignedAgentName,
         this.getStatusLabel(inventory.status),
-        this.getTypeLabel(inventory.type)
+        this.getTypeLabel(inventory.type),
+        this.hasDocument(inventory) ? 'pdf ekipriz belge' : ''
       ]
         .filter((value): value is string | number => value !== undefined && value !== null)
         .join(' ')
@@ -400,6 +401,10 @@ export class InventoryListComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getRequestLabel(inventory: Inventory): string {
     return `Talep #${inventory.requestId}`;
+  }
+
+  hasDocument(inventory: Inventory): boolean {
+    return Boolean(inventory.imageUrl?.trim());
   }
 
   getLineCount(inventory: Inventory): number {

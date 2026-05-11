@@ -9,6 +9,7 @@ export interface Inventory {
   ficheNo: string;
   status: number | InventoryStatusApi;
   type: number | InventoryTypeApi;
+  imageUrl?: string | null;
   createdAt: string;
   updatedAt?: string | null;
   lines: InventoryLine[];
@@ -52,6 +53,7 @@ export interface CreateInventoryRequest {
   ficheNo: string;
   status: InventoryStatusApi;
   type: InventoryTypeApi;
+  imageUrl?: string | null;
   createdAt: string;
   updatedAt: string | null;
   lines: CreateInventoryLineRequest[];
@@ -74,6 +76,7 @@ export interface UpdateInventoryRequest {
   staffId?: number;
   requestId?: number;
   ficheNo?: string;
+  imageUrl?: string | null;
   status?: InventoryStatusApi;
   type?: InventoryTypeApi;
   createdAt?: string;

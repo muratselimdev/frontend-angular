@@ -73,6 +73,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('inventoryScale') private readonly inventoryScaleRef?: ElementRef<HTMLDivElement>;
   @ViewChild('inventoryBoard') private readonly inventoryBoardRef?: ElementRef<HTMLElement>;
   @ViewChild('holoCanvas') private readonly holoCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('documentInput') private readonly documentInputRef?: ElementRef<HTMLInputElement>;
 
   inventoryForm: InventoryFormGroup;
   isEditMode = false;
@@ -81,6 +82,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   isSaving = false;
   error = '';
   itemLoadError = '';
+  selectedDocumentFile: File | null = null;
 
   requests: RequestInfo[] = [];
   selectedRequest: RequestInfo | null = null;
@@ -103,6 +105,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   private inventoryHeroAnimationFrame = 0;
   private inventoryHeroRunId = 0;
   private inventoryHeroParticles: InventoryHeaderParticle[] = [];
+  private editingAmountIndex: number | null = null;
   private readonly inventoryHeroResizeObservers: ResizeObserver[] = [];
   private readonly moneyFormatter = new Intl.NumberFormat('tr-TR', {
     minimumFractionDigits: 2,
@@ -219,6 +222,26 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.lockedMessage;
   }
 
+  get currentDocumentUrl(): string | null {
+    return this.normalizeText(this.currentInventory?.imageUrl ?? null);
+  }
+
+  get currentDocumentFileName(): string | null {
+    return this.selectedDocumentFile?.name ?? this.extractDocumentFileName(this.currentDocumentUrl);
+  }
+
+  get documentDisplayName(): string {
+    if (this.selectedDocumentFile) {
+      return this.selectedDocumentFile.name;
+    }
+
+    return this.currentDocumentUrl ? 'Mevcut PDF dosyası' : 'PDF dosyası eklenmedi';
+  }
+
+  get documentActionLabel(): string {
+    return this.selectedDocumentFile || this.currentDocumentUrl ? 'Değiştir' : 'PDF Seç';
+  }
+
   createLineFormGroup(line?: InventoryLine): InventoryLineFormGroup {
     return this.fb.group<InventoryLineFormControls>({
       id: this.fb.nonNullable.control(line?.id ?? 0),
@@ -304,6 +327,37 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  onAmountFocus(index: number): void {
+    this.editingAmountIndex = index;
+  }
+
+  onAmountInput(index: number, event: Event): void {
+    if (this.isLocked) {
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const amountControl = this.lines.at(index).controls.amount;
+    const parsedAmount = this.parseMoneyInput(input.value);
+
+    amountControl.setValue(parsedAmount);
+    amountControl.markAsDirty();
+  }
+
+  onAmountBlur(index: number): void {
+    this.lines.at(index).controls.amount.markAsTouched();
+    this.editingAmountIndex = null;
+  }
+
+  getAmountDisplay(index: number): string {
+    const amount = this.lines.at(index).controls.amount.value;
+    if (amount === null) {
+      return '';
+    }
+
+    return this.editingAmountIndex === index ? String(amount).replace('.', ',') : this.moneyFormatter.format(amount);
+  }
+
   getLineTotal(index: number): number {
     const lineGroup = this.lines.at(index);
     return this.toNumber(lineGroup.controls.quantity.value) * this.toNumber(lineGroup.controls.amount.value);
@@ -340,6 +394,37 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     return index;
   }
 
+  onDocumentSelected(event: Event): void {
+    if (this.isSaveBlocked) {
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!this.isPdfFile(file)) {
+      this.selectedDocumentFile = null;
+      input.value = '';
+      this.error = 'Sadece PDF dosyası yükleyebilirsiniz.';
+      return;
+    }
+
+    this.selectedDocumentFile = file;
+    this.error = '';
+  }
+
+  clearSelectedDocument(): void {
+    if (this.isSaveBlocked) {
+      return;
+    }
+
+    this.clearDocumentInput();
+  }
+
   onSubmit(): void {
     if (this.isSaveBlocked) {
       this.error = this.saveBlockedMessage;
@@ -366,14 +451,14 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     this.error = '';
 
     if (this.isEditMode && this.inventoryId !== null) {
-      this.inventoryService.update(this.inventoryId, this.buildUpdatePayload(currentStaffId)).subscribe({
+      this.inventoryService.update(this.inventoryId, this.buildUpdatePayload(currentStaffId), this.selectedDocumentFile).subscribe({
         next: () => this.handleSaveSuccess(),
         error: () => this.handleSaveError('Güncelleme sırasında hata oluştu.')
       });
       return;
     }
 
-    this.inventoryService.create(this.buildCreatePayload(currentStaffId)).subscribe({
+    this.inventoryService.create(this.buildCreatePayload(currentStaffId), this.selectedDocumentFile).subscribe({
       next: () => this.handleSaveSuccess(),
       error: () => this.handleSaveError('Oluşturma sırasında hata oluştu.')
     });
@@ -425,6 +510,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
 
   private patchInventory(inventory: Inventory): void {
     this.currentInventory = inventory;
+    this.clearDocumentInput();
     this.inventoryForm.enable({ emitEvent: false });
     this.clearLines();
 
@@ -444,6 +530,7 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
 
   private resetForCreate(ficheNo: string): void {
     this.currentInventory = null;
+    this.clearDocumentInput();
     this.inventoryForm.enable({ emitEvent: false });
     this.clearLines();
     this.inventoryForm.reset({
@@ -594,6 +681,38 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
     return normalizedValue.length > 0 ? normalizedValue : null;
   }
 
+  private extractDocumentFileName(url: string | null): string | null {
+    if (!url) {
+      return null;
+    }
+
+    const path = this.getUrlPath(url);
+    const fileName = path.split('/').filter(Boolean).pop() ?? '';
+    const normalizedFileName = this.normalizeText(decodeURIComponent(fileName).replace(/^[0-9a-f-]{36}_/i, ''));
+
+    return normalizedFileName?.toLowerCase().endsWith('.pdf') ? normalizedFileName : null;
+  }
+
+  private getUrlPath(url: string): string {
+    try {
+      return new URL(url).pathname;
+    } catch {
+      return url.split('?')[0] ?? '';
+    }
+  }
+
+  private isPdfFile(file: File): boolean {
+    return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  }
+
+  private clearDocumentInput(): void {
+    this.selectedDocumentFile = null;
+
+    if (this.documentInputRef?.nativeElement) {
+      this.documentInputRef.nativeElement.value = '';
+    }
+  }
+
   private nullableAmount(value: number | null): number | null {
     if (value === null) {
       return null;
@@ -613,6 +732,36 @@ export class InventoryFormComponent implements OnInit, AfterViewInit, OnDestroy 
   private toNumber(value: number | string | null | undefined, fallback = 0): number {
     const parsedValue = Number(value ?? fallback);
     return Number.isFinite(parsedValue) ? parsedValue : fallback;
+  }
+
+  private parseMoneyInput(value: string): number | null {
+    const cleanedValue = value.replace(/[^\d,.-]/g, '').trim();
+
+    if (!cleanedValue) {
+      return null;
+    }
+
+    const normalizedValue = this.normalizeMoneyInput(cleanedValue);
+    const parsedValue = Number(normalizedValue);
+
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  private normalizeMoneyInput(value: string): string {
+    if (value.includes(',')) {
+      return value.replace(/\./g, '').replace(',', '.');
+    }
+
+    if (value.includes('.')) {
+      const parts = value.split('.');
+      const lastPart = parts[parts.length - 1] ?? '';
+
+      if (lastPart.length === 3 && parts.length > 1) {
+        return parts.join('');
+      }
+    }
+
+    return value.replace(/,/g, '');
   }
 
   private getItemNameWithCode(item: InventoryItem): string {
