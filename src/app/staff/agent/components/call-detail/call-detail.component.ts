@@ -55,6 +55,8 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   callActive = false;
   incomingCall: any = null;
+  incomingVisible = false;
+  callerName = '';
   activeVoiceCallId?: number;
   requestIdCandidates: number[] = [];
   private mediaRecorder?: MediaRecorder;
@@ -91,6 +93,42 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.agentId = this.getAgentIdFromToken();
+
+    // Start VoiceService SignalR connection for agent
+    await this.voiceService.startConnection(this.auth.token, 'agent', this.agentId);
+
+    // Sync callActive state with WebRTC events
+    this.voiceService.onCallActive.subscribe(state => {
+      this.zone.run(() => {
+        this.callActive = state;
+        this.cdr.detectChanges();
+      });
+    });
+
+    this.voiceService.callEnded.subscribe(() => {
+      this.zone.run(() => {
+        this.callActive = false;
+        this.activeVoiceCallId = undefined;
+        this.incomingVisible = false;
+        this.incomingCall = null;
+        this.cdr.detectChanges();
+        this.refreshVoiceCalls();
+      });
+    });
+
+    // Handle incoming calls initiated by the customer
+    this.voiceService.incomingCall.subscribe(call => {
+      const fromId = call.fromUserId ?? call.FromUserId;
+      if (fromId === this.agentId) return;
+
+      this.zone.run(() => {
+        this.callerName = call.FromUserName ?? call.fromUserName ?? `Müşteri #${fromId}`;
+        this.incomingCall = call;
+        this.incomingVisible = true;
+        this.toastr.info(`${this.callerName} sizi arıyor...`, '📞 Gelen Çağrı');
+        this.cdr.detectChanges();
+      });
+    });
 
     this.chatService.messages$.subscribe((msgs: ChatMessage[]) => {
       if (!this.data || !this.requestId) return;
@@ -614,35 +652,137 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   // CALL FUNCTIONS
   // ===========================================================
   async startVoiceCall() {
-    const customerId = this.getCustomerId();
+    // Best-effort customer ID for the HTTP registration call.
+    // The backend resolves the real userId from the request record.
+    const customerId = this.resolveCustomerUserId();
 
     if (!customerId) {
-      this.toastr.warning('Müşteri bilgisi eksik.');
+      this.toastr.warning('Müşteri bilgisi eksik. Önce mesaj geçmişini yükleyiniz.');
       return;
     }
 
-    this.voiceService.startVoiceCallRequest(this.requestId, this.agentId, customerId).subscribe({
-      next: () => {
-        this.toastr.success('Sesli arama başlatıldı.');
-        this.refreshVoiceCalls();
-      },
-      error: () => this.toastr.error('Sesli arama başlatılamadı')
-    });
+    try {
+      // 1️⃣ Register call in DB
+      await firstValueFrom(
+        this.voiceService.startVoiceCallRequest(this.requestId, this.agentId, customerId)
+      );
+
+      // 2️⃣ Fetch fresh voice-call list — freshCalls[0] is the call we just created
+      const freshCalls = this.voiceService.normalizeVoiceCalls(
+        await firstValueFrom(
+          this.voiceService.getVoiceCallsForRequest(this.requestId).pipe(catchError(() => of([])))
+        )
+      );
+
+      // Always pick the newest call (sorted newest-first by normalizeVoiceCalls)
+      const latestCall = freshCalls[0];
+
+      this.zone.run(() => {
+        this.data = { ...this.data, voiceCalls: [...freshCalls] };
+        this.activeVoiceCallId = latestCall?.id;   // reliable: newest = just-created
+        this.cdr.detectChanges();
+      });
+
+      // 3️⃣ Use the backend-resolved toUserId for WebRTC (treat 0 as missing)
+      const webrtcTargetId = latestCall?.toUserId || customerId;
+      console.log('[CallDetail] startVoiceCall IDs:', {
+        resolvedCustomerId: customerId,
+        latestCallToUserId: latestCall?.toUserId,
+        webrtcTargetId,
+        agentId: this.agentId,
+        requestId: this.requestId
+      });
+
+      this.toastr.success('Sesli arama başlatıldı.');
+
+      // 4️⃣ Initiate WebRTC offer
+      await this.voiceService.startCall(this.requestId, webrtcTargetId);
+    } catch (err) {
+      console.error('[CallDetail] startVoiceCall error:', err);
+      this.toastr.error('Sesli arama başlatılamadı.');
+    }
+  }
+
+  /** Returns the best available customer user-account ID (must match the hub connection userId). */
+  private resolveCustomerUserId(): number {
+    // 1. Last incoming call fromUserId — this IS the exact hub userId Flutter/customer connected with
+    const incomingFromId = Number(
+      this.incomingCall?.fromUserId ?? this.incomingCall?.FromUserId ?? 0
+    );
+    if (incomingFromId && incomingFromId !== this.agentId) return incomingFromId;
+
+    // 2. Previous voice calls — handle both directions (agent called OR customer called)
+    const voiceCallRecord = (this.data?.voiceCalls as VoiceCall[] | undefined)
+      ?.find(c => c.fromUserId === this.agentId || c.toUserId === this.agentId);
+    if (voiceCallRecord) {
+      // If agent was caller → customer is toUserId; if customer was caller → customer is fromUserId
+      const voiceCallTarget = voiceCallRecord.fromUserId === this.agentId
+        ? voiceCallRecord.toUserId
+        : voiceCallRecord.fromUserId;
+      if (voiceCallTarget && voiceCallTarget !== this.agentId) return voiceCallTarget;
+    }
+
+    // 3. Chat message fromUserId/toUserId → JWT user-account IDs (correct for hub routing)
+    const existingMessages: ChatMessage[] = this.data?.messages ?? [];
+    const participantFromMessages = existingMessages
+      .flatMap((msg: ChatMessage) => [msg.fromUserId, msg.toUserId])
+      .find((id: number) => Number(id) > 0 && Number(id) !== this.agentId);
+    if (participantFromMessages) return Number(participantFromMessages);
+
+    // 4. Fallback: look for explicitly-named userId fields (NOT customer.id which is a record ID)
+    return this.firstValidNumber([
+      this.data?.customer?.userId,
+      this.data?.customer?.UserId,
+      this.data?.customer?.userAccountId,
+      this.data?.customer?.UserAccountId,
+      this.data?.customerUserId,
+      this.data?.CustomerUserId,
+      this.data?.request?.customer?.userId,
+      this.data?.request?.customer?.UserId,
+    ]);
+  }
+
+  onAcceptCall() {
+    this.incomingVisible = false;
+    if (this.incomingCall) {
+      this.voiceService.acceptCall(
+        this.incomingCall.requestId ?? this.incomingCall.RequestId,
+        this.incomingCall.fromUserId ?? this.incomingCall.FromUserId
+      );
+      this.callActive = true;
+      this.refreshVoiceCalls(); // populates activeVoiceCallId from DB
+      this.toastr.success('Çağrı kabul edildi.');
+    }
+  }
+
+  onRejectCall() {
+    this.incomingVisible = false;
+    this.incomingCall = null;
   }
 
   endCall() {
-    if (!this.activeVoiceCallId) {
-      this.toastr.warning('Bitirilecek aktif arama bulunamadı.');
-      return;
-    }
+    const callId = this.activeVoiceCallId;
 
-    this.voiceService.endVoiceCallRequest(this.activeVoiceCallId).subscribe({
-      next: () => {
-        this.toastr.warning('Çağrı sonlandırıldı.');
-        this.refreshVoiceCalls();
-      },
-      error: () => this.toastr.error('Çağrı sonlandırılamadı')
-    });
+    // Immediately reset UI — don't wait for server (avoids stuck 'Bitir' button)
+    this.callActive = false;
+    this.activeVoiceCallId = undefined;
+    this.cdr.detectChanges();
+
+    const finishWebRTC = async () => {
+      await this.voiceService.endCall(this.requestId);
+      this.refreshVoiceCalls();
+      this.toastr.warning('Çağrı sonlandırıldı.');
+    };
+
+    if (callId) {
+      this.voiceService.endVoiceCallRequest(callId).subscribe({
+        next: () => finishWebRTC(),
+        error: () => finishWebRTC()
+      });
+    } else {
+      // No DB record yet (e.g. incoming call accepted before DB refresh completed)
+      finishWebRTC();
+    }
   }
 
   // ===========================================================
@@ -968,14 +1108,24 @@ export class CallDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private syncVoiceCallState(voiceCalls: VoiceCall[]) {
-    const activeVoiceCall = voiceCalls.find(call => this.isVoiceCallActive(call.status));
+    const activeVoiceCall = voiceCalls.find(
+      call => this.isVoiceCallActive(call.status) && !this.isStaleCall(call)
+    );
     this.activeVoiceCallId = activeVoiceCall?.id;
-    this.callActive = Boolean(activeVoiceCall);
+    // callActive is controlled exclusively by WebRTC events (onCallActive / callEnded).
+    // Do NOT derive it from DB status — DB records from previous sessions can be stale.
   }
 
   private isVoiceCallActive(status?: string): boolean {
     const normalizedStatus = (status ?? '').trim().toLowerCase();
     return ['active', 'started', 'ringing', 'ongoing', 'inprogress', 'in progress'].includes(normalizedStatus);
+  }
+
+  private isStaleCall(call: VoiceCall): boolean {
+    if (call.endedAt) return false;
+    const started = new Date(call.startedAt).getTime();
+    if (!Number.isFinite(started) || !started) return false;
+    return Date.now() - started > 24 * 60 * 60 * 1000; // stale after 24 hours
   }
 
   private getCustomerId(): number {

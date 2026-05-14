@@ -114,13 +114,19 @@ export class VoiceService {
 
     console.log(`[VoiceService] 📞 StartCall Req=${requestId} → To=${targetUserId}`);
 
+    // 1️⃣ Notify callee FIRST — so Flutter/web rings immediately before mic permission dialog
+    await this.hubConnection.invoke('StartCall', requestId, this.getUserId(), targetUserId);
+    console.log('[VoiceService] ✅ StartCall sent to hub');
+
+    // 2️⃣ Set up WebRTC peer + request microphone (may show permission dialog)
     await this.preparePeer();
 
     const offer = await this.peer!.createOffer();
     await this.peer!.setLocalDescription(offer);
 
-    await this.hubConnection.invoke('StartCall', requestId, this.getUserId(), targetUserId);
+    // 3️⃣ Send WebRTC offer to callee
     await this.hubConnection.invoke('SendOffer', requestId, targetUserId, JSON.stringify(offer));
+    console.log('[VoiceService] ✅ SendOffer sent to hub');
 
     this.onCallActive.emit(true);
   }
