@@ -1,3 +1,30 @@
+<!-- 🎧 Persistent WebRTC audio elements — must live outside router-outlet so they
+     survive navigation between pages (dashboard → requests → etc.) -->
+<audio #localAudio autoplay muted playsinline></audio>
+<audio #remoteAudio autoplay playsinline></audio>
+
+<!-- 📞 Incoming call modal — shown from any page, not just /requests -->
+<app-call-incoming-modal
+  *ngIf="incomingVisible"
+  [visible]="incomingVisible"
+  [callerName]="callerName"
+  (accept)="onAcceptCall()"
+  (reject)="onRejectCall()"
+></app-call-incoming-modal>
+
+<!-- 🎙️ Active call floating banner -->
+<div *ngIf="callActive"
+     style="position:fixed;bottom:24px;right:24px;z-index:9999;background:#198754;color:#fff;
+            padding:12px 20px;border-radius:14px;display:flex;align-items:center;gap:14px;
+            box-shadow:0 4px 20px rgba(0,0,0,.3)">
+  🎙️ Arama devam ediyor...
+  <button (click)="endCall()"
+          style="background:#dc3545;border:none;color:#fff;padding:5px 14px;
+                 border-radius:8px;cursor:pointer;font-size:13px">
+    <i class="bi bi-telephone-x"></i> Durdur
+  </button>
+</div>
+
 <nav class="bg-white shadow-sm px-4 py-3">
   <div class="flex items-center justify-between">
     <a class="font-bold text-blue-600 text-xl" routerLink="/customer/dashboard">

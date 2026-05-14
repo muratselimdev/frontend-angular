@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>One Clinic</title>
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      var base = path.indexOf('/frontend-angular/') === 0 ? '/frontend-angular/' : '/';
+      window.sessionStorage.setItem('spa-redirect', path + window.location.search + window.location.hash);
+      window.location.replace(window.location.origin + base);
+    })();
+  </script>
+</head>
+<body></body>
+</html>

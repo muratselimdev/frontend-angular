@@ -18,6 +18,10 @@ import { ContactsComponent } from './agent/components/contacts/contacts.componen
 import { LeadsComponent } from './agent/components/leads/leads.component';
 import { DealsComponent } from './agent/components/deals/deals.component';
 import { PlanningComponent } from './agent/components/planning/planning.component';
+import { InventoryListComponent } from './agent/components/inventory-list/inventory-list.component';
+import { InventoryFormComponent } from './agent/components/inventory-form/inventory-form.component';
+import { InventoryItemListComponent } from './agent/components/inventory-item-list/inventory-item-list.component';
+import { InventoryItemFormComponent } from './agent/components/inventory-item-form/inventory-item-form.component';
 
 // Supervisor modülü
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
@@ -47,6 +51,14 @@ const routes: Routes = [
       { path: 'support', component: SupportComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'supervisor', component: SupervisorDashboardComponent},
+      { path: 'inventory', component: InventoryListComponent },
+      { path: 'inventory/updates', component: InventoryListComponent, data: { mode: 'updates' } },
+      { path: 'inventory/new', component: InventoryFormComponent },
+      { path: 'inventory/items', component: InventoryItemListComponent },
+      { path: 'inventory/items/new', component: InventoryItemFormComponent },
+      { path: 'inventory/items/:id', component: InventoryItemFormComponent },
+      { path: 'inventory/edit/:id', component: InventoryFormComponent },
+      { path: 'inventory/:id', component: InventoryFormComponent },
       { path: '', redirectTo: 'calls', pathMatch: 'full' }
     ]
   },

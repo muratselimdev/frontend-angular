@@ -5,6 +5,16 @@
   <title>One Clinic</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    (function () {
+      var redirect = window.sessionStorage.getItem('spa-redirect');
+      if (!redirect) return;
+      window.sessionStorage.removeItem('spa-redirect');
+      if (redirect !== window.location.pathname + window.location.search + window.location.hash) {
+        window.history.replaceState(null, '', redirect);
+      }
+    })();
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>

@@ -1,58 +1,98 @@
 <div class="agent-layout">
-  <button
-    *ngIf="isTabletSidebarOpen"
-    type="button"
-    class="sidebar-backdrop"
-    (click)="closeTabletSidebar()"
-    aria-label="Close menu"
-  ></button>
+  <button *ngIf="isTabletSidebarOpen" type="button" class="sidebar-backdrop" (click)="closeTabletSidebar()"
+    aria-label="Close menu"></button>
 
-  <!-- 🔹 Sol Menü -->
-  <aside class="sidebar" [class.sidebar-open]="isTabletSidebarOpen" [class.sidebar-collapsed]="isSidebarCollapsed" [class.resizing]="isResizing" [style.width.px]="isSidebarCollapsed ? 0 : sidebarWidth">
-    <div class="sidebar-header text-center py-3">
-      <h3>🎧 Agent Panel</h3>
+  <aside class="sidebar" [class.sidebar-open]="isTabletSidebarOpen" [class.sidebar-collapsed]="isSidebarCollapsed"
+    [class.resizing]="isResizing" [style.width.px]="isSidebarCollapsed ? 0 : sidebarWidth">
+    <div class="sidebar-header">
+      <a routerLink="/agent" class="sidebar-brand" (click)="closeTabletSidebar()" aria-label="OneClinic">
+        <span class="sidebar-brand__logo-shell">
+          <img src="assets/../logo.png" alt="One Clinic" class="sidebar-brand__logo">
+        </span>
+      </a>
+
+      <button type="button" class="sidebar-collapse-button" (click)="toggleTabletSidebar()" aria-label="Menüyü daralt">
+        <mat-icon>menu</mat-icon>
+      </button>
     </div>
 
     <!-- resize handle -->
     <div class="resize-handle" (mousedown)="startResize($event)"></div>
 
     <!-- 📞 Gelen çağrı popup -->
-    <app-call-incoming-modal
-      *ngIf="incomingVisible"
-      [visible]="incomingVisible"
-      [callerName]="callerName"
-      (accept)="onAcceptCall()"
-      (reject)="onRejectCall()">
+    <app-call-incoming-modal *ngIf="incomingVisible" [visible]="incomingVisible" [callerName]="callerName"
+      (accept)="onAcceptCall()" (reject)="onRejectCall()">
     </app-call-incoming-modal>
 
-    <nav class="mt-3">
-      <ul class="list-unstyled">
-        <li *ngFor="let item of menuItems">
-          <a
-            [routerLink]="item.path"
-            (click)="navigateTo(item.path, $event)"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: !item.children?.length }"
-            class="d-flex align-items-center px-3 py-2">
-            <span *ngIf="item.icon" class="me-2">{{ item.icon }}</span>
-            <span>{{ item.label }}</span>
+    <nav class="sidebar-nav" aria-label="Agent menüsü">
+      <ul class="sidebar-menu">
+        <ng-container *ngFor="let item of menuItems; let i = index">
+          <li *ngIf="i === 0" class="sidebar-section-item">
+            <span class="sidebar-section-label">
+              <mat-icon class="sidebar-section-icon">view_in_ar</mat-icon>
+              Genel
+            </span>
+          </li>
+          <li *ngIf="item.children?.length" class="sidebar-section-item">
+            <span class="sidebar-section-label sidebar-section-label--inventory">Envanter</span>
+          </li>
+          <li class="sidebar-menu-item" [class.sidebar-menu-item--children]="item.children?.length">
+          <a [routerLink]="item.children?.length ? null : item.path"
+            (click)="item.children?.length ? toggleMenu(item, $event) : navigateTo(item.path, $event)"
+            [class.active]="!item.children?.length && isItemActive(item)"
+            [class.parent-active]="item.children?.length && isItemActive(item)"
+            [class.menu-open]="item.children?.length && isMenuOpen(item)"
+            class="sidebar-link">
+            <mat-icon *ngIf="item.icon" class="sidebar-link__icon">{{ item.icon }}</mat-icon>
+            <span class="sidebar-link__label">{{ item.label }}</span>
+            <div class="sidebar-link__actions">
+              <span
+                *ngIf="item.children?.length"
+                class="submenu-toggle"
+                role="button"
+                tabindex="0"
+                (click)="toggleMenu(item, $event)"
+                (keydown.enter)="toggleMenu(item, $event)"
+                (keydown.space)="toggleMenu(item, $event)"
+                [attr.aria-label]="isMenuOpen(item) ? 'Menüyü kapat' : 'Menüyü aç'"
+              >
+                <mat-icon>{{ isMenuOpen(item) ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </span>
+            </div>
           </a>
 
-          <ul *ngIf="item.children?.length" class="submenu list-unstyled mt-1 ms-3">
+          <ul *ngIf="item.children?.length && isMenuOpen(item)" class="submenu">
             <li *ngFor="let child of item.children">
-              <a
-                [routerLink]="child.path"
-                (click)="navigateTo(child.path, $event)"
-                routerLinkActive="active"
-                class="submenu-link d-flex align-items-center px-3 py-2">
-                <span *ngIf="child.icon" class="me-2">{{ child.icon }}</span>
-                <span>{{ child.label }}</span>
+              <a *ngIf="isItemVisible(child)" [routerLink]="child.path" (click)="navigateTo(child.path, $event)"
+                [class.active]="isItemActive(child)" class="submenu-link">
+                <mat-icon *ngIf="child.icon" class="sidebar-icon sidebar-icon--child">{{ child.icon }}</mat-icon>
+                <span class="sidebar-link__label">{{ child.label }}</span>
               </a>
             </li>
           </ul>
-        </li>
+          </li>
+        </ng-container>
       </ul>
     </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/agent/support" class="sidebar-support-card sidebar-support-card--light" (click)="closeTabletSidebar()">
+        <span class="sidebar-support-card__icon" aria-hidden="true">
+          <mat-icon>support_agent</mat-icon>
+        </span>
+        <span>
+          <strong>Destek Merkezi</strong>
+          <small>7/24 hızlı destek alın</small>
+        </span>
+        <mat-icon class="sidebar-support-card__arrow">chevron_right</mat-icon>
+      </a>
+
+      <button type="button" class="sidebar-minimize" (click)="toggleTabletSidebar()">
+        <mat-icon>radio_button_checked</mat-icon>
+        <span>Menüyü Daralt</span>
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+    </div>
   </aside>
 
   <!-- 🔹 İçerik Alanı -->

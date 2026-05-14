@@ -13,6 +13,7 @@ interface MenuItem {
   path: string;
   icon?: string;
   children?: MenuItem[];
+  exact?: boolean;
 }
 
 @Component({
@@ -24,11 +25,12 @@ interface MenuItem {
 export class AgentLayoutComponent implements OnInit, OnDestroy {
   isTabletSidebarOpen = false;
   isSidebarCollapsed = false;
-  sidebarWidth = 280;
+  sidebarWidth = 285;
 
   isResizing = false;
   private resizeStartX = 0;
-  private resizeStartWidth = 280;
+  private resizeStartWidth = 285;
+  private readonly openMenuPaths = new Set<string>(['/staff/inventory']);
 
   startResize(event: MouseEvent): void {
     this.isResizing = true;
@@ -41,7 +43,7 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
   onMouseMove(event: MouseEvent): void {
     if (!this.isResizing) return;
     const delta = event.clientX - this.resizeStartX;
-    const newWidth = Math.min(480, Math.max(160, this.resizeStartWidth + delta));
+    const newWidth = Math.min(360, Math.max(250, this.resizeStartWidth + delta));
     this.sidebarWidth = newWidth;
   }
 
@@ -54,11 +56,21 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
     {
       label: 'Leads',
       path: '/agent/leads',
-      icon: '🎯'},
-    { label: 'Contacts', path: '/agent/contacts', icon: '📒' },
-    { label: 'Deals', path: '/agent/deals', icon: '🤝' },
-    { label: 'Planning', path: '/agent/planning', icon: '📅' },
-    { label: 'Requests', path: '/agent/calls', icon: '📋' }
+      icon: 'account_tree'
+    },
+    { label: 'Contacts', path: '/agent/contacts', icon: 'support_agent' },
+    { label: 'Deals', path: '/agent/deals', icon: 'content_paste' },
+    { label: 'Planning', path: '/agent/planning', icon: 'home_work' },
+    { label: 'Requests', path: '/agent/calls', icon: 'center_focus_weak' },
+    {
+      label: 'Envanter',
+      path: '/staff/inventory',
+      icon: 'view_in_ar',
+      children: [
+        { label: 'Sipariş Listesi', path: '/staff/inventory', icon: 'fiber_manual_record', exact: true },
+        { label: 'Sipariş Kalemleri', path: '/staff/inventory/items', icon: 'fiber_manual_record', exact: true }
+      ]
+    }
   ];
 
   incomingVisible = false;
@@ -191,6 +203,52 @@ export class AgentLayoutComponent implements OnInit, OnDestroy {
 
     this.router.navigateByUrl(path);
     this.closeTabletSidebar();
+  }
+
+  toggleMenu(item: MenuItem, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (!item.children?.length) {
+      this.navigateTo(item.path);
+      return;
+    }
+
+    if (this.openMenuPaths.has(item.path)) {
+      this.openMenuPaths.delete(item.path);
+      return;
+    }
+
+    this.openMenuPaths.add(item.path);
+  }
+
+  isMenuOpen(item: MenuItem): boolean {
+    return item.children?.length ? this.openMenuPaths.has(item.path) : false;
+  }
+
+  isItemActive(item: MenuItem): boolean {
+    if (item.path.includes('?') || item.path.includes('#')) {
+      return this.router.url === item.path || this.router.url.startsWith(`${item.path}&`);
+    }
+
+    const currentPath = this.getPathOnly(this.router.url);
+    const itemPath = this.getPathOnly(item.path);
+
+    if (item.exact) {
+      return currentPath === itemPath && !this.router.url.includes('?') && !this.router.url.includes('#');
+    }
+
+    return currentPath.startsWith(itemPath);
+  }
+
+  isItemVisible(item: MenuItem): boolean {
+    return true;
+  }
+
+  private getPathOnly(url: string): string {
+    return url.split('?')[0].split('#')[0];
   }
 
   toggleTabletSidebar(): void {

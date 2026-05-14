@@ -2,11 +2,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  ViewChild,
-  ElementRef,
   ChangeDetectorRef,
-  NgZone,
-  AfterViewInit
+  NgZone
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -24,7 +21,7 @@ import { filter, take } from 'rxjs';
   standalone: false
 })
 export class CustomerRequestsComponent
-  implements OnInit, AfterViewInit, OnDestroy {
+  implements OnInit, OnDestroy {
 
   // =============================================================
   // STATE
@@ -44,15 +41,8 @@ export class CustomerRequestsComponent
   customerId!: number;
   agentId!: number;
 
-  incomingVisible = false;
-  callerName = '';
-  currentIncomingCall: any = null;
-
+  // Controlled by VoiceService.onCallActive — shown in the in-page active call indicator
   callActive = false;
-
-  // 🎧 AUDIO ELEMENTS
-  @ViewChild('localAudio') localAudio!: ElementRef<HTMLAudioElement>;
-  @ViewChild('remoteAudio') remoteAudio!: ElementRef<HTMLAudioElement>;
 
   baseUrl = `${environment.apiUrl}/api/customer/requests`;
 
@@ -78,9 +68,8 @@ export class CustomerRequestsComponent
 
     this.customerId = this.decodeCustomerId();
 
-    // Chat & Voice connections
+    // Chat connection (voice hub is managed by CustomerLayoutComponent)
     this.chatService.startConnection(token, 'customer', this.customerId);
-    await this.voiceService.startConnection(token, 'customer', this.customerId);
 
     // Mesajları dinle
     this.chatService.messages$.subscribe((msgs: ChatMessage[]) => {
@@ -91,74 +80,8 @@ export class CustomerRequestsComponent
     // Talepleri yükle
     this.loadRequests();
 
-    // =============================================================
-    // 📥 INCOMING CALL
-    // =============================================================
-    this.voiceService.incomingCall.subscribe(call => {
-      const fromId = call.fromUserId ?? call.FromUserId;
-      if (fromId === this.customerId) return;
-
-      this.zone.run(() => {
-        this.callerName = call.FromUserName || `Temsilci #${fromId}`;
-        this.currentIncomingCall = call;
-        this.incomingVisible = true;
-
-        this.toastr.info(`${this.callerName} sizi arıyor...`, '📞 Gelen Çağrı');
-        this.cdr.detectChanges();
-      });
-    });
-
-    // =============================================================
-    // 📴 CALL ENDED (EN ÖNEMLİ BÖLÜM — UI RESET)
-    // =============================================================
-      this.voiceService.callEnded.subscribe((endedByUserId: number) => {
-      this.zone.run(() => {
-
-        // 1) Global UI reset
-        this.incomingVisible = false;
-        this.callActive = false;
-        this.currentIncomingCall = null;
-        this.callerName = '';
-
-        // 2) Modal içindeki state reset
-        if (this.selectedRequest) {
-          this.selectedRequest.isCalling = false;
-
-          // voiceCalls varsa güncelle
-          if (this.selectedRequest.voiceCalls?.length > 0) {
-            const last = this.selectedRequest.voiceCalls[0];
-            last.status = 'Completed';
-            last.endedAt = new Date();
-          }
-        }
-
-        // 3) Liste UI reset
-        if (this.requests?.length && this.selectedRequest) {
-          const row = this.requests.find(r => r.id === this.selectedRequest.id);
-          if (row) {
-            row.isCalling = false;
-            // Eğer isteğe bağlı UI istiyorsan:
-            // row.status = 'Completed';
-          }
-        }
-
-        // 4) Bildirim
-        this.toastr.warning(
-          `Kullanıcı #${endedByUserId} çağrıyı sonlandırdı.`,
-          'Çağrı Bitti'
-        );
-
-        // 5) Angular zorunlu refresh
-        this.cdr.detectChanges();
-      });
-    });
-
-
-    // =============================================================
-    // 📡 CALL ACTIVE STATE
-    // =============================================================
-    // 📶 Çağrı durumu izleme
-    this.voiceService.onCallActive.subscribe((state) => {
+    // Mirror call active state for the in-page active call indicator
+    this.voiceService.onCallActive.subscribe(state => {
       this.zone.run(() => {
         this.callActive = state;
         this.cdr.detectChanges();
@@ -167,21 +90,11 @@ export class CustomerRequestsComponent
   }
 
   // =============================================================
-  // AUDIO ELEMENTS
-  // =============================================================
-  ngAfterViewInit(): void {
-    if (this.localAudio && this.remoteAudio) {
-      this.voiceService.setLocalAudioElement(this.localAudio.nativeElement);
-      this.voiceService.setRemoteAudioElement(this.remoteAudio.nativeElement);
-    }
-  }
-
-  // =============================================================
   // DESTROY
   // =============================================================
   ngOnDestroy(): void {
     this.chatService.stopConnection();
-    this.voiceService.cleanup();
+    // Voice hub cleanup is handled by CustomerLayoutComponent
   }
 
   // =============================================================
@@ -311,32 +224,6 @@ export class CustomerRequestsComponent
     this.voiceService.endCall();
     this.callActive = false;
     this.toastr.info('Çağrı sonlandırıldı.');
-  }
-
-  // =============================================================
-  // INCOMING CALL UI
-  // =============================================================
-  onAcceptCall() {
-    this.incomingVisible = false;
-
-    if (this.currentIncomingCall) {
-      this.voiceService.acceptCall(
-        this.currentIncomingCall.requestId,
-        this.currentIncomingCall.fromUserId
-      );
-      this.callActive = true;
-      this.toastr.success('Çağrı kabul edildi.');
-    }
-  }
-
-  onRejectCall() {
-    this.incomingVisible = false;
-
-    if (this.currentIncomingCall) {
-      this.voiceService.endCall(this.currentIncomingCall.requestId);
-    }
-
-    this.currentIncomingCall = null;
   }
 
   // =============================================================

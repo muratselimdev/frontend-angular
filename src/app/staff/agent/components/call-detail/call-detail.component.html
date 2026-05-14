@@ -2,6 +2,15 @@
 <audio #localAudio autoplay muted playsinline></audio>
 <audio #remoteAudio autoplay playsinline></audio>
 
+<!-- 📞 Gelen çağrı popup -->
+<app-call-incoming-modal
+  *ngIf="incomingVisible"
+  [visible]="incomingVisible"
+  [callerName]="callerName"
+  (accept)="onAcceptCall()"
+  (reject)="onRejectCall()"
+></app-call-incoming-modal>
+
 <div class="card p-0 shadow call-detail-card" *ngIf="data">
 
   <!-- 🔹 Üst Başlık -->
@@ -627,6 +636,45 @@
 
         <h5 class="fw-semibold text-success mb-3">🎧 Sesli Arama Geçmişi</h5>
 
+        <div class="call-action-bar mb-4">
+          <div class="call-action-copy">
+            <span class="call-action-kicker">Voice Actions</span>
+            <span class="call-action-status">
+              {{ callActive ? 'An active call is in progress.' : 'You can start a new voice call for this request.' }}
+            </span>
+          </div>
+
+          <div class="call-action-buttons">
+            <button
+              class="call-action-btn call-action-btn-start"
+              (click)="startVoiceCall()"
+              [disabled]="callActive"
+            >
+              <span class="call-action-icon">
+                <i class="bi bi-mic-fill"></i>
+              </span>
+              <span class="call-action-text">
+                <span class="call-action-title">Yeni Arama Baslat</span>
+                <span class="call-action-subtitle">Request icin sesli gorusme baslat</span>
+              </span>
+            </button>
+
+            <button
+              *ngIf="callActive"
+              class="call-action-btn call-action-btn-end"
+              (click)="endCall()"
+            >
+              <span class="call-action-icon">
+                <i class="bi bi-telephone-x-fill"></i>
+              </span>
+              <span class="call-action-text">
+                <span class="call-action-title">Bitir</span>
+                <span class="call-action-subtitle">Aktif gorusmeyi sonlandir</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div *ngIf="data.voiceCalls?.length; else emptyVoiceCalls" class="voice-history-grid">
           <div class="voice-history-head">
             <div class="voice-history-title-block">
@@ -690,44 +738,6 @@
           </div>
         </ng-template>
 
-        <div class="call-action-bar">
-          <div class="call-action-copy">
-            <span class="call-action-kicker">Voice Actions</span>
-            <span class="call-action-status">
-              {{ callActive ? 'An active call is in progress.' : 'You can start a new voice call for this request.' }}
-            </span>
-          </div>
-
-          <div class="call-action-buttons">
-            <button
-              class="call-action-btn call-action-btn-start"
-              (click)="startVoiceCall()"
-              [disabled]="callActive"
-            >
-              <span class="call-action-icon">
-                <i class="bi bi-mic-fill"></i>
-              </span>
-              <span class="call-action-text">
-                <span class="call-action-title">Yeni Arama Baslat</span>
-                <span class="call-action-subtitle">Request icin sesli gorusme baslat</span>
-              </span>
-            </button>
-
-            <button
-              *ngIf="callActive"
-              class="call-action-btn call-action-btn-end"
-              (click)="endCall()"
-            >
-              <span class="call-action-icon">
-                <i class="bi bi-telephone-x-fill"></i>
-              </span>
-              <span class="call-action-text">
-                <span class="call-action-title">Bitir</span>
-                <span class="call-action-subtitle">Aktif gorusmeyi sonlandir</span>
-              </span>
-            </button>
-          </div>
-        </div>
 
       </div>
     </mat-tab>

@@ -34,7 +34,8 @@ export class AuthInterceptor implements HttpInterceptor {
     const isStaffEndpoint =
     req.url.startsWith(`${environment.apiUrl}/api/staff`) ||
     req.url.startsWith(`${environment.apiUrl}/api/agent`) ||
-    req.url.startsWith(`${environment.apiUrl}/api/admin`);
+    req.url.startsWith(`${environment.apiUrl}/api/admin`) ||
+    req.url.startsWith(`${environment.apiUrl}/api/inventory`);
     const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
     if (!isStaffEndpoint) {

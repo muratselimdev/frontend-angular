@@ -1,14 +1,10 @@
 <div class="agent-topbar">
   <button type="button" class="hamburger-button" (click)="toggleNavigationMenu()" aria-label="Menüyü aç">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M4 7h16"></path>
-      <path d="M4 12h16"></path>
-      <path d="M4 17h16"></path>
-    </svg>
+    <mat-icon>menu</mat-icon>
   </button>
 
   <form class="search-form" (ngSubmit)="performSearch()">
-    <span class="search-icon">🔍</span>
+    <mat-icon class="search-icon">search</mat-icon>
     <input
       [(ngModel)]="searchTerm"
       name="topbarSearch"
@@ -19,12 +15,12 @@
 
   <div class="topbar-actions">
     <button type="button" class="icon-button" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Light mode' : 'Dark mode'">
-      <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+      <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
     </button>
 
     <div class="menu-wrapper">
       <button type="button" class="icon-button" (click)="toggleNotifications($event)" aria-label="Bildirimler">
-        <span>🔔</span>
+        <mat-icon>notifications_none</mat-icon>
         <span *ngIf="unreadCount > 0" class="notification-dot">{{ unreadCount }}</span>
       </button>
 
@@ -44,13 +40,19 @@
 
     <div class="menu-wrapper">
       <button type="button" class="icon-button language-button" (click)="toggleLanguageMenu($event)" aria-label="Dil seçimi">
-        <span>🌐</span>
+        <mat-icon>language</mat-icon>
         <span class="lang-text">{{ currentLanguage | uppercase }}</span>
       </button>
 
       <div *ngIf="languageMenuOpen" class="dropdown-panel small-panel">
-        <button type="button" class="dropdown-action" (click)="switchLanguage('tr')">🇹🇷 Türkçe</button>
-        <button type="button" class="dropdown-action" (click)="switchLanguage('en')">🇬🇧 English</button>
+        <button type="button" class="dropdown-action" (click)="switchLanguage('tr')">
+          <mat-icon>translate</mat-icon>
+          Türkçe
+        </button>
+        <button type="button" class="dropdown-action" (click)="switchLanguage('en')">
+          <mat-icon>translate</mat-icon>
+          English
+        </button>
       </div>
     </div>
 
@@ -61,7 +63,7 @@
           <strong>{{ getUserName() }}</strong>
           <small>{{ getUserEmail() }}</small>
         </div>
-        <span class="caret">⌄</span>
+        <mat-icon class="caret">expand_more</mat-icon>
       </button>
 
       <div *ngIf="userMenuOpen" class="dropdown-panel user-panel">
@@ -73,14 +75,29 @@
           </div>
         </div>
 
-        <button type="button" class="dropdown-action" (click)="navigateToProfile()">👤 Profili düzenle</button>
-        <button type="button" class="dropdown-action" (click)="navigateToSettings()">⚙️ Hesap ayarları</button>
-        <button type="button" class="dropdown-action" (click)="navigateToSettings('password')">🔒 Şifre değiştir</button>
-        <button type="button" class="dropdown-action" (click)="navigateToSupport()">❓ Destek</button>
+        <button type="button" class="dropdown-action" (click)="navigateToProfile()">
+          <mat-icon>person_outline</mat-icon>
+          Profili düzenle
+        </button>
+        <button type="button" class="dropdown-action" (click)="navigateToSettings()">
+          <mat-icon>tune</mat-icon>
+          Hesap ayarları
+        </button>
+        <button type="button" class="dropdown-action" (click)="navigateToSettings('password')">
+          <mat-icon>lock_reset</mat-icon>
+          Şifre değiştir
+        </button>
+        <button type="button" class="dropdown-action" (click)="navigateToSupport()">
+          <mat-icon>support_agent</mat-icon>
+          Destek
+        </button>
 
         <div class="dropdown-divider"></div>
 
-        <button type="button" class="dropdown-action danger" (click)="logout()">🚪 Çıkış yap</button>
+        <button type="button" class="dropdown-action danger" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Çıkış yap
+        </button>
       </div>
     </div>
   </div>

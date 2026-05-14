@@ -374,3 +374,219 @@
     min-width: 0;
   }
 }
+
+/* Mint ERP topbar refresh */
+.agent-topbar {
+  min-height: 4.7rem;
+  border-color: rgba(20, 184, 166, 0.34);
+  background:
+    radial-gradient(circle at 7% 48%, rgba(20, 184, 166, 0.28), transparent 11rem),
+    radial-gradient(circle at 72% 24%, rgba(45, 212, 191, 0.24), transparent 16rem),
+    linear-gradient(135deg, rgba(236, 254, 255, 0.98), rgba(204, 251, 241, 0.74) 48%, rgba(240, 253, 250, 0.94));
+  box-shadow:
+    0 1rem 2.4rem rgba(15, 118, 110, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.hamburger-button,
+.icon-button,
+.user-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(20, 184, 166, 0.18);
+  background: rgba(255, 255, 255, 0.62);
+  color: #0f766e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.hamburger-button {
+  border-radius: 0.9rem;
+}
+
+.hamburger-button mat-icon,
+.icon-button mat-icon,
+.language-button mat-icon,
+.caret {
+  width: 1.12rem;
+  height: 1.12rem;
+  font-size: 1.12rem;
+  line-height: 1;
+}
+
+.hamburger-button:hover,
+.icon-button:hover,
+.user-trigger:hover {
+  border-color: rgba(20, 184, 166, 0.34);
+  background: rgba(204, 251, 241, 0.58);
+}
+
+.search-form input {
+  border-color: rgba(20, 184, 166, 0.20);
+  background: rgba(255, 255, 255, 0.64);
+  color: #134e4a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+.search-form input::placeholder {
+  color: #64748b;
+}
+
+.search-form input:focus {
+  border-color: rgba(20, 184, 166, 0.55);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+}
+
+.search-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #0f766e;
+  font-size: 1rem;
+  opacity: 0.72;
+}
+
+.language-button {
+  gap: 0.35rem;
+}
+
+.avatar {
+  background: linear-gradient(135deg, #14b8a6, #3b82f6);
+  box-shadow: 0 0.55rem 1.2rem rgba(20, 184, 166, 0.20);
+}
+
+.user-meta strong {
+  color: #0f172a;
+  font-weight: 850;
+}
+
+.dropdown-action {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #0f172a;
+}
+
+.dropdown-action mat-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: #0f766e;
+  font-size: 1.05rem;
+}
+
+:host-context(.dark-theme) .agent-topbar,
+:host-context(.dark) .agent-topbar {
+  border-color: rgba(45, 212, 191, 0.24);
+  background:
+    radial-gradient(circle at 8% 50%, rgba(20, 184, 166, 0.22), transparent 10rem),
+    radial-gradient(circle at 78% 18%, rgba(56, 189, 248, 0.15), transparent 15rem),
+    linear-gradient(135deg, #0b1f23, #0f2d31 56%, #111827);
+  box-shadow: 0 1rem 2.4rem rgba(0, 0, 0, 0.18);
+}
+
+:host-context(.dark-theme) .hamburger-button,
+:host-context(.dark-theme) .icon-button,
+:host-context(.dark-theme) .user-trigger,
+:host-context(.dark) .hamburger-button,
+:host-context(.dark) .icon-button,
+:host-context(.dark) .user-trigger {
+  border-color: rgba(45, 212, 191, 0.22);
+  background: rgba(15, 23, 42, 0.72);
+  color: #99f6e4;
+}
+
+:host-context(.dark-theme) .search-form input,
+:host-context(.dark) .search-form input {
+  border-color: rgba(45, 212, 191, 0.22);
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+}
+
+:host-context(.dark-theme) .user-meta strong,
+:host-context(.dark) .user-meta strong {
+  color: #f8fafc;
+}
+
+/* Stronger mint wash requested for the ERP shell topbar */
+.agent-topbar {
+  border-color: rgba(20, 184, 166, 0.46);
+  background:
+    radial-gradient(circle at 7% 48%, rgba(20, 184, 166, 0.38), transparent 12rem),
+    radial-gradient(circle at 70% 22%, rgba(45, 212, 191, 0.31), transparent 16.5rem),
+    linear-gradient(135deg, rgba(236, 254, 255, 0.98), rgba(183, 250, 239, 0.84) 48%, rgba(240, 253, 250, 0.95));
+  box-shadow:
+    0 1rem 2.5rem rgba(15, 118, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+:host-context(.dark-theme) .agent-topbar,
+:host-context(.dark) .agent-topbar {
+  border-color: rgba(45, 212, 191, 0.30);
+  background:
+    radial-gradient(circle at 8% 50%, rgba(20, 184, 166, 0.28), transparent 10.5rem),
+    radial-gradient(circle at 78% 18%, rgba(56, 189, 248, 0.18), transparent 15.5rem),
+    linear-gradient(135deg, #0b1f23, #0f3435 56%, #111827);
+}
+
+/* Calmer dark navbar palette */
+:host-context(.dark-theme) .agent-topbar,
+:host-context(.dark) .agent-topbar {
+  border-color: rgba(125, 211, 252, 0.18);
+  background:
+    radial-gradient(circle at 9% 50%, rgba(20, 184, 166, 0.18), transparent 10rem),
+    radial-gradient(circle at 76% 24%, rgba(14, 116, 144, 0.18), transparent 15rem),
+    linear-gradient(135deg, #0d1d29 0%, #102b32 54%, #0b1522 100%);
+  box-shadow:
+    0 1rem 2.4rem rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+:host-context(.dark-theme) .hamburger-button,
+:host-context(.dark-theme) .icon-button,
+:host-context(.dark-theme) .user-trigger,
+:host-context(.dark) .hamburger-button,
+:host-context(.dark) .icon-button,
+:host-context(.dark) .user-trigger {
+  border-color: rgba(125, 211, 252, 0.18);
+  background: rgba(15, 23, 42, 0.54);
+  color: #bae6fd;
+}
+
+:host-context(.dark-theme) .hamburger-button:hover,
+:host-context(.dark-theme) .icon-button:hover,
+:host-context(.dark-theme) .user-trigger:hover,
+:host-context(.dark) .hamburger-button:hover,
+:host-context(.dark) .icon-button:hover,
+:host-context(.dark) .user-trigger:hover {
+  border-color: rgba(94, 234, 212, 0.28);
+  background: rgba(20, 184, 166, 0.14);
+}
+
+:host-context(.dark-theme) .search-form input,
+:host-context(.dark) .search-form input {
+  border-color: rgba(125, 211, 252, 0.20);
+  background: rgba(8, 18, 30, 0.58);
+}
+
+/* Dark ERP color alignment */
+:host-context(.dark-theme) .agent-topbar,
+:host-context(.dark) .agent-topbar {
+  border-color: rgba(148, 163, 184, 0.18);
+  background:
+    radial-gradient(circle at 8% 52%, rgba(20, 184, 166, 0.16), transparent 10rem),
+    radial-gradient(circle at 76% 24%, rgba(14, 116, 144, 0.14), transparent 15rem),
+    linear-gradient(135deg, #111c28 0%, #0c1824 54%, #08131f 100%);
+  box-shadow:
+    0 1rem 2.4rem rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+:host-context(.dark-theme) .hamburger-button,
+:host-context(.dark-theme) .icon-button,
+:host-context(.dark-theme) .user-trigger,
+:host-context(.dark) .hamburger-button,
+:host-context(.dark) .icon-button,
+:host-context(.dark) .user-trigger {
+  border-color: rgba(148, 163, 184, 0.20);
+  background: rgba(15, 23, 42, 0.58);
+  color: #e2e8f0;
+}

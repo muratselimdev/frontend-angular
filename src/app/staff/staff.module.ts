@@ -34,6 +34,11 @@ import { PlanningEditComponent } from './agent/components/planning/planning-edit
 import { PlanningNoteComponent } from './agent/components/planning/planning-note/planning-note.component';
 import { SupervisorDashboardComponent } from './supervisor/supervisor-dashboard/supervisor-dashboard.component';
 import { SalesManagerDashboardComponent } from './management/sales-manager-dashboard/sales-manager-dashboard.component';
+import { InventoryListComponent } from './agent/components/inventory-list/inventory-list.component';
+import { InventoryFormComponent } from './agent/components/inventory-form/inventory-form.component';
+import { InventoryHeaderVisualComponent } from './agent/components/inventory-header-visual/inventory-header-visual.component';
+import { InventoryItemListComponent } from './agent/components/inventory-item-list/inventory-item-list.component';
+import { InventoryItemFormComponent } from './agent/components/inventory-item-form/inventory-item-form.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from '../shared/shared.module';
@@ -67,7 +72,12 @@ import { SharedModule } from '../shared/shared.module';
     PlanningEditComponent,
     PlanningNoteComponent,
     SupervisorDashboardComponent,
-    SalesManagerDashboardComponent
+    SalesManagerDashboardComponent,
+    InventoryListComponent,
+    InventoryFormComponent,
+    InventoryHeaderVisualComponent,
+    InventoryItemListComponent,
+    InventoryItemFormComponent
   ],
   imports: [
     CommonModule,
